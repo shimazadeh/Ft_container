@@ -1,4 +1,7 @@
-#include "vector.hpp"
+#include <vector>
+#include <iostream>
+
+using namespace std;
 
 int main()
 {
@@ -6,12 +9,15 @@ int main()
     vector<int> v = {7, 5, 16, 8};
 
     // Add two more integers to vector
+    cout << "max_size: " << v.max_size() << endl;
+    cout << "capacity: " << v.capacity() << endl;
+    cout << "size: " << v.size() << endl;
+
     v.push_back(25);
     v.push_back(13);
-
     // Print out the vector
-    std::cout << "v = { ";
-	for (int i = 0; i != vector.end(); i++)
-		std::cout << *i << ",";
-    std::cout << "}" << std::endl;
+    cout << "v = { ";
+	// for (auto i = 0; i != v.end(); i++)
+	// 	std::cout << *i << ",";
+    cout << "}" << endl;
 }

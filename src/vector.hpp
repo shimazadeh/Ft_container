@@ -1,23 +1,88 @@
 #ifndef _VECTOR_HPP
 # define _VECTOR_HPP
 
-template<typename T>
-class Vector
+#include <iostream>
+#include <iterator>
+
+template<typename T, class Allocator = allocator<T> >
+
+class	Vector
 {
+	// private:
+	// 	T*				arr;
+	// 	size_type		capacity;
+	// 	size_type		current;
+	// 	const allocator_type	_alloc;
 	public:
-	//member functions
-		Vector<T>(void){
-			arr = new T[1];
-			capacity = 1;
-			current = 0;
+	//==================================Class Types=================================================================
+		typedef	T						value_type;
+		typedef	std::Allocator			allocator_type;
+		typedef	std::size_t				size_type;
+		typedef	std::ptrdiff_t			difference_type;
+		typedef	value_type				&reference;
+		typedef	const value_type		&const_reference;
+		typedef	value_type				*pointer;
+		typedef	const value_type		*const_pointer;
+		typedef	std::iterator<iterator>					iterator;
+		typedef	std::iterator<const_iterator>			const_iterator;
+		typedef	std::reverse_iterator<iterator>			reverse_iterator;
+		typedef	std::reverse_iterator<const_iterator>	const_reverse_iterator;
+
+	//========================================Constructors==========================================================
+		Vector(void):arr(NULL), current(1), capacity(1), _alloc(NULL)
+		{
 		};
-		~Vector<T>(void){
+
+		explicit	Vector(const allocator_type &alloc):arr(?), capacity(0), current(0), _alloc(alloc)
+		{
+		};
+
+		Vector(size_type count, const T& value, const allocator_type &alloc):arr(NULL), capacity(0), current(0), _alloc(alloc)
+		{
+			//EXPAND THE SIZE TO COUNT
+		};
+
+		explicit	Vector(size_type count, const T& value, const allocator_type &alloc = allocator_type()):arr(NULL), capacity(0), current(0), _alloc(alloc)
+		{
+			//EXPAND THE SIZE TO COUNT
+		};
+
+		explicit	Vector(size_type count):arr(NULL), capacity(0), current(0), _alloc(??)
+		{
+			//expand the size to count
+		};
+
+		explicit	Vector(size_type count, const allocator_type &alloc = allocator_type()):arr(NULL), capacity(0), current(0), _alloc(alloc)
+		{
+			//resize with count
+		};
+
+		template<class InputIt>
+		Vector(InputIt first, InputIt last, const allocator_type &alloc = allocator_type()):arr(NULL), capacity(0), current(0), _alloc(alloc)
+		{};
+
+		Vector(const Vector &other):arr(NULL), capacity(0), current(0), _alloc(other._alloc)
+		{
+			*this = other;
+			return (*this);
+		};
+
+		Vector(Vector &&other, const allocator_type &alloc):arr(other.arr), count()
+		{
+		};
+
+	//=======================================Destructor==============================================================
+		~Vector(void)
+		{
+			_alloc.deallocate(arr, current);
 			delete [] arr;
 		};
 
-		Vector<T> &operator=(const Vector<T> &other){
-			if (this != &src)
-				//set the members equal to each other
+	//=======================================Member Functions========================================================
+		Vector &operator=(const Vector &other)
+		{
+			this->_alloc = other->_alloc;
+			this->assign(other.begin(), other.end());
 			return (*this);
 		};
 		void	assign(size_type count, const T& value);
@@ -26,7 +91,7 @@ class Vector
 		void	assign(InputIt first, InputIt last);
 		allocator_type	get_allocator()const;
 
-	//modifiers
+	//=======================================Modifiers================================================================
 		void			clear();//erases all elements, after this call size returns 0
 
 		iterator		insert(const_iterator pos, const T& value);//insert elements at a specific location
@@ -34,7 +99,7 @@ class Vector
 		template<class InputIt>
 		iterator		insert(const_iterator pos, InputIt first, InputIt last);
 
-		template< class... Args >
+		template<class... Args>
 		iterator		emplace(const_iterator pos, Args&&...args);//Inserts a new element into the container directly before pos
 
 		iterator		erase(iterator pos);
@@ -43,10 +108,10 @@ class Vector
 		void			push_back(const T& value);
 		void			push_back(T && value);
 
-		template< class... Args>
+		template<class... Args>
 		void			emplace_back(Args&&...args);
 
-		template< class... Args>
+		template<class... Args>
 		reference		emplace_back(Argc&&...args);
 
 		void			pop_back();
@@ -58,15 +123,15 @@ class Vector
 
 		void			swap(vector &other);
 
-	//capacity
+	//========================================Capacity================================================================
 		void	shrinks_to_fit(void);//reduces the capacity of the container to fit its size and destroys all elements beyon the capacity
-		void	reserve(void);//requests that the vector capacity be at least enough to contain n elements
+		void	reserve(size_type new_cap);//requests that the vector capacity be at least enough to contain n elements
 		bool	empty(void); //returns whether the container is empty
 		int		size(void);//returns number of elements in the elements
 		int		max_size(void);//returns max elements the vector can hold
 		int		capacity(void);//returns the size of the storage sppace allocated currently
 
-	//iterators
+	//========================================Iterators================================================================
 		iterator				begin(void) {};
 		iterator				end(void){};
 
@@ -80,34 +145,31 @@ class Vector
 		const_reverse_iterator	rend(void)const{};
 
 	private:
-		T*	arr;
-		int	capacity;
-		int	current;
+		T*				arr;
+		size_type		capacity;
+		size_type		current;
+		const allocator_type	_alloc;
+
+	//operator
+	friend bool	operator==(const Vector &other, const Vector &src)const{
+		return ();
+	};
+	friend bool	operator!=(const Vector &other, const Vector &src)const{
+		return ();
+	};
+	friend bool	operator<(const Vector &other, const Vector &src)const{
+		return ();
+	};
+	friend bool	operator<=(const Vector &other, const Vector &src)const{
+		return ();
+	};
+	friend bool	operator>(const Vector &other, const Vector &src)const{
+		return ();
+	};
+	friend bool	operator<=>(const Vector &other, const Vector &src)const{
+		return ();
+	};
 };
 
-//operator
-template<typename T>
-bool	operator==(const Vector<T> &other, const Vector<T> &src)const{
-	return ();
-};
-template<typename T>
-bool	operator!=(const Vector<T> &other, const Vector<T> &src)const{
-	return ();
-};
-template<typename T>
-bool	operator<(const Vector<T> &other, const Vector<T> &src)const{
-	return ();
-};
-template<typename T>
-bool	operator<=(const Vector<T> &other, const Vector<T> &src)const{
-	return ();
-};
-template<typename T>
-bool	operator>(const Vector<T> &other, const Vector<T> &src)const{
-	return ();
-};
-template<typename T>
-bool	operator<=>(const Vector<T> &other, const Vector<T> &src)const{
-	return ();
-};
+
 #endif
