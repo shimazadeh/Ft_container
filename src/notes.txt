@@ -1,0 +1,20 @@
+template functions:
+	1. function specialization: When specializing a function template, its template arguments can be omitted if
+							template argument deduction can provide them from the function arguments:
+							template< typename T>
+							void	function<T>(void); //generic form
+
+							template<>
+							void	function<int>(void);//specializing for int
+	link to read: https://en.cppreference.com/w/cpp/language/template_specialization
+
+	2. there is no difference between using <typename T> OR <class T>
+
+
+difference between struct and class
+	3.class and struct are almost the same in C++, the difference being the default access
+	specifiers and inheritance, which are private for class and public for struct.
+	So if a type has little need for private data members it may make more sense to implement
+	it as a struct.
+
+why Iterator trait is structure but reverse_iterator is a calss???
