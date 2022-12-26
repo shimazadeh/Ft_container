@@ -18,3 +18,6 @@ difference between struct and class
 	it as a struct.
 
 why Iterator trait is structure but reverse_iterator is a calss???
+what is noexcept in some functions prototype??
+what is the benefit of move_constructors?
+what does auto type mean?

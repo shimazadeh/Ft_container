@@ -2,9 +2,8 @@
 # define _VECTOR_HPP
 
 #include <iostream>
-#include <iterator>
 #include <memory>
-
+#include "./iterators/iterator_traits.hpp"
 
 namespace	ft
 {
@@ -22,7 +21,7 @@ namespace	ft
 			typedef	const typename value_type						&const_reference;
 			typedef	typename value_type								*pointer;
 			typedef	const typename value_type						*const_pointer;
-			typedef	std::iterator<iterator>					iterator;
+			typedef	std::iterator<iterator>					iterator; //I think iterators need to be from my own file
 			typedef	std::iterator<const_iterator>			const_iterator;
 			typedef	std::reverse_iterator<iterator>			reverse_iterator;
 			typedef	std::reverse_iterator<const_iterator>	const_reverse_iterator;

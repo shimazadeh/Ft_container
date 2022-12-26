@@ -4,6 +4,9 @@
 #include <iostream>
 #include <memory>
 #include <iterator>
+#include "./Binary_search_tree/tree.hpp"
+#include "./Binary_search_tree/tree_iterator.hpp"
+
 
 namespace ft
 {
@@ -25,51 +28,100 @@ namespace ft
 		typedef typename allocator_type::pointer			pointer;
 		typedef typename allocator_type::const_pointer		const_pointer;
 
-		typedef std::bidirectional_iterator_tag				iterator;//not sure
-		typedef const typename iterator						const_iterator;//not sure
-		typedef	std::reverse_iterator<iterator>				reverse_iterator;
-		typedef	std::reverse_iterator<const_iterator>		const_reverse_iterator;
+		typedef	const	tree_iterator<T>					const_iterator;
+		typedef	const_iterator								iterator;
+		typedef	const_iterator								reverse_iterator;
+		typedef	const_iterator								const_reverse_iterator;
 
 		//=========================================== Constructor ===================================================
-		explicit map( const Compare& comp, const Allocator& alloc = Allocator() );
+		explicit map( const Compare& comp, const Allocator& alloc = Allocator()):_bstree(bstree()), _cmp(comp), _alloc(alloc)
+		{}
 
-		explicit map( const Allocator& alloc );
+		explicit map( const Allocator& alloc ):_bstree(bstree()), _cmp(0), _alloc(alloc)
+		{}
 
 		template< class InputIt >
-		map( InputIt first, InputIt last, const Compare& comp = Compare(), const Allocator& alloc = Allocator() );
+		map( InputIt first, InputIt last, const Compare& comp = Compare(), const Allocator& alloc = Allocator() ): _bstree(bstree()), _cmp(comp), _alloc(alloc)
+		{
+			this->insert(first, last);
+		}
 
 		template< class InputIt >
-		map( InputIt first, InputIt last, const Allocator& alloc );
+		map( InputIt first, InputIt last, const Allocator& alloc ):_bstree(bstree()), _cmp(0), _alloc(alloc)
+		{
+			this->insert(first, last);
+		}
 
-		map( const map& other );
+		map( const map& other ):_bstree(other._bstree), _cmp(other._cmp), _alloc(other._alloc)
+		{}
 
-		map( const map& other, const Allocator& alloc );
+		map( const map& other, const Allocator& alloc ):_bstree(other._bstree), _cmp(other._cmp), _alloc(alloc)
+		{}
 
-		map( map&& other );
+		//next two constructor use move semantic: I used two methods
+		map( map&& other ):_bstree(std::move(other._bstree)),_cmp(std::move(other._cmp)), _alloc(std::move(other._alloc))
+		{}
 
-		map( map&& other, const Allocator& alloc );
+		map( map&& other, const Allocator& alloc ):_bstree(std::move(other._bstree)), _cmp(other._cmp), _alloc(alloc)
+		{
+			other._cmp = 0;
+			other._alloc = 0;
+		}
 
-		map( std::initializer_list<value_type> init, const Compare& comp = Compare(), const Allocator& alloc = Allocator() );
+		map( std::initializer_list<value_type> init, const Compare& comp = Compare(), const Allocator& alloc = Allocator() )
+		{}
 
-		map( std::initializer_list<value_type> init, const Allocator&);
+		map( std::initializer_list<value_type> init, const Allocator&)
+		{}
 
 		//=========================================== Destructor ===================================================
-		~map()
-		{
-
-		}
+		~map(){this->clear();}
 		//=========================================== Operator ===================================================
-		map& operator=( const map& other );
+		map& operator=( const map& other )
+		{
+			if (this != &other)
+			{
+				this->clear();
+				this->insert(other.begin(), other.end());
+				_alloc = other._alloc;
+				_cmp = other._cmp;
+			}
+			return (*this);
+		}
 
-		map& operator=( map&& other );
+		map& operator=( map&& other )
+		{
+			if (this != other)
+			{
+				this->clear();
+				this->insert(other.begin(), other.end());
+				_alloc = other._alloc;
+				_cmp = other._cmp;
+				other._alloc = 0;
+				other._cmp = 0;
+			}
+			return (*this);
+		}
 
-		map& operator=( map&& other ) noexcept();
+		map& operator=( map&& other ) noexcept()
+		{
+			if (this != other)
+			{
+				this->clear();
+				this->insert(other.begin(), other.end());
+				_alloc = other._alloc;
+				_cmp = other._cmp;
+				other._alloc = 0;
+				other._cmp = 0;
+			}
+			return (*this);
+		}
 
 		map& operator=( std::initializer_list<value_type> ilist );
 
-		allocator_type get_allocator() const;
+		allocator_type get_allocator() const {return (_alloc);}
 
-		allocator_type get_allocator() const noexcept;
+		allocator_type get_allocator() const noexcept {return (_alloc);}
 
 		//=========================================== Access ===================================================
 		T& at( const Key& key );
@@ -80,29 +132,18 @@ namespace ft
 
 		T& operator[]( Key&& key );
 		//=========================================== Iterator ===================================================
-		iterator		begin();
-		iterator		end();
+		iterator		begin(){return (iterator(_bstree.min_element(_bstree.root)));}
+		iterator		end(){return (iterator(_bstree.max_element(_bstree.root)));}
 
-		const_iterator	begin();
-		const_iterator	end();
+		const_iterator	begin() const {return (const_iterator(_bstree.min_element(_bstree.root)));}
+		const_iterator	end()const {return (const_iterator(_bstree.max_element(_bstree.root)));}
 
-		iterator		cbegin();
-		iterator		cend();
+		iterator		rbegin(){return (iterator(_bstree.max_element(_bstree.root)));}
+		iterator		rend() {return (iterator(_bstree.min_element(_bstree.root)));}
 
-		const_iterator	cbegin();
-		cons_iterator	cend();
+		const_iterator	rbegin(){return (const_iterator(_bstree.max_element(_bstree.root)));}
+		const_iterator	rend(){return (const_iterator(_bstree.min_element(_bstree.root)));}
 
-		iterator		rbegin();
-		iterator		rend();
-
-		const_iterator	rbegin();
-		const_iterator	rend();
-
-		iterator		crbegin();
-		iterator		crend();
-
-		const_iterator	crbegin();
-		const_iterator	crend();
 		//=========================================== Capacity ===================================================
 		bool	empty()const;
 
@@ -110,9 +151,14 @@ namespace ft
 
 		size_type	max_size()const;
 		//=========================================== Modifiers ===================================================
-		void clear();
+		void clear()
+		{}
 
-		std::pair<iterator, bool> insert( const value_type& value );
+		std::pair<iterator, bool> insert( const value_type& value )
+		{
+			_bstree.insert(value, _bstree.root, _bstree.root->parent);
+		}
+
 		template< class P >
 		std::pair<iterator, bool> insert( P&& value );
 
@@ -148,9 +194,6 @@ namespace ft
 
 		template <class M>
 		iterator insert_or_assign( const_iterator hint, Key&& k, M&& obj );
-
-
-
 
 		template< class... Args >
 		std::pair<iterator,bool> emplace( Args&&... args );
@@ -286,8 +329,7 @@ namespace ft
 
 		//=================================================================================================================
 		private:
-			// key_type		*keys;//idk whats up here
-			// T				*members;//idk whats up here
+			bstree			_bstree;
 			key_compare		_cmp;
 			allocator_type	_alloc;
 	};
