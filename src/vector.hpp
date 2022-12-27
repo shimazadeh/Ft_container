@@ -27,21 +27,9 @@ namespace	ft
 			typedef	std::reverse_iterator<const_iterator>	const_reverse_iterator;
 
 		//========================================Constructors==========================================================
-			vector(void):arr(NULL), size_filled(0), size_allocated(0), _alloc(NULL)
-			{
-			}
 
 			explicit	vector(const allocator_type &alloc):arr(NULL), size_allocated(0), size_filled(0), _alloc(alloc)
 			{
-			}
-
-			vector(size_type count, const T& value, const allocator_type &alloc):arr(NULL), size_allocated(0), size_filled(0), _alloc(alloc)
-			{
-				size_filled = count;
-				size_allocated = count * 2;
-				_alloc.allocate(count * 2);
-				for (size_type i = 0; i < size_filled; i++)
-					_alloc.construct(arr + i, value);
 			}
 
 			explicit	vector(size_type count, const T& value, const allocator_type &alloc = allocator_type()):arr(NULL), size_allocated(0), size_filled(0), _alloc(alloc)
@@ -51,20 +39,6 @@ namespace	ft
 				_alloc.allocate(count * 2);
 				for (size_type i = 0; i < size_filled; i++)
 					_alloc.construct(arr + i, value);
-			}
-
-			explicit	vector(size_type count):arr(NULL), size_allocated(0), size_filled(0), _alloc(NULL)
-			{
-				size_allocated = count * 2;
-				size_filled = count;
-				_alloc.allocate(count * 2);
-			}
-
-			explicit	vector(size_type count, const allocator_type &alloc = allocator_type()):arr(NULL), size_allocated(0), size_filled(0), _alloc(alloc)
-			{
-				size_allocated = count * 2;
-				size_filled = count;
-				_alloc.allocate(count * 2);
 			}
 
 			template<class InputIt>
@@ -83,12 +57,6 @@ namespace	ft
 			vector(const vector &other):arr(NULL), size_allocated(0), size_filled(0), _alloc(other._alloc)
 			{
 				*this = other;
-				return (*this);
-			}
-
-			vector(vector &&other, const allocator_type &alloc):arr(NULL), size_allocated(0), size_filled(0), _alloc(alloc)
-			{
-				*this = &other;
 				return (*this);
 			}
 
@@ -330,21 +298,14 @@ namespace	ft
 				size_filled++;
 			}
 
-			// void			push_back(T && value)
-			// {
-			// };
-
 			template<class... Args>
 			iterator		emplace(const_iterator pos, Args&&...args)
 			{
 
 			}//Inserts a new element into the container directly before pos
 
-			// template<class... Args>
-			// void			emplace_back(Args&&...args);
-
-			// template<class... Args>
-			// reference		emplace_back(Argc&&...args);
+			template<class... Args>
+			void			emplace_back(Args&&...args);
 
 			void			pop_back()
 			{
@@ -353,11 +314,7 @@ namespace	ft
 				size_filled--;
 			}//removes the last element in the vector
 
-			constexpr	void	pop_back()//??? not sure if we have to do this
-			{
-			}
-
-			void			resize(size_type count)
+			void			resize(size_type count, value_type val = value_type())
 			{
 				value_type	*new_arr;
 
@@ -380,8 +337,6 @@ namespace	ft
 				size_allocated = count;
 				size_filled = count;
 			}
-			// void			resize(size_type count, T value = T());
-			// void			resize(size_type count, const value_type &value);
 
 			//***there is another swap type that is a non member function???
 			void			swap(vector &other)
@@ -398,10 +353,6 @@ namespace	ft
 				other.size_allocated = tmp_allocated;
 				other.size_filled = tmp_filled;
 			}
-
-			void				swap(vector &other)noexcept;
-			constexpr	void	swap(vector *other);
-
 
 		//====================================================Non Member functions=====================================================
 		friend bool	operator==(const vector &other, const vector &src)const
