@@ -5,22 +5,25 @@
 
 namespace	ft
 {
-	template<typename T>
+	template<typename Key, typename T, typename Compare = std::less<Key>>
 	struct tree_iterator
 	{
-		typedef	T								value_type;
-		typedef	T*								pointer;
-		typedef	T&								reference;
-		typedef	std::ptrdiff_t					difference_type;
-		typedef	std::bidirectional_iterator_tag	iterator_category;
+		typedef	const Key											key_type;
+		typedef	T													mapped_type;
+		typedef	T*													pointer;
+		typedef	T&													reference;
+		typedef	std::ptrdiff_t										difference_type;
+		typedef	std::bidirectional_iterator_tag						iterator_category;
+		typedef std::less<Key>										key_compare;
+		typedef ft::tree_node<key_type, mapped_type, key_compare>	tree_node;
 
 		//member
-		const	tree::tree_node<T>*	node;
+		const	tree_node	*node;
 
 		tree_iterator():node(nullptr)
 		{}
 
-		tree_iterator(const tree::tree_node<T>* n):node(n)
+		tree_iterator(const ft::tree_node<T>* n):node(n)
 		{}
 
 		const	T&	operator*()const noexcept;
@@ -82,6 +85,37 @@ namespace	ft
 
 			return (*this);
 		}
+
+		template< class Key, class T, class Compare, class Alloc >
+		friend bool operator==(tree_iterator &lhs, tree_iterator &rhs)
+		{
+			if (lhs->node->first == rhs->node->first)
+			{
+				if (lhs->node->second == rhs->node->second)
+					return  true;
+			}
+			return false;
+		}
+
+		template< class Key, class T, class Compare, class Alloc >
+		friend bool operator!=(tree_iterator& lhs, tree_iterator& rhs)
+		{
+			return (!(lhs == rhs));
+		}
+
+		template< class Key, class T, class Compare, class Alloc >
+		friend bool operator<(tree_iterator& lhs, tree_iterator& rhs)
+		{
+			if (lhs->node->first < rhs->node->first)
+				return true;
+			else if (lhs->node->first == rhs->node->first)
+			{
+				if (lhs->node->second < rhs->node->second)
+					return true;
+			}
+			return false;
+		}
+
 	};
 
 }

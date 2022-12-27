@@ -6,28 +6,38 @@ namespace ft
 	template<typename T1, typename T2>
 	struct pair
 	{
-		typedef	T1	first_element;
-		typedef	T2	second_element;
+		// typedef	T1	first;
+		// typedef	T2	second;
 
-		pair(void):first_element(), second_element(){}
-		pair(const pair<T1, T2> &other): first_element(other.first_element), second_element(other.second_element){}
-		pair(const T1 t1, const T2 t2):first_element(t1), second_element(t2){}
+		pair(void):first(), second(){}
+		pair(const pair<T1, T2> &other): first(other.first), second(other.second){}
+		pair(const T1 t1, const T2 t2):first(t1), second(t2){}
 		~pair(){}
 
-		void	swap(pair &other){}
+		void	swap(pair &other)
+		{
+			pair	tmp = other;
+
+			other.first = first;
+			other.second = second;
+
+			first = tmp.first;
+			second = tmp.second;
+		}
+
 		pair& operator=(const pair& other)
 		{
 			if (this != &other)
 			{
-				this->T1 = other.T1;
-				this->T2 = other.T2;
+				first = other.T1;
+				second = other.T2;
 			}
 			return (*this);
 		}
 
 		//members
-		T1	first_element;
-		T2	second_element;
+		T1	first;
+		T2	second;
 
 	};
 
