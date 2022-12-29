@@ -100,7 +100,25 @@ namespace	ft
 			}
 
 		//======================================Element access=============================================================
+			reference back()
+			{
+			}
+			const_reference back() const
+			{
 
+			}
+			template <class InputIterator>
+			void assign (InputIterator first, InputIterator last)
+			{}
+
+			void assign (size_type n, const value_type& val)
+			{}
+
+			reference at (size_type n)
+			{}
+
+			const_reference at (size_type n) const
+			{}
 
 		//========================================Iterators================================================================
 			iterator				begin(void)const{return (iterator(&arr[0]))}

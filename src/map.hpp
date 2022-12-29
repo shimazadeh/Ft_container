@@ -3,10 +3,9 @@
 
 #include <iostream>
 #include <memory>
-#include <iterator>
-#include "./Binary_search_tree/tree.hpp"
-#include "./Binary_search_tree/tree_iterator.hpp"
-#include "./Binary_search_tree/tree_node.hpp"
+#include "./RedBlackTree/RBtree_iterator.hpp"
+#include "./RedBlackTree/RBtree_node.hpp"
+#include "./RedBlackTree/RBtree.hpp"
 #include "./utils/pair.hpp"
 
 namespace ft
@@ -29,10 +28,12 @@ namespace ft
 		typedef typename allocator_type::pointer			pointer;
 		typedef typename allocator_type::const_pointer		const_pointer;
 
-		typedef	const	tree_iterator<Key, T, Compare>		const_iterator;
-		typedef	const_iterator								iterator;
+		typedef	tree_iterator<Key, T, Compare>				iterator;
+		typedef	const iterator								const_iterator;
 		typedef	const_iterator								reverse_iterator;
 		typedef	const_iterator								const_reverse_iterator;
+
+		typedef ft::tree_node<key_type, mapped_type, key_compare, allocator_type>	node_type;
 
 
 		class	value_compare
@@ -50,13 +51,13 @@ namespace ft
 				{
 					return (comp(x.first, y.first));
 				}
-		}
+		};
 		//=========================================== Constructor ===================================================
-		explicit map( const Compare& comp, const Allocator& alloc = Allocator()):_bstree(bstree()), _cmp(comp), _alloc(alloc)
+		explicit map( const Compare& comp, const Allocator& alloc = Allocator()):_bstree(bstree<Key, T, Compare, Allocator>()), _cmp(comp), _alloc(alloc)
 		{}
 
-		template< class InputIt >
-		map( InputIt first, InputIt last, const Compare& comp = Compare(), const Allocator& alloc = Allocator() ): _bstree(bstree()), _cmp(comp), _alloc(alloc)
+		template< typename InputIt >
+		map( InputIt first, InputIt last, const Compare& comp = Compare(), const Allocator& alloc = Allocator() ): _bstree(bstree<Key, T, Compare, Allocator>()), _cmp(comp), _alloc(alloc)
 		{
 			this->insert(first, last);
 		}
@@ -84,7 +85,7 @@ namespace ft
 		//=========================================== Access ===================================================
 		mapped_type& at(const key_type& key)
 		{
-			if (!_bstree.find_node(key, _bstree.get_root()))
+			if (!_bstree.find_node(key))
 				throw std::out_of_range("key is out of range");
 			else
 				return ((*this)[key]);
@@ -92,7 +93,7 @@ namespace ft
 
 		const mapped_type& at( const key_type& key ) const
 		{
-			if (!_bstree.find_node(key, _bstree.get_root()))
+			if (!_bstree.find_node(key))
 				throw std::out_of_range("key is out of range");
 			else
 				return ((*this)[key]);
@@ -104,20 +105,20 @@ namespace ft
 		}
 
 		//=========================================== Iterator ===================================================
-		iterator		begin(){return (iterator(_bstree.min_element(_bstree.root)));}
-		iterator		end(){return (iterator(_bstree.max_element(_bstree.root)));}
+		iterator		begin(){return (iterator(_bstree.min_element(_bstree.get_root())));}
+		iterator		end(){return (iterator(_bstree.max_element(_bstree.get_root())));}
 
-		const_iterator	begin() const {return (const_iterator(_bstree.min_element(_bstree.root)));}
-		const_iterator	end()const {return (const_iterator(_bstree.max_element(_bstree.root)));}
+		const_iterator	begin() const {return (const_iterator(_bstree.min_element(_bstree.get_root())));}
+		const_iterator	end()const {return (const_iterator(_bstree.max_element(_bstree.get_root())));}
 
-		iterator		rbegin(){return (iterator(_bstree.max_element(_bstree.root)));}
-		iterator		rend() {return (iterator(_bstree.min_element(_bstree.root)));}
+		iterator		rbegin(){return (iterator(_bstree.max_element(_bstree.get_root())));}
+		iterator		rend() {return (iterator(_bstree.min_element(_bstree.get_root())));}
 
-		const_iterator	rbegin(){return (const_iterator(_bstree.max_element(_bstree.root)));}
-		const_iterator	rend(){return (const_iterator(_bstree.min_element(_bstree.root)));}
+		const_iterator	rbegin() const{return (const_iterator(_bstree.max_element(_bstree.get_root())));}
+		const_iterator	rend() const{return (const_iterator(_bstree.min_element(_bstree.get_root())));}
 
 		//=========================================== Capacity ===================================================
-		bool	empty()const {return (if (_bstree.size() == 0));}
+		bool	empty()const {return (_bstree.size() == 0);}
 
 		size_type	size()const { return (_bstree.size());}
 
@@ -128,13 +129,22 @@ namespace ft
 			_bstree.clear();
 		}
 
-		std::pair<iterator, bool> insert( const value_type& value )
+		std::pair<iterator, bool> insert(const value_type& value)
 		{
-			bool	wasinserted = false;
+			bool		was_inserted = false;
 			iterator	result;
+			node_type	*tmp;
 
-			result = iterator(_bstree.insert(value, _bstree.get_root(), _bstree.get_root()->parent, &wasinserted));
-			return (ft::makepair(result, wasinserted););
+			tmp = _bstree.find_node(value.get_key());
+			if (!tmp)//if the key doesn't exist
+			{
+				_bstree.insert(value.get_key());
+				was_inserted = true;
+				result = iterator(tmp);
+			}
+			else
+				result = this->end();
+			return (ft::make_pair(result, was_inserted));
 		}
 
 		iterator insert( iterator pos, const value_type& value )
@@ -142,14 +152,12 @@ namespace ft
 			//????
 		}
 
-		template< class InputIt >
+		template< typename InputIt >
 		void insert( InputIt first, InputIt last )
 		{
-			bool	whatever = false;
-
 			while (first != last)
 			{
-				_bstree.insert(*first, _bstree.get_root(), _bstree.get_root()->parent, &whatever);
+				_bstree.insert(first->node->get_value());//insert as a pair
 				first++;
 			}
 		}
@@ -157,7 +165,7 @@ namespace ft
 		//=======================================================================
 		void erase( iterator pos )
 		{
-			_bstree.erase(pos.node->get_value(), _bstree.get_root())
+			_bstree.erase(pos.get_value());
 		}
 
 		void erase( iterator first, iterator last )
@@ -171,24 +179,34 @@ namespace ft
 
 		size_type erase( const Key& key )
 		{
-			return (_bstree.erase_key(key));
+			return (_bstree.erase(key));
 		}
 
 		//================================================================
-		void	swap(map &other);
+		void	swap(map &other)
+		{
+			map		tmp = *this;
 
+			this->_bstree = other._bstree;
+			this->_cmp = other._cmp;
+			this->_alloc = other._alloc;
+
+			other._bstree = tmp._bstree;
+			other._cmp = tmp._cmp;
+			other._alloc = tmp._alloc;
+		}
 
 		//=========================================== LookUps ===================================================
 		size_type count( const Key& key ) const
 		{
-			if (_bstree.find_node(key, _bstree.get_root()))
+			if (_bstree.find_node(key))
 				return (1);
 			return (0);
 		}
 
 		iterator find( const Key& key )
 		{
-			ft::tree_node<const Key, T, Compare, Allocator> *res = _bstree.find_node(key, _bstree.get_root());
+			node_type *res = _bstree.find_node(key);
 
 			if (res != nullptr)
 				return (iterator(res));
@@ -197,7 +215,7 @@ namespace ft
 
 		const_iterator find( const Key& key ) const
 		{
-			ft::tree_node<const Key, T, Compare, Allocator> *res = _bstree.find_node(key, _bstree.get_root());
+			node_type *res = _bstree.find_node(key);
 
 			if (res != nullptr)
 				return (const_iterator(res));
@@ -224,16 +242,16 @@ namespace ft
 
 		iterator lower_bound( const Key& key )
 		{
-			ft::tree_node	*res = _bstree.lower_bound(key, _bstree.get_root());
+			node_type	*res = _bstree.lower_bound(key, _bstree.get_root());
 
 			if (res == nullptr)
-				return (this->end())
+				return (this->end());
 			return (iterator(res));
 		}
 
 		const_iterator lower_bound( const Key& key ) const
 		{
-			ft::tree_node	*res = _bstree.lower_bound(key, _bstree.get_root());
+			node_type	*res = _bstree.lower_bound(key, _bstree.get_root());
 
 			if (res == nullptr)
 				return (this->end());
@@ -242,7 +260,7 @@ namespace ft
 
 		iterator upper_bound( const Key& key )
 		{
-			ft::tree_node	*res = _bstree.upper_bound(key, _bstree.get_root());
+			node_type	*res = _bstree.upper_bound(key, _bstree.get_root());
 
 			if (res == nullptr)
 				return (this->end());
@@ -251,7 +269,7 @@ namespace ft
 
 		const_iterator upper_bound( const Key& key ) const
 		{
-			ft::tree_node	*res = _bstree.upper_bound(key, _bstree.get_root());
+			node_type	*res = _bstree.upper_bound(key, _bstree.get_root());
 
 			if (res == nullptr)
 				return (this->end());
@@ -260,12 +278,11 @@ namespace ft
 
 		//=========================================== Observers ===================================================
 
-		key_compare key_comp() const {return (_comp);}
-		value_compare value_comp() const {return (value_compare(key_comp());)};
+		key_compare key_comp() const {return (_cmp);}
+		value_compare value_comp() const {return (value_compare(key_comp()));};
 
 		//===========================================Non-Member functions===================================================
-		template< class Key, class T, class Compare, class Alloc >
-		friend bool operator==( const std::map<Key,T,Compare,Alloc>& lhs, const std::map<Key,T,Compare,Alloc>& rhs )
+		friend bool operator==( const ft::map<Key,T,Compare,Allocator>& lhs, const ft::map<Key,T,Compare,Allocator>& rhs )
 		{
 			iterator	lhs_start = lhs.begin();
 			iterator	lhs_end = lhs.end();
@@ -284,13 +301,12 @@ namespace ft
 			return true;
 		}
 
-		template< class Key, class T, class Compare, class Alloc >
-		friend bool operator!=( const std::map<Key,T,Compare,Alloc>& lhs, const std::map<Key,T,Compare,Alloc>& rhs )
+		friend bool operator!=( const ft::map<Key,T,Compare,Allocator>& lhs, const ft::map<Key,T,Compare,Allocator>& rhs )
 		{
 			return (!(lhs == rhs));
 		}
-		template< class Key, class T, class Compare, class Alloc >
-		friend bool operator<( const std::map<Key,T,Compare,Alloc>& lhs, const std::map<Key,T,Compare,Alloc>& rhs )
+
+		friend bool operator<( const ft::map<Key,T,Compare,Allocator>& lhs, const ft::map<Key,T,Compare,Allocator>& rhs )
 		{
 			iterator	lhs_start = lhs.begin();
 			iterator	lhs_end = lhs.end();
@@ -302,7 +318,7 @@ namespace ft
 			while (lhs_start != lhs_end && rhs_start != rhs_end)
 			{
 				if (lhs_start != rhs_start)
-					return (lhs_start < rhs_start)
+					return (lhs_start < rhs_start);//???double check this
 				lhs_start++;
 				rhs_start++;
 			}
@@ -311,29 +327,32 @@ namespace ft
 			return true;
 		}
 
-		template< class Key, class T, class Compare, class Alloc >
-		friend bool operator<=( const std::map<Key,T,Compare,Alloc>& lhs, const std::map<Key,T,Compare,Alloc>& rhs )
+		friend bool operator<=( const ft::map<Key,T,Compare,Allocator>& lhs, const ft::map<Key,T,Compare,Allocator>& rhs )
 		{
 			return(!(rhs < lhs));
 		}
 
-		template< class Key, class T, class Compare, class Alloc >
-		friend bool operator>( const std::map<Key,T,Compare,Alloc>& lhs, const std::map<Key,T,Compare,Alloc>& rhs )
+		friend bool operator>( const ft::map<Key,T,Compare,Allocator>& lhs, const ft::map<Key,T,Compare,Allocator>& rhs )
 		{
 			return (!(lhs < rhs));
 		}
 
-		template< class Key, class T, class Compare, class Alloc >
-		friend bool operator>=( const std::map<Key,T,Compare,Alloc>& lhs, const std::map<Key,T,Compare,Alloc>& rhs )
+		friend bool operator>=( const ft::map<Key,T,Compare,Allocator>& lhs, const ft::map<Key,T,Compare,Allocator>& rhs )
 		{
 			return(!(lhs < rhs));
 		}
 
-		template <class Key, class T, class Compare, class Alloc>  void swap (map<Key,T,Compare,Alloc>& x, map<Key,T,Compare,Alloc>& y);
+		void swap (map<Key,T,Compare,Allocator>& x, map<Key,T,Compare,Allocator>& y)
+		{
+			map<Key, T, Compare, Allocator> tmp = x;
+
+			x = y;
+			y = tmp;
+		}
 
 		//=================================================================================================================
 		private:
-			bstree			_bstree;
+			bstree<Key, T, Compare, Allocator>			_bstree;
 			key_compare		_cmp;
 			allocator_type	_alloc;
 	};

@@ -21,3 +21,21 @@ why Iterator trait is structure but reverse_iterator is a calss???
 what is noexcept in some functions prototype??
 what is the benefit of move_constructors?
 what does auto type mean?
+
+
+tester:
+https://github.com/Mazoise/42TESTERS-CONTAINERS
+https://github.com/mli42/containers_test
+
+
+useful resources:
+https://www.programiz.com/dsa/red-black-tree#:~:text=Left%20Rotate,arrangements%20on%20the%20left%20node.&text=If%20y%20has%20a%20left,the%20left%20subtree%20of%20y%20.&text=If%20the%20parent%20of%20x,the%20root%20of%20the%20tree.
+https://daveparillo.github.io/cisc187-reader/trees/bst.html
+
+
+to do:
+
+1. add comprison operation to RBtree_node: how nodes are compared
+2. does insert works with pair and single values?
+3. for vectors and stack: member access functions + emplace + emplace_back
+4.

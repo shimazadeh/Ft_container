@@ -6,26 +6,28 @@
 #include <memory>
 #include <iostream>
 
+//key is the first value, T or mapped value is the second
 namespace ft
 {
 	template<typename Key, typename T, typename Compare = std::less<Key>, typename Allocator = std::allocator<std::pair<const Key, T>> >
 	class bstree
 	{
 		public:
-		typedef	Key											key_type;
-		typedef T											mapped_type;
-		typedef std::pair<const Key, T>						value_type;
-		typedef std::size_t									size_type;
-		typedef std::allocator<value_type>					allocator_type;
-		typedef std::less<Key>								key_compare;
+		typedef	Key																	key_type;
+		typedef T																	mapped_type;
+		typedef std::pair<const Key, T>												value_type;
+		typedef std::size_t															size_type;
+		typedef std::allocator<value_type>											allocator_type;
+		typedef std::less<Key>														key_compare;
+		typedef ft::tree_node<key_type, mapped_type, key_compare, allocator_type>	node_type;
 
-		//========================================================================================
+		//================================= constructor =======================================================
 		bstree():root(nullptr), _size(0), _nodeAlloc(allocator())
 		{}
 
-		explicit	bstree(const T &value)
+		explicit	bstree(const mapped_type &value)
 		{
-			root = new ft::tree_node<T>(value, nullptr, nullptr, nullptr);
+			root = new node_type(value, nullptr, nullptr, nullptr);
 		}
 
 		~bstree()
@@ -47,72 +49,50 @@ namespace ft
 			return (*this);
 		}
 
-		//============================================Move constructor============================
-		bstree(const bstree &&other):root(other.root), _size(other._size), _nodeAlloc(other._nodeAlloc)
-		{
-			other.root = nullptr;
-			other._size = 0;
-			other._nodeAlloc = nullptr;
-		}
-
-		bstree&	operator=(const bstree &&other)
-		{
-			if (this != other)
-			{
-				root = other.root;
-				_size = other._size;
-				_nodeAlloc = other._nodeAlloc;
-				other.root = nullptr;
-				other._size = 0;
-				other._nodeAlloc = nullptr;
-			}
-			return (*this);
-		}
 		//==================================================member functions================================
 
 		//this function finds the node with minimum value of the element
-		template<typename T>
-		ft::tree_node<T>	*min_element(ft::tree_node<T>*	node)
+
+		node_type	*min_element(node_type *node)
 		{
 			if (node == nullptr || node->left == nullptr)
 				return node;
 			return (min_element(node->left);)
 		}
 
-		template<typename T>
-		ft::tree_node<T>	*max_element(ft::tree_node<T>*	node)
+		node_type	*max_element(node_type	*node)
 		{
 			if (node == nullptr || node->right == nullptr)
 				return node;
 			return (max_element(node->right);)
 		}
 
-		ft::tree_node<T>	*lower_bound(const key_type&	key, ft::tree<T>	*node)
+		node_type	*lower_bound(const key_type&	key, node_type	*node)
 		{
 			if (node == nullptr || key == node.get_key())
 				return (node);
 			if (_cmp(node->get_key(), key)) //if current key is less than the KEY
 				return (lower_bound(key, node->right));
-			ft::tree_node<T>	*tmp = lower_bound(key, node->left);
+			node_type	*tmp = lower_bound(key, node->left);
 			if (tmp == nullptr)
 				return (node);
 			return (tmp);
 		}
 
-		ft::tree_node<T>	*upper_bound(const key_type&	key, ft::tree<T>	*node)
+		node_type	*upper_bound(const key_type&	key, node_type	*node)
 		{
 			if (node == nullptr)
 				return (node);
 			if (_cmp(node->get_key(), key) || key == node->get_key())
 				return (lower_bound(key, node->right));
-			ft::tree_node<T>	*tmp = lower_bound(key, node->left);
+			node_type	*tmp = lower_bound(key, node->left);
 			if (tmp == nullptr)
 				return (node);
 			return (tmp);
 		}
 
 		//finds the node
-		ft::tree_node<T>	*find_node(const key_type&	key, ft::tree_node<T>*	node)
+		node_type	*find_node(const key_type&	key, node_type*	node)
 		{
 			if (node == nullptr || node->get_Key() == key)
 				return (node);
@@ -123,11 +103,11 @@ namespace ft
 
 		//this function inset the value into the tree starting the search from node
 
-		ft::tree_node<T>	*insert(const T &value, ft::tree_node<T>*& node, ft::tree_node<T>* parent, bool	&wasinserted)
+		node_type	*insert(const T &value, node_type*& node,node_type *parent, bool	&wasinserted)
 		{
 			if (node == nullptr)
 			{
-				node = new ft::tree_node<T>(value, nullptr, nullptr, parent);
+				node = new node_type(value, nullptr, nullptr, parent);
 				wasinserted = true;
 				_size++;
 				return (node);
@@ -143,7 +123,7 @@ namespace ft
 
 		size_type	erase_key(const key_type &key)
 		{
-			ft::tree_node<T>	*founded;
+			node_type	*founded;
 
 			founded = find_node(key, root);
 			if (founded == nullptr)
@@ -153,8 +133,8 @@ namespace ft
 		}
 
 		//erasing elements: this function has a problem comparison of pairs
-		template<typename T>
-		void	erase(const T &value, tree_node<T>*& node)
+
+		void	erase(const T &value, node_type *& node)
 		{
 			if (node == nullptr)
 				return ;
@@ -173,7 +153,7 @@ namespace ft
 			}
 			else //a leaf or node with 1 subtree
 			{
-				tree_node<T>	*tmp = node;
+				node_type	*tmp = node;
 
 				if (node->left != nullptr)
 					node = node->left
@@ -184,11 +164,14 @@ namespace ft
 			}
 		}
 
+		//rotating function
+
+		//recoloring function
 		size_type	size(){return (_size);}
 
 		size_type	max_size(){return (_nodeAlloc.max_size());}
 
-		ft::tree_node<T>*	get_root(){return(root);}
+		node_type	*get_root(){return(root);}
 
 		void	clear_all()
 		{
@@ -202,10 +185,10 @@ namespace ft
 		}
 
 		private:
-			ft::tree_node<key_type, mapped_type, key_compare, allocator_type>*			root = nullptr;
+			node_type					*root = nullptr;
 			size_type					_size;
 			key_compare					_cmp;
-			allocator_type<value_type>	_nodeAlloc;
+			allocator_type				_nodeAlloc;
 	};
 }
 
