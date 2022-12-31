@@ -65,37 +65,37 @@ namespace ft
 
 		//==================================Non-Member functions========================================================
 		template< class T, class Container >
-		friend	bool operator==(const std::stack<T,Container>& lhs, const std::stack<T, Container>& rhs)
+		friend	bool operator==(const ft::stack<T,Container>& lhs, const ft::stack<T, Container>& rhs)
 		{
 			return (lhs.c == rhs.c);
 		}
 
 		template< class T, class Container >
-		friend bool operator!=( const std::stack<T,Container>& lhs, const std::stack<T,Container>& rhs )
+		friend bool operator!=( const ft::stack<T,Container>& lhs, const ft::stack<T,Container>& rhs )
 		{
 			return (lhs.c != rhs.c);
 		}
 
 		template< class T, class Container >
-		friend bool operator<( const std::stack<T,Container>& lhs, const std::stack<T,Container>& rhs )
+		friend bool operator<( const ft::stack<T,Container>& lhs, const ft::stack<T,Container>& rhs )
 		{
 			return (lhs.c < rhs.c);
 		}
 
 		template< class T, class Container >
-		friend bool operator<=( const std::stack<T,Container>& lhs, const std::stack<T,Container>& rhs )
+		friend bool operator<=( const ft::stack<T,Container>& lhs, const ft::stack<T,Container>& rhs )
 		{
 			return (lhs.c <= rhs.c);
 		}
 
 		template< class T, class Container >
-		friend bool operator>( const std::stack<T,Container>& lhs, const std::stack<T,Container>& rhs )
+		friend bool operator>( const ft::stack<T,Container>& lhs, const ft::stack<T,Container>& rhs )
 		{
 			return (lhs.c > rhs.c);
 		}
 
 		template< class T, class Container >
-		friend bool operator>=( const std::stack<T,Container>& lhs, const std::stack<T,Container>& rhs )
+		friend bool operator>=( const ft::stack<T,Container>& lhs, const ft::stack<T,Container>& rhs )
 		{
 			return (lhs.c >= rhs.c);
 		}

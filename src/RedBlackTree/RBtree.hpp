@@ -5,17 +5,18 @@
 #include "RBtree_iterator.hpp"
 #include <memory>
 #include <iostream>
+#include <stdlib.h>//for printing colors
 
 //key is the first value, T or mapped value is the second
 namespace ft
 {
-	template<typename Key, typename T, typename Compare = std::less<Key>, typename Allocator = std::allocator<std::pair<const Key, T>> >
+	template<typename Key, typename T, typename Compare = std::less<Key>, typename Allocator = std::allocator<ft::pair<const Key, T>> >
 	class bstree
 	{
 		public:
 		typedef	Key																	key_type;
 		typedef T																	mapped_type;
-		typedef std::pair<const Key, T>												value_type;
+		typedef ft::pair<Key, T>													value_type;
 		typedef std::size_t															size_type;
 		typedef std::allocator<value_type>											allocator_type;
 		typedef std::less<Key>														key_compare;
@@ -40,7 +41,7 @@ namespace ft
 
 		bstree& operator=(const bstree &other)
 		{
-			if (*this != other)
+			if (this != &other)
 			{
 				root = other.root;
 				_size = other._size;
@@ -51,14 +52,14 @@ namespace ft
 		//==================================================member functions====================================================
 		//this function finds the node with minimum value of the element
 
-		node_type	*min_element(node_type *node)
+		node_type	*min_element(node_type *node) const
 		{
 			if (node == nullptr || node->left == nullptr)
 				return node;
 			return (min_element(node->left));
 		}
 
-		node_type	*max_element(node_type	*node)
+		node_type	*max_element(node_type	*node) const
 		{
 			if (node == nullptr || node->right == nullptr)
 				return node;
@@ -90,27 +91,23 @@ namespace ft
 		}
 
 		//finds the node from mapped value
-		node_type	*find_node(const mapped_type&	key)
+		node_type	*find_node(const mapped_type&	key, node_type	*to_search)
 		{
-			node_type	*tmp = root;
-
-			if (tmp == nullptr || tmp->get_maptype() == key)
-				return (tmp);
-			if(_cmp(key, tmp->get_maptype()))//if its less we go to the left branch
-				return (find_node(key, tmp->left));
-			return (find_node(key, tmp->right));
+			if (to_search == nullptr || to_search->get_maptype() == key)
+				return (to_search);
+			if(_cmp(key, to_search->get_maptype()))//if its less we go to the left branch
+				return (find_node(key, to_search->left));
+			return (find_node(key, to_search->right));
 		}
 
 		//find the node form the key value
-		node_type	*find_node(const key_type&	key)
+		node_type	*find_node(const key_type&	key, node_type	*to_search)
 		{
-			node_type	*tmp = root;
-
-			if (tmp == nullptr || tmp->get_key() == key)
-				return (tmp);
-			if(_cmp(key, tmp->get_key()))//if its less we go to the left branch
-				return (find_node(key, tmp->left));
-			return (find_node(key, tmp->right));
+			if (to_search == nullptr || to_search->get_key() == key)
+				return (to_search);
+			if(_cmp(key, to_search->get_key()))//if its less we go to the left branch
+				return (find_node(key, to_search->left));
+			return (find_node(key, to_search->right));
 		}
 
 		//make insert works with pair or key or mapped value????
@@ -121,7 +118,6 @@ namespace ft
 			node_type	*new_node = new node_type(key, nullptr, nullptr, nullptr, "r");
 			node_type	*tmp = root;
 			node_type	*tmp1 = nullptr;
-			node_type	*pos = nullptr;
 
 			if (root == nullptr)//if the tree is empty set the new node to root
 			{
@@ -133,16 +129,16 @@ namespace ft
 				while(tmp != nullptr)//search to find the right position
 				{
 					tmp1 = tmp;
-					if (tmp->value < new_node->value)//does node class has < operator?
+					if (tmp->value.first < new_node->value.first)//does node class has < operator?
 						tmp = tmp->right;
 					else
 						tmp = tmp->left;
 				}
 				new_node->parent = tmp1;
-				if (pos->value < new_node->value)
-					pos->right = new_node;
+				if (tmp1->value.first < new_node->value.first)
+					tmp1->right = new_node;
 				else
-					pos->left = new_node;
+					tmp1->left = new_node;
 			}
 			insertion_fix(new_node);
 			_size++;
@@ -430,17 +426,62 @@ namespace ft
 
 		size_type	max_size(){return (_nodeAlloc.max_size());}
 
-		node_type	*get_root(){return(root);}
+		node_type	*get_root()const{return(root);}
 
 		void	clear_all()
 		{
-			if (root->right)
-				to_delete(root->right);
-			if (root->left)
-				to_delete(root->left);
-			_nodeAlloc.destroy(&root->value);
-			_nodeAlloc.deallocate(root, 1);
-			_size--;
+			// if (root->right)
+			// 	to_delete(root->right);
+			// if (root->left)
+			// 	to_delete(root->left);
+			// to_delete(root);
+			// _size--;
+		}
+
+		// void	to_delete(node_type	*node)
+		// {
+		// 	_nodeAlloc.destroy(node->value);
+		// 	_nodeAlloc.deallocate(node, 1);
+		// }
+
+		//=================================================== Debugging tools =================================================================================
+		void	print(node_type	*node)
+		{
+			if (node != nullptr)
+			{
+				if (node == root)
+				{
+					if (node->color == "r")
+						system("Color 74");
+					else
+						system("Color 70");
+					std::cout << "Root-----" << node->value->first;
+					std::cout << ":" << node->value->second;
+					system("Color 07");
+				}
+				if (node->right != nullptr)
+				{
+					if (node->color == "r")
+						system("Color 74");
+					else
+						system("Color 70");
+					std::cout << "R-----" << node->value->first;
+					std::cout << ":" << node->value->second;
+					system("Color 07");
+				}
+				if (node->left != nullptr)
+				{
+					if (node->color == "r")
+						system("Color 74");
+					else
+						system("Color 70");
+					std::cout << "L-----" << node->value->first;
+					std::cout << ":" << node->value->second;
+					system("Color 07");
+				}
+				print(node->right);
+				print(node->left);
+			}
 		}
 
 		private:

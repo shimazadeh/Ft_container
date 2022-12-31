@@ -6,9 +6,6 @@ namespace ft
 	template<typename T1, typename T2>
 	struct pair
 	{
-		// typedef	T1	first;
-		// typedef	T2	second;
-
 		pair(void):first(), second(){}
 		pair(const pair<T1, T2> &other): first(other.first), second(other.second){}
 		pair(const T1 t1, const T2 t2):first(t1), second(t2){}
@@ -29,8 +26,8 @@ namespace ft
 		{
 			if (this != &other)
 			{
-				first = other.T1;
-				second = other.T2;
+				first = other.first;
+				second = other.second;
 			}
 			return (*this);
 		}

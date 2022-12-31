@@ -428,9 +428,6 @@ namespace	ft
 			return (!(other < src));
 		}
 
-		friend constexpr operator<=>(const vector &other, const vector &src)const{
-			return ();
-		}
 		//=================================================================================================================
 		private:
 			T*						arr;

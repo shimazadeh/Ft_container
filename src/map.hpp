@@ -10,14 +10,14 @@
 
 namespace ft
 {
-	template<typename Key, typename T, typename Compare = std::less<Key>, typename Allocator = std::allocator<std::pair<const Key, T>> >
+	template<typename Key, typename T, typename Compare = std::less<Key>, typename Allocator = std::allocator<ft::pair<const Key, T>> >
 	class map
 	{
 		public:
 		//===========================================Class Types===================================================
 		typedef	Key											key_type;
 		typedef T											mapped_type;
-		typedef std::pair<const Key, T>						value_type;
+		typedef pair<Key, T>								value_type;
 		typedef std::size_t									size_type;
 		typedef std::ptrdiff_t								difference_type;
 		typedef std::less<Key>								key_compare;
@@ -53,7 +53,7 @@ namespace ft
 				}
 		};
 		//=========================================== Constructor ===================================================
-		explicit map( const Compare& comp, const Allocator& alloc = Allocator()):_bstree(bstree<Key, T, Compare, Allocator>()), _cmp(comp), _alloc(alloc)
+		explicit map(const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type()):_bstree(bstree<Key, T, Compare, Allocator>()), _cmp(comp), _alloc(alloc)
 		{}
 
 		template< typename InputIt >
@@ -85,7 +85,7 @@ namespace ft
 		//=========================================== Access ===================================================
 		mapped_type& at(const key_type& key)
 		{
-			if (!_bstree.find_node(key))
+			if (!_bstree.find_node(key, _bstree.get_root()))
 				throw std::out_of_range("key is out of range");
 			else
 				return ((*this)[key]);
@@ -93,7 +93,7 @@ namespace ft
 
 		const mapped_type& at( const key_type& key ) const
 		{
-			if (!_bstree.find_node(key))
+			if (!_bstree.find_node(key, _bstree.get_root()))
 				throw std::out_of_range("key is out of range");
 			else
 				return ((*this)[key]);
@@ -101,7 +101,11 @@ namespace ft
 
 		mapped_type& operator[]( const key_type& key )
 		{
-			return (*(this->insert(ft::make_pair(key, mapped_type())).first)).second;
+			ft::pair<iterator, bool>	tmp = insert(ft::make_pair(key, mapped_type()));
+			iterator					tmp2 = tmp.first;
+			mapped_type					*res = new mapped_type((tmp2.node)->get_maptype());
+
+			return *res;
 		}
 
 		//=========================================== Iterator ===================================================
@@ -126,19 +130,20 @@ namespace ft
 		//=========================================== Modifiers ===================================================
 		void clear()
 		{
-			_bstree.clear();
+			_bstree.clear_all();
 		}
 
-		std::pair<iterator, bool> insert(const value_type& value)
+		ft::pair<iterator, bool> insert(const value_type& value)
 		{
 			bool		was_inserted = false;
 			iterator	result;
 			node_type	*tmp;
 
-			tmp = _bstree.find_node(value.get_key());
-			if (!tmp)//if the key doesn't exist
+			tmp = _bstree.find_node(value.first, _bstree.get_root());
+			if (tmp == nullptr)//if the key doesn't exist
 			{
-				_bstree.insert(value.get_key());
+				dprintf(2, "value is %c\n", value.first);//empty!!!
+				_bstree.insert(value);
 				was_inserted = true;
 				result = iterator(tmp);
 			}
@@ -199,14 +204,14 @@ namespace ft
 		//=========================================== LookUps ===================================================
 		size_type count( const Key& key ) const
 		{
-			if (_bstree.find_node(key))
+			if (_bstree.find_node(key, _bstree.get_root()))
 				return (1);
 			return (0);
 		}
 
 		iterator find( const Key& key )
 		{
-			node_type *res = _bstree.find_node(key);
+			node_type *res = _bstree.find_node(key, _bstree.get_root());
 
 			if (res != nullptr)
 				return (iterator(res));
@@ -215,7 +220,7 @@ namespace ft
 
 		const_iterator find( const Key& key ) const
 		{
-			node_type *res = _bstree.find_node(key);
+			node_type *res = _bstree.find_node(key, _bstree.get_root());
 
 			if (res != nullptr)
 				return (const_iterator(res));
@@ -349,7 +354,12 @@ namespace ft
 			x = y;
 			y = tmp;
 		}
+		//================================================= DEBUGGING TOOLS ==============================================================
 
+		void	print_tree(void)
+		{
+			_bstree.print(_bstree.get_root());
+		}
 		//=================================================================================================================
 		private:
 			bstree<Key, T, Compare, Allocator>			_bstree;

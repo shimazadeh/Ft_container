@@ -8,23 +8,34 @@ namespace	ft
 	template<typename Key, typename T, typename Compare = std::less<Key>>
 	struct tree_iterator
 	{
-		typedef	const Key											key_type;
-		typedef	T													mapped_type;
-		typedef	T*													pointer;
-		typedef	T&													reference;
-		typedef	std::ptrdiff_t										difference_type;
-		typedef	std::bidirectional_iterator_tag						iterator_category;
-		typedef std::less<Key>										key_compare;
-		typedef ft::tree_node<key_type, mapped_type, key_compare>	node_type;
+		typedef	Key																	key_type;
+		typedef	T																	mapped_type;
+		typedef	T*																	pointer;
+		typedef	T&																	reference;
+		typedef	std::ptrdiff_t														difference_type;
+		typedef	std::bidirectional_iterator_tag										iterator_category;
+		typedef ft::pair<Key, T>													value_type;
+		typedef std::less<Key>														key_compare;
+		typedef std::allocator<value_type>											allocator_type;
+		typedef ft::tree_node<key_type, mapped_type, key_compare, allocator_type>	node_type;
 
 		//member
-		const	node_type	*node;
+		node_type	*node;
 
 		tree_iterator():node(nullptr)
 		{}
 
-		tree_iterator(const node_type	*n):node(n)
-		{}
+		tree_iterator(const node_type	*n)
+		{
+			node = new node_type(*n);
+		}
+
+		tree_iterator &operator=(const tree_iterator &other)
+		{
+			if (this != &other)
+				node = other.node;
+			return (*this);
+		}
 
 		const	T&	operator*()const noexcept;
 
@@ -53,10 +64,10 @@ namespace	ft
 
 		tree_iterator&	operator++(int)
 		{
-			tree_iterator	tmp = *this;
+			tree_iterator	*tmp = new tree_iterator(*this);
 			node++;
 
-			return(tmp);
+			return(*tmp);
 		}
 
 		tree_iterator&	operator--()
@@ -89,35 +100,26 @@ namespace	ft
 
 			return (*this);
 		}
-
-		friend bool operator==(tree_iterator &lhs, tree_iterator &rhs)
-		{
-			if (lhs->node->first == rhs->node->first)
-			{
-				if (lhs->node->second == rhs->node->second)
-					return  true;
-			}
-			return false;
-		}
-
-		friend bool operator!=(tree_iterator& lhs, tree_iterator& rhs)
-		{
-			return (!(lhs == rhs));
-		}
-
-		friend bool operator<(tree_iterator& lhs, tree_iterator& rhs)
-		{
-			if (lhs->node->first < rhs->node->first)
-				return true;
-			else if (lhs->node->first == rhs->node->first)
-			{
-				if (lhs->node->second < rhs->node->second)
-					return true;
-			}
-			return false;
-		}
-
 	};
+
+	//IM not sure about these functions:
+	template<typename Key, typename T, typename Compare = std::less<Key>>
+	bool operator==(tree_iterator<Key, T, Compare> &lhs, tree_iterator<Key, T, Compare> &rhs)
+	{
+		return (lhs.node == rhs.node);
+	}
+
+	template<typename Key, typename T, typename Compare = std::less<Key>>
+	bool operator!=(tree_iterator<Key, T, Compare>& lhs, tree_iterator<Key, T, Compare>& rhs)
+	{
+		return (!(lhs == rhs));
+	}
+
+	template<typename Key, typename T, typename Compare = std::less<Key>>
+	bool operator<(tree_iterator<Key, T, Compare>& lhs, tree_iterator<Key, T, Compare>& rhs)
+	{
+		return (lhs.node < rhs.node);
+	}
 
 }
 #endif

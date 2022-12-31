@@ -35,7 +35,7 @@ https://daveparillo.github.io/cisc187-reader/trees/bst.html
 
 to do:
 
-1. add comprison operation to RBtree_node: how nodes are compared
-2. does insert works with pair and single values?
+1. add comprison operation to RBtree_node: how nodes are compared //done
+2. does insert works with pair and single values?//yes I think lol
 3. for vectors and stack: member access functions + emplace + emplace_back
-4.
+4. for maps: insert (pos, value)
