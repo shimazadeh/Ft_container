@@ -103,9 +103,8 @@ namespace ft
 		{
 			ft::pair<iterator, bool>	tmp = insert(ft::make_pair(key, mapped_type()));
 			iterator					tmp2 = tmp.first;
-			mapped_type					*res = new mapped_type((tmp2.node)->get_maptype());
 
-			return *res;
+			return ((tmp2.node)->get_maptype());
 		}
 
 		//=========================================== Iterator ===================================================
@@ -140,11 +139,11 @@ namespace ft
 			node_type	*tmp;
 
 			tmp = _bstree.find_node(value.first, _bstree.get_root());
-			if (tmp == nullptr)//if the key doesn't exist
+			if (tmp == nullptr)//if tmp was not found
 			{
-				dprintf(2, "value is %c\n", value.first);//empty!!!
 				_bstree.insert(value);
 				was_inserted = true;
+				tmp = _bstree.find_node(value.first, _bstree.get_root());
 				result = iterator(tmp);
 			}
 			else
@@ -296,6 +295,7 @@ namespace ft
 
 			while (lhs_start != lhs_end && rhs_start != rhs_end)
 			{
+				dprintf(2, "rhs is %c lhs is %c\n", (lhs_start.node)->get_key(), (rhs_start.node)->get_key());
 				if (lhs_start != rhs_start)
 					return false;
 				lhs_start++;
@@ -358,6 +358,7 @@ namespace ft
 
 		void	print_tree(void)
 		{
+			std::cout << "printing the tree" << std::endl;
 			_bstree.print(_bstree.get_root());
 		}
 		//=================================================================================================================

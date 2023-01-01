@@ -452,32 +452,47 @@ namespace ft
 				if (node == root)
 				{
 					if (node->color == "r")
-						system("Color 74");
+					{
+						std:: cout << "\033[1;31mRoot-----";
+						std:: cout << node->value.first;
+						std::cout << ":" << node->value.second <<"\033[0m\n";
+					}
 					else
-						system("Color 70");
-					std::cout << "Root-----" << node->value->first;
-					std::cout << ":" << node->value->second;
-					system("Color 07");
+					{
+						std:: cout << "\033[1;32mRoot-----";
+						std:: cout << node->value.first;
+						std::cout << ":" << node->value.second <<"\033[0m\n";
+					}
 				}
 				if (node->right != nullptr)
 				{
-					if (node->color == "r")
-						system("Color 74");
+					if (node->right->color == "r")
+					{
+						std:: cout << "\033[1;31mright-----";
+						std:: cout << node->right->value.first;
+						std::cout << ":" << node->right->value.second <<"\033[0m\n";
+					}
 					else
-						system("Color 70");
-					std::cout << "R-----" << node->value->first;
-					std::cout << ":" << node->value->second;
-					system("Color 07");
+					{
+						std:: cout << "\033[1;32mright-----";
+						std:: cout << node->right->value.first;
+						std::cout << ":" << node->right->value.second <<"\033[0m\n";
+					}
 				}
 				if (node->left != nullptr)
 				{
-					if (node->color == "r")
-						system("Color 74");
+					if (node->left->color == "r")
+					{
+						std:: cout << "\033[1;31mleft-----";
+						std:: cout << node->left->value.first;
+						std::cout << ":" << node->left->value.second <<"\033[0m\n";
+					}
 					else
-						system("Color 70");
-					std::cout << "L-----" << node->value->first;
-					std::cout << ":" << node->value->second;
-					system("Color 07");
+					{
+						std:: cout << "\033[1;32mleft-----";
+						std:: cout << node->left->value.first;
+						std::cout << ":" << node->left->value.second <<"\033[0m\n";
+					}
 				}
 				print(node->right);
 				print(node->left);

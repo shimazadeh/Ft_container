@@ -52,24 +52,39 @@
 #include "./RedBlackTree/RBtree_iterator.hpp"
 #include "map.hpp"
 
+using namespace ft;
+
 int main ()
 {
-  ft::map<char,int> foo;
-  ft::map<char,int> bar;
+  map<char,int> foo;
+  map<char,int> bar;
+  map<char, int>::iterator  it, ite;
 
-  foo['a']=100;
-  foo['b']=1000;
+  foo['a']= 100;
+  foo['b']= 1000;
   foo['c'] = 1;
 
-  bar['a']=100;
-  bar['b']=1000;
+  bar['a']= 100;
+  bar['b']= 1000;
+  bar['c'] = 1;
+
+  it = foo.begin();
+  ite = foo.end();
+
+  for (map<char, int>::iterator i = it; i != ite; i++)
+  {
+    std::cout << "key is: " << it.node->get_key() << " , mapped value: " << it.node->get_maptype() << std::endl;
+  }
+
+  // foo.print_tree();
+  // bar.print_tree();
 
   // foo ({{a,100},{b,200}}) vs bar ({a,10},{z,1000}}):
-  if (foo==bar) std::cout << "foo and bar are equal\n";
-  if (foo!=bar) std::cout << "foo and bar are not equal\n";
-  if (foo< bar) std::cout << "foo is less than bar\n";
-  if (foo> bar) std::cout << "foo is greater than bar\n";
-  if (foo<=bar) std::cout << "foo is less than or equal to bar\n";
-  if (foo>=bar) std::cout << "foo is greater than or equal to bar\n";
+  if (foo == bar) std::cout << "foo and bar are equal\n";
+  // if (foo!=bar) std::cout << "foo and bar are not equal\n";
+  // if (foo< bar) std::cout << "foo is less than bar\n";
+  // if (foo> bar) std::cout << "foo is greater than bar\n";
+  // if (foo<=bar) std::cout << "foo is less than or equal to bar\n";
+  // if (foo>=bar) std::cout << "foo is greater than or equal to bar\n";
   return 0;
 }

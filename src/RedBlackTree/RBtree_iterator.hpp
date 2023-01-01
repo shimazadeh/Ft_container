@@ -27,7 +27,10 @@ namespace	ft
 
 		tree_iterator(const node_type	*n)
 		{
-			node = new node_type(*n);
+			if (n != nullptr)
+				node = new node_type(*n);
+			else
+				node = nullptr;
 		}
 
 		tree_iterator &operator=(const tree_iterator &other)
@@ -39,7 +42,7 @@ namespace	ft
 
 		const	T&	operator*()const noexcept;
 
-		tree_iterator&	operator++()
+		tree_iterator&	operator++(int)
 		{
 			if (node == nullptr)
 				return (*this);
@@ -62,7 +65,7 @@ namespace	ft
 			return (*this);
 		}
 
-		tree_iterator&	operator++(int)
+		tree_iterator&	operator++()
 		{
 			tree_iterator	*tmp = new tree_iterator(*this);
 			node++;
@@ -70,7 +73,7 @@ namespace	ft
 			return(*tmp);
 		}
 
-		tree_iterator&	operator--()
+		tree_iterator&	operator--(int)
 		{
 			if (node == nullptr)
 				return (*this);
@@ -93,7 +96,7 @@ namespace	ft
 			return (*this);
 		}
 
-		tree_iterator&	operator--(int)
+		tree_iterator&	operator--()
 		{
 			tree_iterator	tmp = *this;
 			node--;
@@ -106,7 +109,7 @@ namespace	ft
 	template<typename Key, typename T, typename Compare = std::less<Key>>
 	bool operator==(tree_iterator<Key, T, Compare> &lhs, tree_iterator<Key, T, Compare> &rhs)
 	{
-		return (lhs.node == rhs.node);
+		return (*(lhs.node) == *(rhs.node));
 	}
 
 	template<typename Key, typename T, typename Compare = std::less<Key>>
@@ -118,7 +121,7 @@ namespace	ft
 	template<typename Key, typename T, typename Compare = std::less<Key>>
 	bool operator<(tree_iterator<Key, T, Compare>& lhs, tree_iterator<Key, T, Compare>& rhs)
 	{
-		return (lhs.node < rhs.node);
+		return (*(lhs.node) < *(rhs.node));
 	}
 
 }
