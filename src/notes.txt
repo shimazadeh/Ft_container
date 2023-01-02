@@ -35,9 +35,11 @@ https://daveparillo.github.io/cisc187-reader/trees/bst.html
 
 to do:
 
-map testing:
-	1. end() is not correct, need to return one member past the last one
-	2.
+testings:
+	map testing:
+	2. [] doesnt get assigned
+	3. make sure: the argument protection for the operator== != < again
 
-3. for vectors and stack: member access functions + emplace + emplace_back
-4. for maps: insert (pos, value)
+to write:
+	3. for vectors and stack: member access functions + emplace + emplace_back
+	4. for maps: insert (pos, value)

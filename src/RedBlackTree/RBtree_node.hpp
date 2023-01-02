@@ -4,6 +4,7 @@
 
 #include "../utils/pair.hpp"
 #include <memory>
+#include <iostream>
 #include <string>
 
 namespace ft
@@ -31,8 +32,6 @@ namespace ft
 		tree_node(void): left(nullptr), right(nullptr), parent(nullptr), color("b")
 		{
 			value = ft::make_pair(Key(), mapped_type());
-			// value.first = Key();
-			// value.second = mapped_type();
 		}
 
 		tree_node(const mapped_type &_value, node_type *_left, node_type *_right, node_type *_parent, std::string _color):value(ft::make_pair(Key(), _value)), color(_color)
@@ -124,6 +123,10 @@ namespace ft
 		key_type	get_key() const {return(value.first);}
 		mapped_type get_maptype() const {return(value.second);}
 		std::string	get_color() const {return (color);}
+		bool		isNil()const
+		{
+			return (this->parent == this);
+		}
 	};
 
 	//=======================================Non-Member functions===============================================================
@@ -180,6 +183,14 @@ namespace ft
 	bool	operator>=(const tree_node<Key, T, Compare, Allocator>	&lhs, const tree_node<Key, T, Compare, Allocator>	&rhs)
 	{
 		return (!(lhs < rhs));
+	}
+
+	template<typename Key, typename T, typename Compare = std::less<Key>, typename Allocator = std::allocator<ft::pair<const Key, T>> >
+	std::ostream	&operator<<(std::ostream &o, const tree_node<Key, T, Compare, Allocator> &src)
+	{
+		o << "Key: " << src.get_key() << " with value of:" << src.get_maptype();
+
+		return o;
 	}
 }
 

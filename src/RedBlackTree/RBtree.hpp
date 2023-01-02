@@ -5,9 +5,7 @@
 #include "RBtree_iterator.hpp"
 #include <memory>
 #include <iostream>
-#include <stdlib.h>//for printing colors
 
-//key is the first value, T or mapped value is the second
 namespace ft
 {
 	template<typename Key, typename T, typename Compare = std::less<Key>, typename Allocator = std::allocator<ft::pair<const Key, T>> >
@@ -52,18 +50,26 @@ namespace ft
 		//==================================================member functions====================================================
 		//this function finds the node with minimum value of the element
 
-		node_type	*min_element(node_type *node) const
+		node_type	*min_element(node_type *node, bool	&if_end) const
 		{
 			if (node == nullptr || node->left == nullptr)
+			{
+				if (node == nullptr)
+					if_end = true;
 				return node;
-			return (min_element(node->left));
+			}
+			return (min_element(node->left, if_end));
 		}
 
-		node_type	*max_element(node_type	*node) const
+		node_type	*max_element(node_type	*node, bool	&if_end) const
 		{
 			if (node == nullptr || node->right == nullptr)
+			{
+				if (node == nullptr)
+					if_end = true;
 				return node;
-			return (max_element(node->right));
+			}
+			return (max_element(node->right, if_end));
 		}
 
 		node_type	*lower_bound(const key_type&	key, node_type	*node)
@@ -129,7 +135,7 @@ namespace ft
 				while(tmp != nullptr)//search to find the right position
 				{
 					tmp1 = tmp;
-					if (tmp->value.first < new_node->value.first)//does node class has < operator?
+					if (tmp->value.first < new_node->value.first)
 						tmp = tmp->right;
 					else
 						tmp = tmp->left;
@@ -382,10 +388,13 @@ namespace ft
 			else
 				node->right = nullptr;
 
-			if (node->parent != nullptr)//switch x and y
+			if (node->parent != nullptr)
 				tmp->parent = node->parent;
-			else if (node->parent == nullptr)
+			if (node->parent == nullptr)
+			{
 				root = tmp;
+				root->parent = nullptr;//I added this but not sure for corner cases
+			}
 			else if (node->parent->right == node)//if node is the right child
 				node->parent->right = tmp;
 			else
@@ -412,7 +421,10 @@ namespace ft
 			if (node->parent != nullptr)
 				tmp->parent = node->parent;
 			else if (node->parent == nullptr)
+			{
 				root = tmp;
+				root->parent = nullptr;
+			}
 			else if (node->parent->right == node)
 				node->parent->right = tmp;
 			else
@@ -479,6 +491,8 @@ namespace ft
 						std::cout << ":" << node->right->value.second <<"\033[0m\n";
 					}
 				}
+				else
+					std::cout << "right; nill" << std::endl;
 				if (node->left != nullptr)
 				{
 					if (node->left->color == "r")
@@ -494,6 +508,25 @@ namespace ft
 						std::cout << ":" << node->left->value.second <<"\033[0m\n";
 					}
 				}
+				else
+					std::cout << "left; nill" << std::endl;
+				if (node->parent != nullptr)
+				{
+					if (node->parent->color == "r")
+					{
+						std:: cout << "\033[1;31mparent-----";
+						std:: cout << node->parent->value.first;
+						std::cout << ":" << node->parent->value.second <<"\033[0m\n";
+					}
+					else
+					{
+						std:: cout << "\033[1;32mparent-----";
+						std:: cout << node->parent->value.first;
+						std::cout << ":" << node->parent->value.second <<"\033[0m\n";
+					}
+				}
+				else
+					std::cout << "parent; nill" << std::endl;
 				print(node->right);
 				print(node->left);
 			}

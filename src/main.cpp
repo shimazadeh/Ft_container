@@ -66,21 +66,24 @@ int main ()
 
   bar['a']= 100;
   bar['b']= 1000;
-  bar['c'] = 1;
+  // bar['c'] = 1;
 
   it = foo.begin();
   ite = foo.end();
 
+  // std::cout << ite.is_end << std::endl;
+  // std::cout << it.is_end << std::endl;
+
   for (map<char, int>::iterator i = it; i != ite; i++)
   {
-    std::cout << "key is: " << it.node->get_key() << " , mapped value: " << it.node->get_maptype() << std::endl;
+    std::cout << *i << std::endl;
   }
 
   // foo.print_tree();
   // bar.print_tree();
 
   // foo ({{a,100},{b,200}}) vs bar ({a,10},{z,1000}}):
-  if (foo == bar) std::cout << "foo and bar are equal\n";
+  // if (foo == bar) std::cout << "foo and bar are equal\n";
   // if (foo!=bar) std::cout << "foo and bar are not equal\n";
   // if (foo< bar) std::cout << "foo is less than bar\n";
   // if (foo> bar) std::cout << "foo is greater than bar\n";

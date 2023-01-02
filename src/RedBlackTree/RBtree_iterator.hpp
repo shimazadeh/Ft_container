@@ -21,11 +21,12 @@ namespace	ft
 
 		//member
 		node_type	*node;
+		bool		is_end;
 
-		tree_iterator():node(nullptr)
+		tree_iterator():node(nullptr), is_end(false)
 		{}
 
-		tree_iterator(const node_type	*n)
+		tree_iterator(const node_type	*n, bool	if_end): is_end(if_end)
 		{
 			if (n != nullptr)
 				node = new node_type(*n);
@@ -33,10 +34,18 @@ namespace	ft
 				node = nullptr;
 		}
 
+		node_type &operator*()
+		{
+			return (*node);
+		}
+
 		tree_iterator &operator=(const tree_iterator &other)
 		{
 			if (this != &other)
+			{
+				is_end = other.is_end;
 				node = other.node;
+			}
 			return (*this);
 		}
 
@@ -57,18 +66,22 @@ namespace	ft
 				auto	node_up = node->parent;
 				while(node->parent != nullptr && node == node_up->right)
 				{
+					// std::cout << "current parent" << *node_up << std::endl;
 					node = node_up;
 					node_up = node_up->parent;
+					// std::cout << "next parent " << *node_up << std::endl;
 				}
 				node = node_up;
 			}
+			if (node == nullptr)
+				is_end = true;
 			return (*this);
 		}
 
 		tree_iterator&	operator++()
 		{
 			tree_iterator	*tmp = new tree_iterator(*this);
-			node++;
+			(*this)++;
 
 			return(*tmp);
 		}
@@ -93,13 +106,15 @@ namespace	ft
 				}
 				node = node_up;
 			}
+			if (node == nullptr)
+				is_end = true;
 			return (*this);
 		}
 
 		tree_iterator&	operator--()
 		{
 			tree_iterator	tmp = *this;
-			node--;
+			(*this)--;
 
 			return (*this);
 		}
@@ -109,6 +124,10 @@ namespace	ft
 	template<typename Key, typename T, typename Compare = std::less<Key>>
 	bool operator==(tree_iterator<Key, T, Compare> &lhs, tree_iterator<Key, T, Compare> &rhs)
 	{
+		if (lhs.is_end && rhs.is_end)
+			return true;
+		if (lhs.is_end || rhs.is_end)
+			return false;
 		return (*(lhs.node) == *(rhs.node));
 	}
 

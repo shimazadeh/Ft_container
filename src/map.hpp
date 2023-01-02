@@ -108,17 +108,62 @@ namespace ft
 		}
 
 		//=========================================== Iterator ===================================================
-		iterator		begin(){return (iterator(_bstree.min_element(_bstree.get_root())));}
-		iterator		end(){return (iterator(_bstree.max_element(_bstree.get_root())));}
+		iterator		begin()
+		{
+			bool	if_end = false;
 
-		const_iterator	begin() const {return (const_iterator(_bstree.min_element(_bstree.get_root())));}
-		const_iterator	end()const {return (const_iterator(_bstree.max_element(_bstree.get_root())));}
+			return (iterator(_bstree.min_element(_bstree.get_root(), if_end), if_end));
+		}
+		iterator		end()
+		{
+			bool		whatever = false;
+			node_type	*end_element = _bstree.max_element(_bstree.get_root(), whatever);
+			node_type	*res = new node_type();
 
-		iterator		rbegin(){return (iterator(_bstree.max_element(_bstree.get_root())));}
-		iterator		rend() {return (iterator(_bstree.min_element(_bstree.get_root())));}
+			res->parent = end_element;
 
-		const_iterator	rbegin() const{return (const_iterator(_bstree.max_element(_bstree.get_root())));}
-		const_iterator	rend() const{return (const_iterator(_bstree.min_element(_bstree.get_root())));}
+			return (const_iterator(res, true));
+		}
+
+		const_iterator	begin() const
+		{
+			bool	if_end = false;
+
+			return (const_iterator(_bstree.min_element(_bstree.get_root(), if_end), if_end));
+		}
+		const_iterator	end()const
+		{
+			bool		whatever = false;
+			node_type	*end_element = _bstree.max_element(_bstree.get_root(), whatever);
+			node_type	*res = new node_type();
+
+			res->parent = end_element;
+			return (const_iterator(res, true));
+		}
+
+		iterator		rbegin()
+		{
+			bool	whatever = false;
+			return (iterator(_bstree.max_element(_bstree.get_root(), whatever), true));
+		}
+
+		iterator		rend()
+		{
+			bool	if_end = false;
+			return (iterator(_bstree.min_element(_bstree.get_root(), if_end), if_end));
+		}
+
+		const_iterator	rbegin() const
+		{
+			bool	whatever = false;
+			return (const_iterator(_bstree.max_element(_bstree.get_root(), whatever), true));
+		}
+
+		const_iterator	rend() const
+		{
+			bool	if_end = false;
+			return (const_iterator(_bstree.min_element(_bstree.get_root(), if_end), if_end));
+		}
 
 		//=========================================== Capacity ===================================================
 		bool	empty()const {return (_bstree.size() == 0);}
@@ -144,7 +189,7 @@ namespace ft
 				_bstree.insert(value);
 				was_inserted = true;
 				tmp = _bstree.find_node(value.first, _bstree.get_root());
-				result = iterator(tmp);
+				result = iterator(tmp, tmp->isNil());
 			}
 			else
 				result = this->end();
@@ -213,7 +258,7 @@ namespace ft
 			node_type *res = _bstree.find_node(key, _bstree.get_root());
 
 			if (res != nullptr)
-				return (iterator(res));
+				return (iterator(res, res->isNil()));
 			return (this->end());
 		}
 
@@ -222,7 +267,7 @@ namespace ft
 			node_type *res = _bstree.find_node(key, _bstree.get_root());
 
 			if (res != nullptr)
-				return (const_iterator(res));
+				return (const_iterator(res, res->isNil()));
 			return (this->end());
 		}
 
@@ -250,7 +295,7 @@ namespace ft
 
 			if (res == nullptr)
 				return (this->end());
-			return (iterator(res));
+			return (iterator(res, res->isNil()));
 		}
 
 		const_iterator lower_bound( const Key& key ) const
@@ -259,7 +304,7 @@ namespace ft
 
 			if (res == nullptr)
 				return (this->end());
-			return (const_iterator(res));
+			return (const_iterator(res, res->isNil()));
 		}
 
 		iterator upper_bound( const Key& key )
@@ -268,7 +313,7 @@ namespace ft
 
 			if (res == nullptr)
 				return (this->end());
-			return (const_iterator(res));
+			return (const_iterator(res, res->isNil()));
 		}
 
 		const_iterator upper_bound( const Key& key ) const
@@ -277,7 +322,7 @@ namespace ft
 
 			if (res == nullptr)
 				return (this->end());
-			return (const_iterator(res));
+			return (const_iterator(res, res->isNil()));
 		}
 
 		//=========================================== Observers ===================================================
@@ -295,7 +340,6 @@ namespace ft
 
 			while (lhs_start != lhs_end && rhs_start != rhs_end)
 			{
-				dprintf(2, "rhs is %c lhs is %c\n", (lhs_start.node)->get_key(), (rhs_start.node)->get_key());
 				if (lhs_start != rhs_start)
 					return false;
 				lhs_start++;
