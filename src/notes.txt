@@ -37,9 +37,9 @@ to do:
 
 testings:
 	map testing:
-	2. [] doesnt get assigned
-	3. make sure: the argument protection for the operator== != < again
+	2. [] doesnt get assigned: fixed but dont know why the first method didnt work?
+	4. remove std::cout << *ite when ite is an iterator
 
 to write:
 	3. for vectors and stack: member access functions + emplace + emplace_back
-	4. for maps: insert (pos, value)
+	4. for maps: insert (pos, value),

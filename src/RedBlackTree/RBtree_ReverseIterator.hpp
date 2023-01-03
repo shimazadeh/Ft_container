@@ -1,12 +1,12 @@
-#ifndef	_RBTREE_ITERATOR_HPP
-#define _RBTREE_ITERATOR_HPP
+#ifndef	_RB_REVERSEITERATOR_HPP
+#define _RB_REVERSEITERATOR_HPP
 
 #include "RBtree.hpp"
 
 namespace	ft
 {
 	template<typename Key, typename T, typename Compare = std::less<Key>>
-	struct tree_iterator
+	struct tree_reverse_iterator
 	{
 		typedef	Key																	key_type;
 		typedef	T																	mapped_type;
@@ -19,10 +19,10 @@ namespace	ft
 		node_type	*node;
 		bool		is_end;
 
-		tree_iterator():node(nullptr), is_end(false)
+		tree_reverse_iterator():node(nullptr), is_end(false)
 		{}
 
-		tree_iterator(const node_type	*n, bool	if_end): is_end(if_end)
+		tree_reverse_iterator(const node_type	*n, bool	if_end): is_end(if_end)
 		{
 			if (n != nullptr)
 				node = new node_type(*n);
@@ -35,7 +35,7 @@ namespace	ft
 			return (*node);
 		}
 
-		tree_iterator &operator=(const tree_iterator &other)
+		tree_reverse_iterator &operator=(const tree_reverse_iterator &other)
 		{
 			if (this != &other)
 			{
@@ -47,7 +47,15 @@ namespace	ft
 
 		const	T&	operator*()const noexcept;
 
-		tree_iterator&	operator++()
+		tree_reverse_iterator&	operator++(int)//i++
+		{
+			tree_reverse_iterator	*tmp = new tree_reverse_iterator(*this);
+			++(*this);
+
+			return(*tmp);
+		}
+
+		tree_reverse_iterator&	operator++()//++i
 		{
 			if (node == nullptr)
 				return (*this);
@@ -74,15 +82,15 @@ namespace	ft
 			return (*this);
 		}
 
-		tree_iterator&	operator++(int)
+		tree_reverse_iterator&	operator--(int)//i--
 		{
-			tree_iterator	*tmp = new tree_iterator(*this);
-			++(*this);
+			tree_reverse_iterator	tmp = *this;
+			--(*this);
 
-			return(*tmp);
+			return (*this);
 		}
 
-		tree_iterator&	operator--()
+		tree_reverse_iterator&	operator--()//--i
 		{
 			if (node == nullptr)
 				return (*this);
@@ -106,19 +114,11 @@ namespace	ft
 				is_end = true;
 			return (*this);
 		}
-
-		tree_iterator&	operator--(int)
-		{
-			tree_iterator	tmp = *this;
-			--(*this);
-
-			return (*this);
-		}
 	};
 
 	//IM not sure about these functions:
 	template<typename Key, typename T, typename Compare = std::less<Key>>
-	bool operator==(tree_iterator<Key, T, Compare> &lhs, tree_iterator<Key, T, Compare> &rhs)
+	bool operator==(tree_reverse_iterator<Key, T, Compare> &lhs, tree_reverse_iterator<Key, T, Compare> &rhs)
 	{
 		if (lhs.is_end && rhs.is_end)
 			return true;
@@ -128,13 +128,13 @@ namespace	ft
 	}
 
 	template<typename Key, typename T, typename Compare = std::less<Key>>
-	bool operator!=(tree_iterator<Key, T, Compare>& lhs, tree_iterator<Key, T, Compare>& rhs)
+	bool operator!=(tree_reverse_iterator<Key, T, Compare>& lhs, tree_reverse_iterator<Key, T, Compare>& rhs)
 	{
 		return (!(lhs == rhs));
 	}
 
 	template<typename Key, typename T, typename Compare = std::less<Key>>
-	bool operator<(tree_iterator<Key, T, Compare>& lhs, tree_iterator<Key, T, Compare>& rhs)
+	bool operator<(tree_reverse_iterator<Key, T, Compare>& lhs, tree_reverse_iterator<Key, T, Compare>& rhs)
 	{
 		return (*(lhs.node) < *(rhs.node));
 	}

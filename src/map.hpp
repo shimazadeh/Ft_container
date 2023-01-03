@@ -4,6 +4,7 @@
 #include <iostream>
 #include <memory>
 #include "./RedBlackTree/RBtree_iterator.hpp"
+#include "./RedBlackTree/RBtree_ReverseIterator.hpp"
 #include "./RedBlackTree/RBtree_node.hpp"
 #include "./RedBlackTree/RBtree.hpp"
 #include "./utils/pair.hpp"
@@ -30,11 +31,9 @@ namespace ft
 
 		typedef	tree_iterator<Key, T, Compare>				iterator;
 		typedef	const iterator								const_iterator;
-		typedef	const_iterator								reverse_iterator;
-		typedef	const_iterator								const_reverse_iterator;
-
+		typedef	tree_reverse_iterator<Key, T, Compare>		reverse_iterator;
+		typedef	const reverse_iterator						const_reverse_iterator;
 		typedef ft::tree_node<key_type, mapped_type, key_compare, allocator_type>	node_type;
-
 
 		class	value_compare
 		{
@@ -101,10 +100,14 @@ namespace ft
 
 		mapped_type& operator[]( const key_type& key )
 		{
-			ft::pair<iterator, bool>	tmp = insert(ft::make_pair(key, mapped_type()));
-			iterator					tmp2 = tmp.first;
+			_bstree.insert(key);
+			node_type	*tmp = _bstree.find_node(key, _bstree.get_root());
 
-			return ((tmp2.node)->get_maptype());
+			//think about this: why this method didnt work???
+			// ft::pair<iterator, bool>	tmp = insert(ft::make_pair(key, mapped_type()));
+			// iterator					tmp2 = tmp.first;
+			// return ((*tmp2).value.second);
+			return (tmp->value.second);
 		}
 
 		//=========================================== Iterator ===================================================
@@ -122,7 +125,7 @@ namespace ft
 
 			res->parent = end_element;
 
-			return (const_iterator(res, true));
+			return (iterator(res, true));
 		}
 
 		const_iterator	begin() const
@@ -141,28 +144,36 @@ namespace ft
 			return (const_iterator(res, true));
 		}
 
-		iterator		rbegin()
+		reverse_iterator		rbegin()
 		{
-			bool	whatever = false;
-			return (iterator(_bstree.max_element(_bstree.get_root(), whatever), true));
+			bool		whatever = false;
+			node_type	*end_element = _bstree.max_element(_bstree.get_root(), whatever);
+			node_type	*res = new node_type();
+
+			res->parent = end_element;
+			return (reverse_iterator(res, true));
 		}
 
-		iterator		rend()
+		reverse_iterator		rend()
 		{
 			bool	if_end = false;
-			return (iterator(_bstree.min_element(_bstree.get_root(), if_end), if_end));
+			return (reverse_iterator(_bstree.min_element(_bstree.get_root(), if_end), if_end));
 		}
 
-		const_iterator	rbegin() const
+		const_reverse_iterator	rbegin() const
 		{
-			bool	whatever = false;
-			return (const_iterator(_bstree.max_element(_bstree.get_root(), whatever), true));
+			bool		whatever = false;
+			node_type	*end_element = _bstree.max_element(_bstree.get_root(), whatever);
+			node_type	*res = new node_type();
+
+			res->parent = end_element;
+			return (const_reverse_iterator(res, true));
 		}
 
-		const_iterator	rend() const
+		const_reverse_iterator	rend() const
 		{
 			bool	if_end = false;
-			return (const_iterator(_bstree.min_element(_bstree.get_root(), if_end), if_end));
+			return (const_reverse_iterator(_bstree.min_element(_bstree.get_root(), if_end), if_end));
 		}
 
 		//=========================================== Capacity ===================================================

@@ -1,5 +1,5 @@
-#ifndef	_TREE_NODE_HPP
-#define	_TREE_NODE_HPP
+#ifndef	_RBTREE_NODE_HPP
+#define	_RBTREE_NODE_HPP
 
 
 #include "../utils/pair.hpp"
@@ -125,7 +125,7 @@ namespace ft
 		std::string	get_color() const {return (color);}
 		bool		isNil()const
 		{
-			return (this->parent == this);
+			return (this->parent == this);//smart mf you are!
 		}
 	};
 
@@ -188,7 +188,8 @@ namespace ft
 	template<typename Key, typename T, typename Compare = std::less<Key>, typename Allocator = std::allocator<ft::pair<const Key, T>> >
 	std::ostream	&operator<<(std::ostream &o, const tree_node<Key, T, Compare, Allocator> &src)
 	{
-		o << "Key: " << src.get_key() << " with value of:" << src.get_maptype();
+		if (src.isNil() == false)
+			o << "Key: " << src.get_key() << " with value of:" << src.get_maptype();
 
 		return o;
 	}

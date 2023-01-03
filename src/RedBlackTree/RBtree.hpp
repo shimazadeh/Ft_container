@@ -1,5 +1,5 @@
-#ifndef	_TREE_HPP
-#define	_TREE_HPP
+#ifndef	_RBTREE_HPP
+#define	_RBTREE_HPP
 
 #include "RBtree_node.hpp"
 #include "RBtree_iterator.hpp"
