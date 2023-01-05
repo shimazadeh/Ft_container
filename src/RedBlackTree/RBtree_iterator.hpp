@@ -30,7 +30,12 @@ namespace	ft
 				node = nullptr;
 		}
 
-		node_type &operator*()
+		tree_iterator(const tree_iterator &other)
+		{
+			*this = other;
+		}
+		//===============================================================================================================
+		node_type &operator*()const
 		{
 			return (*node);
 		}
@@ -46,6 +51,7 @@ namespace	ft
 		}
 
 		const	T&	operator*()const noexcept;
+		//===============================================================================================================
 
 		tree_iterator&	operator++()
 		{

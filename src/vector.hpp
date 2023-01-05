@@ -3,7 +3,8 @@
 
 #include <iostream>
 #include <memory>
-#include "./iterators/iterator_traits.hpp"
+#include "./iterators/iterator.hpp"
+#include "./iterators/reverse_iterator.hpp"
 
 namespace	ft
 {
@@ -13,18 +14,19 @@ namespace	ft
 	{
 		public:
 		//==================================Member Types=================================================================
-			typedef	T										value_type;
-			typedef	Allocator								allocator_type;
-			typedef	std::size_t								size_type;
-			typedef	std::ptrdiff_t							difference_type;
+			typedef	T												value_type;
+			typedef	Allocator										allocator_type;
+			typedef	std::size_t										size_type;
+			typedef	std::ptrdiff_t									difference_type;
 			typedef typename value_type								&reference;
 			typedef	const typename value_type						&const_reference;
 			typedef	typename value_type								*pointer;
 			typedef	const typename value_type						*const_pointer;
-			typedef	std::iterator<iterator>					iterator; //I think iterators need to be from my own file
-			typedef	std::iterator<const_iterator>			const_iterator;
-			typedef	std::reverse_iterator<iterator>			reverse_iterator;
-			typedef	std::reverse_iterator<const_iterator>	const_reverse_iterator;
+
+			typedef	ft::iterator<T>									iterator;
+			typedef	ft::iterator<T>									const_iterator;
+			typedef	ft::reverse_iterator<typename iterator>			reverse_iterator;
+			typedef	ft::reverse_iterator<typename const_iterator>	const_reverse_iterator;
 
 		//========================================Constructors==========================================================
 
