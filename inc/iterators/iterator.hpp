@@ -12,7 +12,7 @@ namespace	ft
 			typedef const typename reference		const_reference;
 			typedef T								*pointer;
 			typedef const typename pointer			const_pointer;
-			typedef std::ptrdiff_t					difference_type;
+			typedef ft::iterator_traits<T>::difference_type	difference_type;
 			typedef std::size_t						size_type;
 
 			//===============================Constructor Destructor========================================

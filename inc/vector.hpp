@@ -18,10 +18,10 @@ namespace	ft
 			typedef	Allocator										allocator_type;
 			typedef	std::size_t										size_type;
 			typedef	std::ptrdiff_t									difference_type;
-			typedef typename value_type								&reference;
-			typedef	const typename value_type						&const_reference;
-			typedef	typename value_type								*pointer;
-			typedef	const typename value_type						*const_pointer;
+			typedef ft::iterator_traits<T>::reference				reference;
+			typedef	const reference									const_reference;
+			typedef	ft::iterator_traits<T>::pointer					pointer;
+			typedef	const pointer									const_pointer;
 
 			typedef	ft::iterator<T>									iterator;
 			typedef	ft::iterator<T>									const_iterator;
@@ -43,7 +43,7 @@ namespace	ft
 					_alloc.construct(arr + i, value);
 			}
 
-			template<class InputIt>
+			template<class InputIt , class = typename ft::enable_if<ft::is_integral<InputIt>::value>:: type>
 			vector(InputIt first, InputIt last, const allocator_type &alloc = allocator_type()):arr(NULL), size_allocated(0), size_filled(0), _alloc(alloc)
 			{
 				size_filled = last - first;
@@ -81,15 +81,15 @@ namespace	ft
 				return (*this);
 			}
 
-			void	assign(size_type count, const T& value)
+			void assign (size_type n, const value_type& val)
 			{
 				this->clear();
 				for (size_type i = 0; i < count; i++)
 					push_back(*value);
 			}
 
-			template<class InputIt>
-			void	assign(InputIt first, InputIt last)
+			template <class InputIterator>
+			void assign (InputIterator first, InputIterator last)
 			{
 				this->clear();
 				for(iterator i = first; i != last; i++)
@@ -102,38 +102,40 @@ namespace	ft
 			}
 
 		//======================================Element access=============================================================
-			reference back()
-			{
-			}
-			const_reference back() const
-			{
+			reference back() {return (&arr[size_filled - 1]);}
+			const_reference back() const {return (&arr[size_filled - 1]);}
 
-			}
-			template <class InputIterator>
-			void assign (InputIterator first, InputIterator last)
-			{}
-
-			void assign (size_type n, const value_type& val)
-			{}
+			reference	front() {return (&arr[0]);}
+			const_reference front() const {return (&arr[0]);}
 
 			reference at (size_type n)
-			{}
+			{
+				if (n >= size_filled)
+					throw std::out_of_range();
+				else
+					return (arr[n]);
+			}
 
 			const_reference at (size_type n) const
-			{}
+			{
+				if (n >= size_filled)
+					throw std::out_of_range();
+				else
+					return (const arr[n]);
+			}
 
 		//========================================Iterators================================================================
-			iterator				begin(void)const{return (iterator(&arr[0]))}
-			iterator				end(void)const{return (iterator(&arr[size_filled]))}
+			iterator				begin(void)const{return (iterator(&arr[0]));}
+			iterator				end(void)const{return (iterator(&arr[size_filled]));}
 
-			const_iterator			begin(void)const{return (const_iterator(&arr[0]))}
-			const_iterator			end(void)const{return (const_iterator(&arr[size_filled]))}
+			const_iterator			begin(void)const{return (const_iterator(&arr[0]));}
+			const_iterator			end(void)const{return (const_iterator(&arr[size_filled]));}
 
-			reverse_iterator		rbegin(void)const{return (reverse_iterator(&arr[0]))}
-			reverse_iterator		rend(void)const{return (reverse_iterator(&arr[size_filled]))}
+			reverse_iterator		rbegin(void)const{return (reverse_iterator(&arr[0]));}
+			reverse_iterator		rend(void)const{return (reverse_iterator(&arr[size_filled]));}
 
-			const_reverse_iterator	rbegin(void)const{return (const_reverse_iterator(&arr[0]))}
-			const_reverse_iterator	rend(void)const{return (const_reverse_iterator(&arr[size_filled]))}
+			const_reverse_iterator	rbegin(void)const{return (const_reverse_iterator(&arr[0]));}
+			const_reverse_iterator	rend(void)const{return (const_reverse_iterator(&arr[size_filled]));}
 
 		//========================================Capacity================================================================
 			void	shrinks_to_fit(void)
@@ -317,15 +319,6 @@ namespace	ft
 				_alloc.construct(arr + size_filled, value);
 				size_filled++;
 			}
-
-			template<class... Args>
-			iterator		emplace(const_iterator pos, Args&&...args)
-			{
-
-			}//Inserts a new element into the container directly before pos
-
-			template<class... Args>
-			void			emplace_back(Args&&...args);
 
 			void			pop_back()
 			{

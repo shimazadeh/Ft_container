@@ -43,3 +43,12 @@ testings:
 to write:
 	3. for vectors and stack: member access functions + emplace + emplace_back
 	4. for maps: insert (pos, value),
+
+
+enable_if usage: iterators are address so they are integers. when you make template functions that are only
+supposed to take iterators and nothing else you need to make sure that the argument given is an iterator and nothing else because
+your function will break if something else is given.
+so you use enable if with combination of if_integral to ensure the argument given is iterator and nothing else.
+??what I dont understand is what if you give random number to the function instead of iterator??
+
+Iterator_traits: you can use it as a base class for all your iterators. it is not mandatory tho!

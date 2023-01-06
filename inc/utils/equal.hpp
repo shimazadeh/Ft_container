@@ -41,3 +41,7 @@ namespace ft
 	};
 }
 #endif
+
+
+// vector<car> vec;
+// vec.insert(0, svxhw, bwsbw)

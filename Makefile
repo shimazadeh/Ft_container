@@ -10,20 +10,20 @@
 #                                                                              #
 # **************************************************************************** #
 
-NAME = container
+NAME = ft_container
 
 SRCDIR = src
-
+INCDIR = inc
 OBJDIR = obj
 
 CC = c++
 
 SRCS     := $(wildcard $(SRCDIR)/*.cpp)
-INCLUDES := $(wildcard $(SRCDIR)/*.hpp)
+INCLUDES := $(wildcard $(INCDIR)/*.hpp)
 OBJS     := $(SOURCES:$(SRCDIR)/%.cpp=$(OBJDIR)/%.o)
 rm        = rm -f
 
-FLAGS = -Wall -Wextra -Werror -g3 -std=c++98 -std=c++11
+FLAGS = -Wall -Wextra -Werror -g3 -std=c++98
 
 $(NAME): $(OBJS)
 	@$(CC) $(OBJECTS) $(INCLUDES) -o $@
