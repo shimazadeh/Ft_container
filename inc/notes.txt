@@ -21,7 +21,7 @@ why Iterator trait is structure but reverse_iterator is a calss???
 what is noexcept in some functions prototype??
 what is the benefit of move_constructors?
 what does auto type mean?
-
+should I make the destructors of all my containers virtual???
 
 tester:
 https://github.com/Mazoise/42TESTERS-CONTAINERS
@@ -33,15 +33,16 @@ https://www.programiz.com/dsa/red-black-tree#:~:text=Left%20Rotate,arrangements%
 https://daveparillo.github.io/cisc187-reader/trees/bst.html
 
 
-to do:
+understand:
+	2. map: [] doesnt get assigned: fixed but dont know why the first method didnt work?
 
-testings:
-	map testing:
-	2. [] doesnt get assigned: fixed but dont know why the first method didnt work?
-	4. remove std::cout << *ite when ite is an iterator
+to do:
+	4. map: remove std::cout << *ite when ite is an iterator
+	5. vector & map: for operational comparison use std::equal
+	6. map at function is since c++11?? do I need to remove it??
+	3. notion of enable if: is it in the template or the argument?? : ft::enable_if<ft::is_integral<InputIt>::value>:: type
 
 to write:
-	3. for vectors and stack: member access functions + emplace + emplace_back
 	4. for maps: insert (pos, value),
 
 

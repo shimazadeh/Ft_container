@@ -9,37 +9,28 @@ namespace ft
 {
 	template<typename T, class Container = ft::vector<T> >
 
-	class stack : public vector
+	class stack
 	{
 		public:
 		//==================================Member Types=================================================================
 		typedef	Container							container_type:
-		typedef	typename Container::value_type		T;
-		typedef typename Container::value_type		value_type;
-		typedef typename Container::size_t			size_type;
-		typedef typename Container::reference		reference;
-		typedef typename Container::const_reference	const_reference;
+		typedef	T									value_type;
+		typedef std::size_t							size_type;
 
 		//==================================Constructors================================================================
 		explicit stack(const Container &cont = container_type()):c(cont){}
 
 		//==================================Destructor==================================================================
 
-		~stack(){}//does it need to be virtual??
+		~stack(){}
 
 		//==================================operator====================================================================
 
-		stack& operator=(const stack& other)
+		stack& operator=(const stack& other)//this is not listed in the cpp ref page
 		{
 			if (this != &other)
 				this->c = other.c;
 			return (*this);
-		}
-
-		stack& operator=(stack&& other)//not sure
-		{
-			if (this != &&other)
-				this->c = &other.c;
 		}
 		//==================================Element Access============================================================
 		value_type	&top(){return(c.back())}
@@ -53,61 +44,68 @@ namespace ft
 		//==================================Modifiers===================================================================
 		void	push(const value_type& value){return(c.push_back(value));}
 
-		template< class... Args >
-		void emplace(Args&&... args){return(c.emplace_back(std::forward<Args>(args)...));}
-
-		template< class... Args >
-		decltype(auto) emplace(Args&&... args){return(c.emplace_back(std::forward<Args>(args)...));}
-
 		void	pop(){c.pop_back();}
 
-		void swap( stack& other ) noexcept{swap(c, other.c);}
-
-		//==================================Non-Member functions========================================================
-		template< class T, class Container >
-		friend	bool operator==(const ft::stack<T,Container>& lhs, const ft::stack<T, Container>& rhs)
+		void swap(stack& other) noexcept
 		{
-			return (lhs.c == rhs.c);
+			Container	temp = c;
+
+			c = other.c;
+			other.c = temp;
 		}
 
-		template< class T, class Container >
-		friend bool operator!=( const ft::stack<T,Container>& lhs, const ft::stack<T,Container>& rhs )
-		{
-			return (lhs.c != rhs.c);
-		}
-
-		template< class T, class Container >
-		friend bool operator<( const ft::stack<T,Container>& lhs, const ft::stack<T,Container>& rhs )
-		{
-			return (lhs.c < rhs.c);
-		}
-
-		template< class T, class Container >
-		friend bool operator<=( const ft::stack<T,Container>& lhs, const ft::stack<T,Container>& rhs )
-		{
-			return (lhs.c <= rhs.c);
-		}
-
-		template< class T, class Container >
-		friend bool operator>( const ft::stack<T,Container>& lhs, const ft::stack<T,Container>& rhs )
-		{
-			return (lhs.c > rhs.c);
-		}
-
-		template< class T, class Container >
-		friend bool operator>=( const ft::stack<T,Container>& lhs, const ft::stack<T,Container>& rhs )
-		{
-			return (lhs.c >= rhs.c);
-		}
-
-		template <class T, class Container>
-		void swap (stack<T,Container>& x, stack<T,Container>& y) noexcept(noexcept(x.swap(y)))
-		{
-
-		}
 		private:
 			Container	c;
 
+			friend bool operator==(const ft::stack<T,Container>& lhs, const ft::stack<T, Container>& rhs);
+			friend bool operator<( const ft::stack<T,Container>& lhs, const ft::stack<T,Container>& rhs );
+
 	};//class end
+	//==================================Non-Member functions========================================================
+	template< class T, class Container >
+	bool operator==(const ft::stack<T,Container>& lhs, const ft::stack<T, Container>& rhs)
+	{
+		return (lhs.c == rhs.c);
+	}
+
+	template< class T, class Container >
+	bool operator!=( const ft::stack<T,Container>& lhs, const ft::stack<T,Container>& rhs )
+	{
+		return (!(lhs == rhs));
+	}
+
+	template< class T, class Container >
+	bool operator<( const ft::stack<T,Container>& lhs, const ft::stack<T,Container>& rhs )
+	{
+		return (lhs.c < rhs.c);
+	}
+
+	template< class T, class Container >
+	bool operator<=( const ft::stack<T,Container>& lhs, const ft::stack<T,Container>& rhs )
+	{
+		return (!(lhs > rhs));
+	}
+
+	template< class T, class Container >
+	bool operator>( const ft::stack<T,Container>& lhs, const ft::stack<T,Container>& rhs )
+	{
+		if (lhs == rhs)
+			return false;
+		if (lhs < rhs)
+			return false;
+		return (true);
+	}
+
+	template< class T, class Container >
+	bool operator>=( const ft::stack<T,Container>& lhs, const ft::stack<T,Container>& rhs )
+	{
+		return (!(lhs < rhs));
+	}
+
+	template <class T, class Container>
+	void swap (stack<T,Container>& x, stack<T,Container>& y) noexcept(noexcept(x.swap(y)))
+	{
+		x.swap(y);
+	}
 }//namespace end
 #endif

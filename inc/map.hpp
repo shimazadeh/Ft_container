@@ -55,13 +55,13 @@ namespace ft
 		explicit map(const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type()):_bstree(bstree<Key, T, Compare, Allocator>()), _cmp(comp), _alloc(alloc)
 		{}
 
-		template< typename InputIt >
-		map( InputIt first, InputIt last, const Compare& comp = Compare(), const Allocator& alloc = Allocator() ): _bstree(bstree<Key, T, Compare, Allocator>()), _cmp(comp), _alloc(alloc)
+		template< typename InputIterator >
+		map(InputIterator first, InputIterator last, const Compare& comp = Compare(), const Allocator& alloc = Allocator()): _bstree(bstree<Key, T, Compare, Allocator>()), _cmp(comp), _alloc(alloc)
 		{
 			this->insert(first, last);
 		}
 
-		map( const map& other ):_bstree(other._bstree), _cmp(other._cmp), _alloc(other._alloc)
+		map(const map& other):_bstree(other._bstree), _cmp(other._cmp), _alloc(other._alloc)
 		{}
 
 		//=========================================== Destructor ===================================================
@@ -82,7 +82,7 @@ namespace ft
 		allocator_type get_allocator() const {return (_alloc);}
 
 		//=========================================== Access ===================================================
-		mapped_type& at(const key_type& key)
+		mapped_type& at(const key_type& key)//ref page says since c++11!!!!!what!!!!
 		{
 			if (!_bstree.find_node(key, _bstree.get_root()))
 				throw std::out_of_range("key is out of range");
@@ -212,8 +212,8 @@ namespace ft
 			//????
 		}
 
-		template< typename InputIt >
-		void insert( InputIt first, InputIt last )
+		template< typename InputIterator >
+		void insert( InputIterator first, InputIterator last )
 		{
 			while (first != last)
 			{
@@ -341,13 +341,27 @@ namespace ft
 		key_compare key_comp() const {return (_cmp);}
 		value_compare value_comp() const {return (value_compare(key_comp()));};
 
-		//===========================================Non-Member functions===================================================
-		friend bool operator==( const ft::map<Key,T,Compare,Allocator>& lhs, const ft::map<Key,T,Compare,Allocator>& rhs )
+		//================================================= DEBUGGING TOOLS ==============================================================
+
+		void	print_tree(void)
 		{
-			iterator	lhs_start = lhs.begin();
-			iterator	lhs_end = lhs.end();
-			iterator	rhs_start = rhs.begin();
-			iterator	rhs_end = rhs.end();
+			std::cout << "printing the tree" << std::endl;
+			_bstree.print(_bstree.get_root());
+		}
+		//=================================================================================================================
+		private:
+			bstree<Key, T, Compare, Allocator>			_bstree;
+			key_compare		_cmp;
+			allocator_type	_alloc;
+	};
+		//===========================================Non-Member functions===================================================
+		template <class Key, class T, class Compare, class Allocator>
+		bool operator==( const ft::map<Key,T,Compare,Allocator>& lhs, const ft::map<Key,T,Compare,Allocator>& rhs )
+		{
+			ft::map<Key,T,Compare,Allocator>::iterator	lhs_start = lhs.begin();
+			ft::map<Key,T,Compare,Allocator>::iterator	lhs_end = lhs.end();
+			ft::map<Key,T,Compare,Allocator>::iterator	rhs_start = rhs.begin();
+			ft::map<Key,T,Compare,Allocator>::iterator	rhs_end = rhs.end();
 
 			while (lhs_start != lhs_end && rhs_start != rhs_end)
 			{
@@ -361,17 +375,19 @@ namespace ft
 			return true;
 		}
 
-		friend bool operator!=( const ft::map<Key,T,Compare,Allocator>& lhs, const ft::map<Key,T,Compare,Allocator>& rhs )
+		template <class Key, class T, class Compare, class Allocator>
+		bool operator!=( const ft::map<Key,T,Compare,Allocator>& lhs, const ft::map<Key,T,Compare,Allocator>& rhs )
 		{
 			return (!(lhs == rhs));
 		}
 
-		friend bool operator<( const ft::map<Key,T,Compare,Allocator>& lhs, const ft::map<Key,T,Compare,Allocator>& rhs )
+		template <class Key, class T, class Compare, class Allocator>
+		bool operator<( const ft::map<Key,T,Compare,Allocator>& lhs, const ft::map<Key,T,Compare,Allocator>& rhs )
 		{
-			iterator	lhs_start = lhs.begin();
-			iterator	lhs_end = lhs.end();
-			iterator	rhs_start = rhs.begin();
-			iterator	rhs_end = rhs.end();
+			ft::map<Key,T,Compare,Allocator>::iterator	lhs_start = lhs.begin();
+			ft::map<Key,T,Compare,Allocator>::iterator	lhs_end = lhs.end();
+			ft::map<Key,T,Compare,Allocator>::iterator	rhs_start = rhs.begin();
+			ft::map<Key,T,Compare,Allocator>::iterator	rhs_end = rhs.end();
 
 			if (lhs == rhs)
 				return false;
@@ -387,21 +403,29 @@ namespace ft
 			return true;
 		}
 
-		friend bool operator<=( const ft::map<Key,T,Compare,Allocator>& lhs, const ft::map<Key,T,Compare,Allocator>& rhs )
+		template <class Key, class T, class Compare, class Allocator>
+		bool operator<=( const ft::map<Key,T,Compare,Allocator>& lhs, const ft::map<Key,T,Compare,Allocator>& rhs )
 		{
-			return(!(rhs < lhs));
+			return(!(rhs > lhs));
 		}
 
-		friend bool operator>( const ft::map<Key,T,Compare,Allocator>& lhs, const ft::map<Key,T,Compare,Allocator>& rhs )
+		template <class Key, class T, class Compare, class Allocator>
+		bool operator>( const ft::map<Key,T,Compare,Allocator>& lhs, const ft::map<Key,T,Compare,Allocator>& rhs )
 		{
-			return (!(lhs < rhs));
+			if (lhs == rhs)
+				return false;
+			if (lhs < rhs)
+				return false;
+			return (true);
 		}
 
-		friend bool operator>=( const ft::map<Key,T,Compare,Allocator>& lhs, const ft::map<Key,T,Compare,Allocator>& rhs )
+		template <class Key, class T, class Compare, class Allocator>
+		bool operator>=( const ft::map<Key,T,Compare,Allocator>& lhs, const ft::map<Key,T,Compare,Allocator>& rhs )
 		{
 			return(!(lhs < rhs));
 		}
 
+		template <class Key, class T, class Compare, class Allocator>
 		void swap (map<Key,T,Compare,Allocator>& x, map<Key,T,Compare,Allocator>& y)
 		{
 			map<Key, T, Compare, Allocator> tmp = x;
@@ -409,18 +433,5 @@ namespace ft
 			x = y;
 			y = tmp;
 		}
-		//================================================= DEBUGGING TOOLS ==============================================================
-
-		void	print_tree(void)
-		{
-			std::cout << "printing the tree" << std::endl;
-			_bstree.print(_bstree.get_root());
-		}
-		//=================================================================================================================
-		private:
-			bstree<Key, T, Compare, Allocator>			_bstree;
-			key_compare		_cmp;
-			allocator_type	_alloc;
-	};
 }
 #endif
