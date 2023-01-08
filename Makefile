@@ -10,35 +10,79 @@
 #                                                                              #
 # **************************************************************************** #
 
-NAME = ft_container
+# NAME = ft_container
 
-SRCDIR = src
-INCDIR = inc
-OBJDIR = obj
+# SRCDIR = src/
+# INCDIR = inc/
+# OBJDIR = obj/
 
-CC = c++
+# CC = c++
 
-SRCS     := $(wildcard $(SRCDIR)/*.cpp)
-INCLUDES := $(wildcard $(INCDIR)/*.hpp)
-OBJS     := $(SOURCES:$(SRCDIR)/%.cpp=$(OBJDIR)/%.o)
-rm        = rm -f
+# SRCS     := $(wildcard $(SRCDIR)*.cpp)
+# INCLUDES := $(wildcard $(INCDIR)*.hpp)
+# OBJS     := $(SOURCES:$(SRCDIR)%.cpp=$(OBJDIR)%.o)
+# rm        = rm -f
 
-FLAGS = -Wall -Wextra -Werror -g3 -std=c++98
+# FLAGS = -Wall -Wextra -Werror -g3 -std=c++98
 
-$(NAME): $(OBJS)
-	@$(CC) $(OBJECTS) $(INCLUDES) -o $@
+# $(NAME): $(OBJS)
+# 	$(CC) $(OBJS) -o $@
+# # @$(CC) $(OBJS) $(INCLUDES) -o $@
 
-$(OBJECTS):	$(OBJDIR)/%.o :	$(SRCDIR)/%.cpp
-	@$(CC) $(FLAGS) -cpp $< -o $@
+# $(OBJS): $(OBJDIR)%.o : $(SRCDIR)%.cpp $(INCLUDES)
+# 	$(CC) $(FLAGS) -c $< -o $@
 
-all: $(NAME)
+# all: $(NAME)
+
+# clean:
+# 	@$(rm) $(OBJS)
+# 	@$(rm) $(wildcard $(INCDIR)/*.gch)
+
+# fclean: clean
+# 	@$(rm) $(NAME)
+
+# re: fclean all
+
+# .PHONY: all clean fclean re
+
+
+TARGET   = ft_container
+
+CC       = c++
+
+CFLAGS   = -Wall -Wextra -Werror -g3 -std=c++98 -std=c++11
+
+LINKER   = c++
+
+LDFLAGS  =
+
+INCDIR = inc/
+
+SRCDIR   = src/
+
+OBJDIR   = obj/
+
+SOURCES  := $(wildcard $(SRCDIR)*.cpp)
+
+OBJECTS  := $(SOURCES:$(SRCDIR)%.cpp=$(OBJDIR)%.o)
+
+INCLUDES := $(wildcard $(INCDIR)*.hpp)
+
+rm       = rm -f
+
+$(TARGET): $(OBJECTS)
+	$(LINKER) $(LDFLAGS) $(OBJECTS) -o $@
+
+$(OBJECTS): $(OBJDIR)%.o : $(SRCDIR)%.cpp $(INCLUDES)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+all: $(TARGET)
 
 clean:
-	@$(rm) $(OBJECTS)
-	@$(rm) *.gch
+	$(rm) $(OBJECTS)
 
 fclean: clean
-	@$(rm) $(NAME)
+	$(rm) $(TARGET)
 
 re: fclean all
 

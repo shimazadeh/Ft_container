@@ -1,19 +1,21 @@
 #ifndef _ITERATOR_HPP
 #define _ITERATOR_HPP
 
+#include "./iterator_traits.hpp"
+
 namespace	ft
 {
 	template<typename T>
 	class iterator
 	{
 		public:
-			typedef	T								value_type;
-			typedef T								&reference;
-			typedef const typename reference		const_reference;
-			typedef T								*pointer;
-			typedef const typename pointer			const_pointer;
-			typedef ft::iterator_traits<T>::difference_type	difference_type;
-			typedef std::size_t						size_type;
+			typedef	T													value_type;
+			typedef T													&reference;
+			typedef const T												&const_reference;
+			typedef T													*pointer;
+			typedef const pointer										const_pointer;
+			typedef typename ft::iterator_traits<T>::difference_type	difference_type;
+			typedef std::size_t											size_type;
 
 			//===============================Constructor Destructor========================================
 			iterator():_pointer(NULL){}
@@ -125,32 +127,32 @@ namespace	ft
 			//============================================Relational Operators===================================================
 			friend bool	operator==(const iterator	&lhs, const iterator	&rhs)
 			{
-				return (lhs._pointer == rhs._pointer)
+				return (lhs._pointer == rhs._pointer);
 			}
 
 			friend bool	operator!=(const iterator	&lhs, iterator	&rhs)
 			{
-				return (lhs._pointer != rhs._pointer)
+				return (lhs._pointer != rhs._pointer);
 			}
 
 			friend bool	operator<(iterator	&lhs, iterator	&rhs)
 			{
-				return (lhs._pointer < rhs._pointer)
+				return (lhs._pointer < rhs._pointer);
 			}
 
 			friend bool	operator<=(iterator	&lhs, iterator	&rhs)
 			{
-				return (lhs._pointer <= rhs._pointer)
+				return (lhs._pointer <= rhs._pointer);
 			}
 
 			friend bool	operator>(iterator	&lhs, iterator	&rhs)
 			{
-				return (lhs._pointer > rhs._pointer)
+				return (lhs._pointer > rhs._pointer);
 			}
 
 			friend bool	operator>=(iterator	&lhs, iterator	&rhs)
 			{
-				return (lhs._pointer >= rhs._pointer)
+				return (lhs._pointer >= rhs._pointer);
 			}
 
 		private:

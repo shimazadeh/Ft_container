@@ -13,8 +13,8 @@ namespace ft
 	{
 		public:
 		//==================================Member Types=================================================================
-		typedef	Container							container_type:
 		typedef	T									value_type;
+		typedef	Container							container_type;
 		typedef std::size_t							size_type;
 
 		//==================================Constructors================================================================
@@ -33,20 +33,20 @@ namespace ft
 			return (*this);
 		}
 		//==================================Element Access============================================================
-		value_type	&top(){return(c.back())}
+		value_type	&top(){return(c.back());}
 
-		const value_type	&top()const{return(c.back())}
+		const value_type	&top()const{return(c.back());}
 		//==================================Capacity===================================================================
-		bool	empty()const{return(c.empty())}
+		bool	empty()const{return(c.empty());}
 
-		size_type	size()const{return(c.size())}
+		size_type	size()const{return(c.size());}
 
 		//==================================Modifiers===================================================================
 		void	push(const value_type& value){return(c.push_back(value));}
 
 		void	pop(){c.pop_back();}
 
-		void swap(stack& other) noexcept
+		void	swap(stack& other) noexcept
 		{
 			Container	temp = c;
 
@@ -103,7 +103,7 @@ namespace ft
 	}
 
 	template <class T, class Container>
-	void swap (stack<T,Container>& x, stack<T,Container>& y) noexcept(noexcept(x.swap(y)))
+	void swap (ft::stack<T,Container>& x, ft::stack<T,Container>& y) noexcept
 	{
 		x.swap(y);
 	}

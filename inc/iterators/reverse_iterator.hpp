@@ -46,7 +46,7 @@ namespace	ft
 
 			reference operator*()const
 			{
-				Iter	tmp = current;
+				iterator_type	tmp = current;
 				return  (*--tmp);
 			}
 
@@ -55,10 +55,10 @@ namespace	ft
 				return(std::addressof(operator*()));
 			}
 
-			operator[](difference_type	n)const
-			{
-				return (base()[-n-1]);//from CPP page
-			} //???Not sure about this one
+			// operator[](difference_type	n)const
+			// {
+			// 	return (base()[-n-1]);//from CPP page
+			// } //???Not sure about this one
 
 		//========================================== other member operators ====================================================
 			reverse_iterator& operator++()
@@ -91,7 +91,7 @@ namespace	ft
 
 			reverse_iterator operator+( difference_type n ) const
 			{
-				revese_iterator	tmp = *this;
+				iterator_type	tmp = *this;
 
 				tmp->current -= n;
 				return (tmp);

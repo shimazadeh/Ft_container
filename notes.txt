@@ -37,13 +37,13 @@ understand:
 	2. map: [] doesnt get assigned: fixed but dont know why the first method didnt work?
 
 to do:
+	1. error with default template assignment only goes away with c++11
 	4. map: remove std::cout << *ite when ite is an iterator
 	5. vector & map: for operational comparison use std::equal
 	6. map at function is since c++11?? do I need to remove it??
-	3. notion of enable if: is it in the template or the argument?? : ft::enable_if<ft::is_integral<InputIt>::value>:: type
 
 to write:
-	4. for maps: insert (pos, value),
+	4. for maps: insert (pos, value)
 
 
 enable_if usage: iterators are address so they are integers. when you make template functions that are only

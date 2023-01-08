@@ -5,7 +5,7 @@
 
 namespace	ft
 {
-	template<typename Key, typename T, typename Compare = std::less<Key>>
+	template<typename Key, typename T, typename Compare = std::less<Key> >
 	struct tree_reverse_iterator
 	{
 		typedef	Key																	key_type;
@@ -29,13 +29,15 @@ namespace	ft
 			else
 				node = nullptr;
 		}
+		~tree_reverse_iterator()
+		{}
 
 		node_type &operator*()
 		{
 			return (*node);
 		}
 
-		tree_reverse_iterator &operator=(const tree_reverse_iterator &other)
+		tree_reverse_iterator&	operator=(const tree_reverse_iterator &other)
 		{
 			if (this != &other)
 			{
@@ -45,7 +47,8 @@ namespace	ft
 			return (*this);
 		}
 
-		const	T&	operator*()const noexcept;
+		// const	T&	operator*()const noexcept
+		// {}
 
 		tree_reverse_iterator&	operator++(int)//i++
 		{
@@ -67,7 +70,7 @@ namespace	ft
 			}
 			else//If the current node has a null right child Move up the tree until we have moved over a left child link
 			{
-				auto	node_up = node->parent;
+				node_type	*node_up = node->parent;
 				while(node->parent != nullptr && node == node_up->right)
 				{
 					// std::cout << "current parent" << *node_up << std::endl;
@@ -117,8 +120,8 @@ namespace	ft
 	};
 
 	//IM not sure about these functions:
-	template<typename Key, typename T, typename Compare = std::less<Key>>
-	bool operator==(tree_reverse_iterator<Key, T, Compare> &lhs, tree_reverse_iterator<Key, T, Compare> &rhs)
+	template<typename Key, typename T, typename Compare = std::less<Key> >
+	bool operator==(ft::tree_reverse_iterator<Key, T, Compare> &lhs, ft::tree_reverse_iterator<Key, T, Compare> &rhs)
 	{
 		if (lhs.is_end && rhs.is_end)
 			return true;
@@ -127,14 +130,14 @@ namespace	ft
 		return (*(lhs.node) == *(rhs.node));
 	}
 
-	template<typename Key, typename T, typename Compare = std::less<Key>>
-	bool operator!=(tree_reverse_iterator<Key, T, Compare>& lhs, tree_reverse_iterator<Key, T, Compare>& rhs)
+	template<typename Key, typename T, typename Compare = std::less<Key> >
+	bool operator!=(ft::tree_reverse_iterator<Key, T, Compare>& lhs, ft::tree_reverse_iterator<Key, T, Compare>& rhs)
 	{
 		return (!(lhs == rhs));
 	}
 
-	template<typename Key, typename T, typename Compare = std::less<Key>>
-	bool operator<(tree_reverse_iterator<Key, T, Compare>& lhs, tree_reverse_iterator<Key, T, Compare>& rhs)
+	template<typename Key, typename T, typename Compare = std::less<Key> >
+	bool operator<(ft::tree_reverse_iterator<Key, T, Compare>& lhs, ft::tree_reverse_iterator<Key, T, Compare>& rhs)
 	{
 		return (*(lhs.node) < *(rhs.node));
 	}

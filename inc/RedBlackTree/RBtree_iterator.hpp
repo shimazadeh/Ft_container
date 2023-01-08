@@ -5,7 +5,7 @@
 
 namespace	ft
 {
-	template<typename Key, typename T, typename Compare = std::less<Key>>
+	template<typename Key, typename T, typename Compare = std::less<Key> >
 	struct tree_iterator
 	{
 		typedef	Key																	key_type;
@@ -50,7 +50,8 @@ namespace	ft
 			return (*this);
 		}
 
-		const	T&	operator*()const noexcept;
+		// const	T&	operator*()const noexcept
+		// {}
 		//===============================================================================================================
 
 		tree_iterator&	operator++()
@@ -65,7 +66,7 @@ namespace	ft
 			}
 			else//If the current node has a null right child Move up the tree until we have moved over a left child link
 			{
-				auto	node_up = node->parent;
+				node_type	*node_up = node->parent;
 				while(node->parent != nullptr && node == node_up->right)
 				{
 					// std::cout << "current parent" << *node_up << std::endl;
@@ -123,7 +124,7 @@ namespace	ft
 	};
 
 	//IM not sure about these functions:
-	template<typename Key, typename T, typename Compare = std::less<Key>>
+	template<typename Key, typename T, typename Compare = std::less<Key> >
 	bool operator==(tree_iterator<Key, T, Compare> &lhs, tree_iterator<Key, T, Compare> &rhs)
 	{
 		if (lhs.is_end && rhs.is_end)
@@ -133,13 +134,13 @@ namespace	ft
 		return (*(lhs.node) == *(rhs.node));
 	}
 
-	template<typename Key, typename T, typename Compare = std::less<Key>>
+	template<typename Key, typename T, typename Compare = std::less<Key> >
 	bool operator!=(tree_iterator<Key, T, Compare>& lhs, tree_iterator<Key, T, Compare>& rhs)
 	{
 		return (!(lhs == rhs));
 	}
 
-	template<typename Key, typename T, typename Compare = std::less<Key>>
+	template<typename Key, typename T, typename Compare = std::less<Key> >
 	bool operator<(tree_iterator<Key, T, Compare>& lhs, tree_iterator<Key, T, Compare>& rhs)
 	{
 		return (*(lhs.node) < *(rhs.node));

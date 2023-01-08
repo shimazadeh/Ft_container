@@ -3,8 +3,13 @@
 
 #include <iostream>
 #include <memory>
+#include <stdexcept>
+#include <limits>
 #include "./iterators/iterator.hpp"
 #include "./iterators/reverse_iterator.hpp"
+#include "./utils/equal.hpp"
+#include "./utils/Is_Integral.hpp"
+#include "./utils/pair.hpp"
 
 namespace	ft
 {
@@ -19,13 +24,13 @@ namespace	ft
 			typedef	std::size_t										size_type;
 			typedef	std::ptrdiff_t									difference_type;
 			typedef value_type										&reference;
-			typedef	const reference									const_reference;
+			typedef	const value_type								&const_reference;
 			typedef	value_type										*pointer;
 			typedef	const pointer									const_pointer;
 			typedef	ft::iterator<T>									iterator;
 			typedef	ft::iterator<T>									const_iterator;
-			typedef	ft::reverse_iterator<typename iterator>			reverse_iterator;
-			typedef	ft::reverse_iterator<typename const_iterator>	const_reverse_iterator;
+			typedef	ft::reverse_iterator<iterator>					reverse_iterator;
+			typedef	ft::reverse_iterator<const_iterator>			const_reverse_iterator;
 
 		//========================================Constructors==========================================================
 
@@ -41,9 +46,10 @@ namespace	ft
 					_alloc.construct(arr + i, value);
 			}
 
-			// template<class InputIterator , class = typename ft::enable_if<ft::is_integral<InputIt>::value>:: type>//this is from reference page
 			template<class InputIterator>
-			vector(InputIterator first, InputIterator last, const allocator_type &alloc = allocator_type(), ft::enable_if<ft::is_integral<InputIterator>::value>:: type == 0):arr(NULL), size_allocated(0), size_filled(0), _alloc(alloc)
+			vector(InputIterator first, InputIterator last, const allocator_type &alloc = allocator_type(),
+			typename ft::enable_if<ft::is_integral<InputIterator>::value>:: type = 0):
+			arr(NULL), size_allocated(0), size_filled(0), _alloc(alloc)
 			{
 				size_filled = last - first;
 				size_allocated = size_filled * 2;
@@ -83,12 +89,12 @@ namespace	ft
 			void assign (size_type n, const value_type& val)
 			{
 				this->clear();
-				for (size_type i = 0; i < count; i++)
-					push_back(*value);
+				for (size_type i = 0; i < n; i++)
+					push_back(*val);
 			}
 
-			template<class InputIterator , class = typename ft::enable_if<ft::is_integral<InputIt>::value>:: type>
-			void assign (InputIterator first, InputIterator last)
+			template<class InputIterator>
+			void assign (InputIterator first, InputIterator last, typename ft::enable_if<ft::is_integral<InputIterator>::value>:: type = 0)
 			{
 				this->clear();
 				for(iterator i = first; i != last; i++)
@@ -101,7 +107,9 @@ namespace	ft
 			}
 
 			size_type capacity() const
-			{}
+			{
+				return (size_allocated);
+			}
 
 		//======================================Element access=============================================================
 			reference back() {return (&arr[size_filled - 1]);}
@@ -113,7 +121,7 @@ namespace	ft
 			reference at (size_type n)
 			{
 				if (n >= size_filled)
-					throw std::out_of_range();
+					throw std::out_of_range("INDEX OUT OF RANGE");
 				else
 					return (arr[n]);
 			}
@@ -121,16 +129,20 @@ namespace	ft
 			const_reference at (size_type n) const
 			{
 				if (n >= size_filled)
-					throw std::out_of_range();
+					throw std::out_of_range("INDEX OUT OF RANGE");
 				else
-					return (const arr[n]);
+					return (arr[n]);
 			}
 
 			reference	operator[](size_type n)
-			{}
+			{
+				return (arr[n]);
+			}
 
 			const_reference	operator[](size_type n)const
-			{}
+			{
+				return (arr[n]);
+			}
 		//========================================Iterators================================================================
 			iterator				begin(void){return (iterator(&arr[0]));}
 			iterator				end(void){return (iterator(&arr[size_filled]));}
@@ -176,25 +188,20 @@ namespace	ft
 				return (std::numeric_limits<size_type>::max());
 			}
 
-			size_type		size_allocated(void)const //returns the size of the storage sppace allocated size_filledly
-			{
-				return (this->size_allocated)
-			}
-
 		//=======================================Modifiers================================================================
 			void			clear()//erases all elements, after this call size returns 0
 			{
-				for (iterator i = 0; i != arr.end(); i++)
+				for (iterator i = 0; i != this->end(); i++)
 					_alloc.destroy(&(*i));
 				size_filled = 0;
 			}
 
 			iterator	insert(iterator pos, const value_type& value)
 			{
-				vector	new_vec(arr.begin() + pos, arr.end());
+				vector	new_vec(this->begin() + pos, this->end());
 
 				if (size_filled == size_allocated)
-					extend(size_filled * 2);
+					expand(size_filled * 2);
 				size_filled++;
 
 				for (int i = 0; i < new_vec.size(); i++)
@@ -204,15 +211,15 @@ namespace	ft
 				for (iterator tmp = new_vec.begin(); tmp != new_vec.end(); tmp++)
 					this->push_back(*tmp);
 
-				return (arr.begin() + pos);
+				return (this->begin() + pos);
 			}//insert elements at a specific location
 
 			void	insert(iterator pos, size_type count, const value_type& value)
 			{
-				vector				new_vec(arr.begin() + pos, arr.end());
+				vector				new_vec(this->begin() + pos, this->end());
 
 				if (size_filled + count > size_allocated)
-					extend((size_filled * 2) + count);
+					expand((size_filled * 2) + count);
 				size_filled++;
 
 				for (int i = 0; i < new_vec.size(); i++)
@@ -224,19 +231,19 @@ namespace	ft
 				for (iterator tmp = new_vec.begin(); tmp != new_vec.end(); tmp++)
 					this->push_back(*tmp);
 
-				return (arr.begin()+ pos);
+				return (this->begin()+ pos);
 			}
 
 			template<class InputIterator>//rewrite this, its wrong!!
-			void	insert(iterator pos, InputIterator first, InputIterator last)
+			void	insert(iterator pos, InputIterator first, InputIterator last, typename ft::enable_if<ft::is_integral<InputIterator>::value>:: type = 0)
 			{
-				vector				new_vec(arr.begin() + pos, arr.end());
+				vector				new_vec(this->begin() + pos, this->end());
 				size_type			diff = 0;
 
 				for (iterator i = first; i != last; i++)
 					diff++;
 				if (size_filled + diff > size_allocated)
-					extend((size_filled * 2) + diff);
+					expand((size_filled * 2) + diff);
 				size_filled++;
 
 				for (int i = 0; i < new_vec.size(); i++)
@@ -248,7 +255,7 @@ namespace	ft
 				for (iterator tmp = new_vec.begin(); tmp != new_vec.end(); tmp++)
 					this->push_back(*tmp);
 
-				return (arr.begin() + pos);
+				return (this->begin() + pos);
 			}
 
 			iterator		erase(iterator pos)
@@ -257,7 +264,7 @@ namespace	ft
 				iterator	j = 0;
 
 				new_arr = _alloc.allocate(size_allocated);
-				for (iterator i = 0; i != arr.end() ; i++)
+				for (iterator i = 0; i != end() ; i++)
 				{
 					if (i != pos)
 						_alloc.construct(new_arr + i , *(arr + j));
@@ -276,7 +283,7 @@ namespace	ft
 				iterator	j = 0;
 
 				new_arr = _alloc.allocate(size_allocated);
-				while (i != arr.end())
+				while (i != end())
 				{
 					if (i < first && i >= last)
 						_alloc.construct(new_arr + i , *(arr + j));
@@ -294,11 +301,11 @@ namespace	ft
 				if (size_allocated == 0)
 				{
 					arr = _alloc.allocate(1);
-					size_allocated++
+					size_allocated++;
 				}
 				if (size_filled == size_allocated)
 				{
-					new_arr = _alloc.allocate(size_filled + 1);
+					T	*new_arr = _alloc.allocate(size_filled + 1);
 					for (int i = 0; i < size_filled; i++)
 					{
 						_alloc.construct(new_arr + i, arr[i]);
@@ -322,19 +329,20 @@ namespace	ft
 			void			resize(size_type count, value_type val = value_type())
 			{
 				value_type	*new_arr;
+				(void)val;
 
 				new_arr = _alloc.allocate(count);
-				if (this.size() > count)//delete the last elements (this.size() - count)
+				if (size() > count)//delete the last elements (this.size() - count)
 				{
 					for (size_type i = 0; i < count; i++)
 						new_arr[i] = arr[i];
 
 				}
-				else if (this.size() < count)//insert empty elements at the end
+				else if (size() < count)//insert empty elements at the end
 				{
 					for (size_type i = 0; i < size_filled; i++)
 						new_arr[i] = arr[i];
-					new_arr.insert(new_arr.end(), count - size_filled, 0); //filling the rest with 0
+					new_arr->insert(new_arr->end(), count - size_filled, 0); //filling the rest with 0
 
 				}
 				_alloc.deallocate(arr);
@@ -343,7 +351,6 @@ namespace	ft
 				size_filled = count;
 			}
 
-			//***there is another swap type that is a non member function???
 			void			swap(vector &other)
 			{
 				T		*tmp_arr = arr;
@@ -392,8 +399,8 @@ namespace	ft
 	template <class T, class Alloc>
 	bool	operator==(const vector<T, Alloc> &other, const vector<T, Alloc> &src)
 	{
-		iterator	other_b = other.begin();
-		iterator	src_b = src.begin();
+		ft::iterator<T>	other_b = other.begin();
+		ft::iterator<T>	src_b = src.begin();
 
 		if (other.size() != src.size())
 			return false;
@@ -416,8 +423,8 @@ namespace	ft
 	template <class T, class Alloc>
 	bool	operator<(const vector<T, Alloc> &other, const vector<T, Alloc> &src)
 	{
-		iterator	other_b = other.begin();
-		iterator	src_b = src.begin();
+		ft::iterator<T>	other_b = other.begin();
+		ft::iterator<T>	src_b = src.begin();
 
 		if (other == src)
 			return false;
@@ -442,7 +449,7 @@ namespace	ft
 	{
 		if (other == src)
 			return false;
-		return (!(other_b < src_b));
+		return (!(other < src));
 	}
 
 	template <class T, class Alloc>

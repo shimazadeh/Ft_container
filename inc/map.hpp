@@ -7,11 +7,13 @@
 #include "./RedBlackTree/RBtree_ReverseIterator.hpp"
 #include "./RedBlackTree/RBtree_node.hpp"
 #include "./RedBlackTree/RBtree.hpp"
+#include "./utils/equal.hpp"
+#include "./utils/Is_Integral.hpp"
 #include "./utils/pair.hpp"
 
 namespace ft
 {
-	template<typename Key, typename T, typename Compare = std::less<Key>, typename Allocator = std::allocator<ft::pair<const Key, T>> >
+	template<typename Key, typename T, typename Compare = std::less<Key>, typename Allocator = std::allocator<ft::pair<const Key, T> > >
 	class map
 	{
 		public:
@@ -56,7 +58,9 @@ namespace ft
 		{}
 
 		template< typename InputIterator >
-		map(InputIterator first, InputIterator last, const Compare& comp = Compare(), const Allocator& alloc = Allocator()): _bstree(bstree<Key, T, Compare, Allocator>()), _cmp(comp), _alloc(alloc)
+		map(InputIterator first, InputIterator last, const Compare& comp = Compare(),
+		const Allocator& alloc = Allocator(), typename ft::enable_if<ft::is_integral<InputIterator>::value>:: type = 0):
+		_bstree(bstree<Key, T, Compare, Allocator>()), _cmp(comp), _alloc(alloc)
 		{
 			this->insert(first, last);
 		}
@@ -209,11 +213,13 @@ namespace ft
 
 		iterator insert( iterator pos, const value_type& value )
 		{
+			(void)pos;
+			(void)value;
 			//????
 		}
 
 		template< typename InputIterator >
-		void insert( InputIterator first, InputIterator last )
+		void insert( InputIterator first, InputIterator last, typename ft::enable_if<ft::is_integral<InputIterator>::value>:: type = 0)
 		{
 			while (first != last)
 			{
@@ -358,10 +364,10 @@ namespace ft
 		template <class Key, class T, class Compare, class Allocator>
 		bool operator==( const ft::map<Key,T,Compare,Allocator>& lhs, const ft::map<Key,T,Compare,Allocator>& rhs )
 		{
-			ft::map<Key,T,Compare,Allocator>::iterator	lhs_start = lhs.begin();
-			ft::map<Key,T,Compare,Allocator>::iterator	lhs_end = lhs.end();
-			ft::map<Key,T,Compare,Allocator>::iterator	rhs_start = rhs.begin();
-			ft::map<Key,T,Compare,Allocator>::iterator	rhs_end = rhs.end();
+			typename map<Key,T,Compare,Allocator>::iterator	lhs_start = lhs.begin();
+			typename map<Key,T,Compare,Allocator>::iterator	lhs_end = lhs.end();
+			typename map<Key,T,Compare,Allocator>::iterator	rhs_start = rhs.begin();
+			typename map<Key,T,Compare,Allocator>::iterator	rhs_end = rhs.end();
 
 			while (lhs_start != lhs_end && rhs_start != rhs_end)
 			{
@@ -384,10 +390,10 @@ namespace ft
 		template <class Key, class T, class Compare, class Allocator>
 		bool operator<( const ft::map<Key,T,Compare,Allocator>& lhs, const ft::map<Key,T,Compare,Allocator>& rhs )
 		{
-			ft::map<Key,T,Compare,Allocator>::iterator	lhs_start = lhs.begin();
-			ft::map<Key,T,Compare,Allocator>::iterator	lhs_end = lhs.end();
-			ft::map<Key,T,Compare,Allocator>::iterator	rhs_start = rhs.begin();
-			ft::map<Key,T,Compare,Allocator>::iterator	rhs_end = rhs.end();
+			typename ft::map<Key,T,Compare,Allocator>::iterator	lhs_start = lhs.begin();
+			typename ft::map<Key,T,Compare,Allocator>::iterator	lhs_end = lhs.end();
+			typename ft::map<Key,T,Compare,Allocator>::iterator	rhs_start = rhs.begin();
+			typename ft::map<Key,T,Compare,Allocator>::iterator	rhs_end = rhs.end();
 
 			if (lhs == rhs)
 				return false;
