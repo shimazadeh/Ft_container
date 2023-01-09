@@ -50,7 +50,7 @@ TARGET   = ft_container
 
 CC       = c++
 
-CFLAGS   = -Wall -Wextra -Werror -g3 -std=c++98 -std=c++11
+CFLAGS   = -Wall -Wextra -Werror -g3 -std=c++98
 
 LINKER   = c++
 

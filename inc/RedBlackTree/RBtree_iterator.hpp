@@ -124,7 +124,7 @@ namespace	ft
 	};
 
 	//IM not sure about these functions:
-	template<typename Key, typename T, typename Compare = std::less<Key> >
+	template<typename Key, typename T, typename Compare>
 	bool operator==(tree_iterator<Key, T, Compare> &lhs, tree_iterator<Key, T, Compare> &rhs)
 	{
 		if (lhs.is_end && rhs.is_end)
@@ -134,13 +134,13 @@ namespace	ft
 		return (*(lhs.node) == *(rhs.node));
 	}
 
-	template<typename Key, typename T, typename Compare = std::less<Key> >
+	template<typename Key, typename T, typename Compare>
 	bool operator!=(tree_iterator<Key, T, Compare>& lhs, tree_iterator<Key, T, Compare>& rhs)
 	{
 		return (!(lhs == rhs));
 	}
 
-	template<typename Key, typename T, typename Compare = std::less<Key> >
+	template<typename Key, typename T, typename Compare>
 	bool operator<(tree_iterator<Key, T, Compare>& lhs, tree_iterator<Key, T, Compare>& rhs)
 	{
 		return (*(lhs.node) < *(rhs.node));

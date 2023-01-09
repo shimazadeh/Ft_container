@@ -42,17 +42,9 @@ namespace ft
 		size_type	size()const{return(c.size());}
 
 		//==================================Modifiers===================================================================
-		void	push(const value_type& value){return(c.push_back(value));}
+		void	push(const value_type& value){c.push_back(value);}
 
 		void	pop(){c.pop_back();}
-
-		void	swap(stack& other) noexcept
-		{
-			Container	temp = c;
-
-			c = other.c;
-			other.c = temp;
-		}
 
 		private:
 			Container	c;
@@ -102,10 +94,5 @@ namespace ft
 		return (!(lhs < rhs));
 	}
 
-	template <class T, class Container>
-	void swap (ft::stack<T,Container>& x, ft::stack<T,Container>& y) noexcept
-	{
-		x.swap(y);
-	}
 }//namespace end
 #endif

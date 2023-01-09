@@ -52,13 +52,13 @@ namespace	ft
 
 			pointer	operator->()const
 			{
-				return(std::addressof(operator*()));
+				return(&(operator*()));
 			}
 
-			// operator[](difference_type	n)const
-			// {
-			// 	return (base()[-n-1]);//from CPP page
-			// } //???Not sure about this one
+			reference operator[](difference_type	n)const
+			{
+				return (base()[-n-1]);//from CPP page
+			}
 
 		//========================================== other member operators ====================================================
 			reverse_iterator& operator++()

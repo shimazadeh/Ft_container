@@ -533,7 +533,7 @@ namespace ft
 		}
 
 		private:
-			node_type					*root = nullptr;
+			node_type					*root;
 			size_type					_size;
 			key_compare					_cmp;
 			allocator_type				_nodeAlloc;
