@@ -8,10 +8,12 @@ namespace ft
 	template<typename InputIt1, typename InputIt2>
 	bool	equal(InputIt1 first1, InputIt2 last1, InputIt2 first2)
 	{
-		for (ft::iterator<InputIt1> i = first1; i != last1; i++)
+		while(first1 != last1)
 		{
-			if (*i != *(first2 + (i - first1)))
+			if (*first1 != *first2)
 				return false;
+			first1++;
+			first2++;
 		}
 		return true;
 	};
@@ -19,14 +21,19 @@ namespace ft
 	template<typename InputIt1, typename InputIt2>
 	bool	equal(InputIt1 first1, InputIt1 last1, InputIt2 first2, InputIt2 last2)
 	{
+		ft::iterator<InputIt1> i = first1;
+		ft::iterator<InputIt2> j = first2;
+
 		if (last1 - first1 != last2 - first2)
 			return false;
-		for (ft::iterator<InputIt1> i = first1 , j = first2; i != last1 && j != last2; i++, j++)//rewrite this
+		while (i != last1 && j != last2 && *i == *j)
 		{
-			if (*first1 != *first2)
-				return false;
+			i++;
+			j++;
 		}
-		return true;
+		if (i == last1 && j == last2)
+			return true;
+		return false;
 	};
 
 	template<bool B, typename T = void >

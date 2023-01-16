@@ -17,11 +17,18 @@ difference between struct and class
 	So if a type has little need for private data members it may make more sense to implement
 	it as a struct.
 
+difference between deallocate and destroy:
+	Destroying the individual elements ensures that their destructors are called and therefore
+	they have a chance to free any resources they own. Simply deallocating the memory would not
+	call the destructor of the object placed in that memory.
+
 why Iterator trait is structure but reverse_iterator is a calss???
 what is noexcept in some functions prototype??
 what is the benefit of move_constructors?
 what does auto type mean?
 should I make the destructors of all my containers virtual???
+use of explicit??
+
 
 tester:
 https://github.com/Mazoise/42TESTERS-CONTAINERS
@@ -33,14 +40,15 @@ https://www.programiz.com/dsa/red-black-tree#:~:text=Left%20Rotate,arrangements%
 https://daveparillo.github.io/cisc187-reader/trees/bst.html
 
 
-understand:
+understand the bugs:
 	2. map: [] doesnt get assigned: fixed but dont know why the first method didnt work?
 
 to do:
-	1. error with default template assignment only goes away with c++11
 	4. map: remove std::cout << *ite when ite is an iterator
 	5. vector & map: for operational comparison use std::equal
 	6. map at function is since c++11?? do I need to remove it??
+	7. clear function of map
+	8. insert of vectors dont compile correctly
 
 to write:
 	4. for maps: insert (pos, value)

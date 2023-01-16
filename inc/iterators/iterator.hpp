@@ -14,15 +14,14 @@ namespace	ft
 			typedef const T												&const_reference;
 			typedef T													*pointer;
 			typedef const pointer										const_pointer;
-			typedef typename ft::iterator_traits<T>::difference_type	difference_type;
+			typedef std::ptrdiff_t										difference_type;
 			typedef std::size_t											size_type;
 
 			//===============================Constructor Destructor========================================
 			iterator():_pointer(NULL){}
 
-			iterator(const pointer	p)
+			iterator(const pointer	p):_pointer(p)
 			{
-				_pointer = new pointer(p);
 			}
 
 			iterator(const iterator &other)
@@ -40,7 +39,7 @@ namespace	ft
 				return (*this);
 			}
 
-			pointer		getpointer(void)const {return (_pointer);}
+			pointer		base(void)const {return (_pointer);}
 
 			reference	operator*()const {return (*_pointer);}
 			pointer		operator->()const {return (_pointer);}
@@ -75,11 +74,11 @@ namespace	ft
 				return (tmp);
 			}
 
-			iterator	operator+(int n)//should I write this with difference_type?? similar to reverse iterator
+			iterator	operator+(int n)
 			{
 				iterator	tmp = *this;
 
-				tmp->_pointer += n;
+				tmp._pointer += n;
 				return (tmp);
 			}
 
@@ -87,7 +86,7 @@ namespace	ft
 			{
 				iterator	tmp = *this;
 
-				tmp->_pointer -= n;
+				tmp._pointer -= n;
 				return (tmp);
 			}
 
@@ -107,57 +106,45 @@ namespace	ft
 
 			friend iterator	operator+(int n, const iterator	&rhs)
 			{
-				return (vector_iterator(rhs._pointer + n));
-			}
-
-			friend difference_type	operator+(const iterator	&lhs, const iterator	&rhs)
-			{
-				return (vector_iterator(rhs._pointer + lhs._pointer));
+				return (iterator(rhs._pointer + n));
 			}
 
 			friend iterator	operator-(int n, const iterator	&rhs)
 			{
-				return (vector_iterator(rhs._pointer - n));
+				return (iterator(rhs._pointer - n));
 			}
 
-			friend difference_type	operator-(const iterator	&lhs, const iterator	&rhs)
+			friend difference_type	operator-(const iterator &rhs, const iterator	&lhs)
 			{
-				return (vector_iterator(lhs._pointer - rhs._pointer));
+				return (rhs.base() - lhs.base());
 			}
+
+			friend iterator	operator+(difference_type n, const iterator	&lhs)
+			{
+				return (iterator(lhs.base() + n));
+			}
+
 			//============================================Relational Operators===================================================
-			friend bool	operator==(const iterator	&lhs, const iterator	&rhs)
-			{
-				return (lhs._pointer == rhs._pointer);
-			}
+			bool	operator==(const iterator	&lhs)const
+			{return (lhs._pointer == _pointer);}
 
-			friend bool	operator!=(const iterator	&lhs, iterator	&rhs)
-			{
-				return (lhs._pointer != rhs._pointer);
-			}
+			bool	operator!=(const iterator	&lhs)const
+			{return (lhs._pointer != _pointer);}
 
-			friend bool	operator<(iterator	&lhs, iterator	&rhs)
-			{
-				return (lhs._pointer < rhs._pointer);
-			}
+			bool	operator<(iterator	&lhs)const
+			{return (lhs._pointer < _pointer);}
 
-			friend bool	operator<=(iterator	&lhs, iterator	&rhs)
-			{
-				return (lhs._pointer <= rhs._pointer);
-			}
+			bool	operator<=(iterator	&lhs)const
+			{return (lhs._pointer <= _pointer);}
 
-			friend bool	operator>(iterator	&lhs, iterator	&rhs)
-			{
-				return (lhs._pointer > rhs._pointer);
-			}
+			bool	operator>(iterator	&lhs)const
+			{return (lhs._pointer > _pointer);}
 
-			friend bool	operator>=(iterator	&lhs, iterator	&rhs)
-			{
-				return (lhs._pointer >= rhs._pointer);
-			}
+			bool	operator>=(iterator	&lhs)const
+			{return (lhs._pointer >= _pointer);}
 
 		private:
 			pointer	_pointer;
 	};
-
 }
 #endif
