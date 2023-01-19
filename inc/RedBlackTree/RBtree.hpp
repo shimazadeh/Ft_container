@@ -8,7 +8,7 @@
 
 namespace ft
 {
-	template<typename Key, typename T, typename Compare = std::less<Key>, typename Allocator = std::allocator<ft::pair<const Key, T> > >
+	template<typename Key, typename T, typename Compare = std::less<Key>, typename Allocator = std::allocator<ft::pair<Key, T> > >
 	class bstree
 	{
 		public:
@@ -24,10 +24,10 @@ namespace ft
 		bstree():root(nullptr), _size(0), _nodeAlloc(Allocator())
 		{}
 
-		explicit	bstree(const mapped_type &value)
-		{
-			root = new node_type(value, nullptr, nullptr, nullptr);
-		}
+		// explicit	bstree(const mapped_type &value)
+		// {
+		// 	root = new node_type(value);
+		// }
 
 		~bstree()
 		{
@@ -48,8 +48,6 @@ namespace ft
 			return (*this);
 		}
 		//==================================================member functions====================================================
-		//this function finds the node with minimum value of the element
-
 		node_type	*min_element(node_type *node, bool	&if_end) const
 		{
 			if (node == nullptr || node->left == nullptr)
@@ -97,31 +95,44 @@ namespace ft
 		}
 
 		//finds the node from mapped value
-		node_type	*find_node(const mapped_type&	key, node_type	*to_search)
+		node_type	*find_node_map(const mapped_type&	map, node_type	*to_search)const
 		{
-			if (to_search == nullptr || to_search->get_maptype() == key)
+			if (to_search == nullptr || to_search->get_maptype() == map)
 				return (to_search);
-			if(_cmp(key, to_search->get_maptype()))//if its less we go to the left branch
-				return (find_node(key, to_search->left));
-			return (find_node(key, to_search->right));
+			if(_cmp(map, to_search->get_maptype()))//if its less we go to the left branch
+				return (find_node_map(map, to_search->left));
+			return (find_node_map(map, to_search->right));
 		}
 
 		//find the node form the key value
-		node_type	*find_node(const key_type&	key, node_type	*to_search)
+		node_type	*find_node_key(const key_type&	key, node_type	*to_search) const
 		{
 			if (to_search == nullptr || to_search->get_key() == key)
 				return (to_search);
 			if(_cmp(key, to_search->get_key()))//if its less we go to the left branch
-				return (find_node(key, to_search->left));
-			return (find_node(key, to_search->right));
+				return (find_node_key(key, to_search->left));
+			return (find_node_key(key, to_search->right));
 		}
 
 		//make insert works with pair or key or mapped value????
 
-		template <typename any>
-		void	insert(const any &key)
+		void	insert_by_key(const Key 	&key, node_type	*parent = nullptr)
 		{
-			node_type	*new_node = new node_type(key, nullptr, nullptr, nullptr, "r");
+			node_type	*new_node = new node_type(ft::make_pair(key, mapped_type()), "r");
+
+			insert(new_node , parent);
+		}
+
+		void	insert_by_value(const value_type &value, node_type	*parent = nullptr)
+		{
+			node_type	*new_node = new node_type(value, "r");
+
+			insert(new_node, parent);
+		}
+
+		void	insert(node_type	*new_node, node_type	*parent = nullptr)
+		{
+			// node_type	*new_node = new node_type(key, "r");
 			node_type	*tmp = root;
 			node_type	*tmp1 = nullptr;
 
@@ -132,13 +143,18 @@ namespace ft
 			}
 			else//we create a new node as a leaf
 			{
-				while(tmp != nullptr)//search to find the right position
+				if (parent != nullptr)
+					tmp1 = parent;
+				else
 				{
-					tmp1 = tmp;
-					if (tmp->value.first < new_node->value.first)
-						tmp = tmp->right;
-					else
-						tmp = tmp->left;
+					while(tmp != nullptr)//search to find the right position
+					{
+						tmp1 = tmp;
+						if (tmp->value.first < new_node->value.first)
+							tmp = tmp->right;
+						else
+							tmp = tmp->left;
+					}
 				}
 				new_node->parent = tmp1;
 				if (tmp1->value.first < new_node->value.first)
@@ -217,16 +233,27 @@ namespace ft
 			}
 		}
 
-		template <typename any>
-		void	erase(const any &key)
+		void	erase_by_key(const Key 	&key)
 		{
-			node_type	*tmp = nullptr;//to iterate over root
+			node_type	*tmp = find_node_key(key, root);
+
+			erase(tmp);
+		}
+
+		void	erase_by_map(const mapped_type &map)
+		{
+			node_type	*tmp = find_node_map(map, root);
+
+			erase(tmp);
+		}
+
+		void	erase(node_type *tmp)
+		{
 			node_type	*y = nullptr;//used to save the successor of to_delete
 			node_type	*tmp1 = nullptr;//used if to_delete has two childs
 
 			if (root == nullptr)
 				return ;
-			tmp = find_node(key);
 			if (tmp != nullptr)
 			{
 				if (tmp->left == nullptr || tmp->right == nullptr)//a leaf or one child
@@ -261,6 +288,7 @@ namespace ft
 				if (y->color == "b")
 					erase_fix(tmp1);
 				_size--;
+				to_delete(tmp);
 			}
 		}
 
@@ -268,14 +296,14 @@ namespace ft
 		{
 			node_type	*tmp;//set as the parent sibiling
 
-			while(to_fix != root && to_fix->color == "b")
+			while(to_fix && to_fix != root && to_fix->color == "b")
 			{
 				if (to_fix->parent->left == to_fix)
 				{
 					tmp = to_fix->parent->right;
 					if (tmp->color == "r")
 					{
-						tmp->color == "b";
+						tmp->color = "b";
 						to_fix->parent->color = "r";
 						left_rotate(to_fix->parent);
 						tmp = to_fix->parent->right;
@@ -289,7 +317,7 @@ namespace ft
 					{
 						if (tmp->right->color == "b")
 						{
-							tmp->left->color == "b";
+							tmp->left->color = "b";
 							right_rotate(tmp);
 							tmp = to_fix->parent->right;
 						}
@@ -442,20 +470,43 @@ namespace ft
 
 		void	clear_all()
 		{
-			// if (root->right)
-			// 	to_delete(root->right);
-			// if (root->left)
-			// 	to_delete(root->left);
-			// to_delete(root);
-			// _size--;
+			if (root)
+				clear_recursive(root);
+			root = nullptr;
 		}
 
-		// void	to_delete(node_type	*node)
-		// {
-		// 	_nodeAlloc.destroy(node->value);
-		// 	_nodeAlloc.deallocate(node, 1);
-		// }
+		void	clear_recursive(node_type	*head)
+		{
+			if (head->right != nullptr)
+				clear_recursive(head->right);
+			if (head->left != nullptr)
+				clear_recursive(head->left);
+			to_delete(head);
+			_size--;
+		}
 
+		void	to_delete(node_type	*node)
+		{
+			_valueAlloc.destroy(&node->value);
+			_nodeAlloc.deallocate(node, 1);
+		}
+
+		void	swap(bstree &other)
+		{
+			bstree	tmp = *this;
+
+			root = other.root;
+			_size = other._size;
+			_cmp = other._cmp;
+			_valueAlloc = other._valueAlloc;
+			_nodeAlloc = other._nodeAlloc;
+
+			other.root = tmp.root;
+			other._size = tmp._size;
+			other._cmp = tmp._cmp;
+			other._valueAlloc = tmp._valueAlloc;
+			other._nodeAlloc = tmp._nodeAlloc;
+		}
 		//=================================================== Debugging tools =================================================================================
 		void	print(node_type	*node)
 		{
@@ -475,6 +526,15 @@ namespace ft
 						std:: cout << node->value.first;
 						std::cout << ":" << node->value.second <<"\033[0m\n";
 					}
+				}
+				else
+				{
+					if (node->parent->right == node)
+						std:: cout << "\033[1;32mRightNode-----";
+					if (node->parent->left == node)
+						std:: cout << "\033[1;32mLeftNode-----";
+					std:: cout << node->value.first;
+					std::cout << ":" << node->value.second <<"\033[0m\n";
 				}
 				if (node->right != nullptr)
 				{
@@ -533,10 +593,11 @@ namespace ft
 		}
 
 		private:
-			node_type					*root;
-			size_type					_size;
-			key_compare					_cmp;
-			allocator_type				_nodeAlloc;
+			node_type											*root;
+			size_type											_size;
+			key_compare											_cmp;
+			std::allocator<ft::pair<Key, T> >					_valueAlloc;
+			std::allocator<node_type>							_nodeAlloc;
 	};
 }
 

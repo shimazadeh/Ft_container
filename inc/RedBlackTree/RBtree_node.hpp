@@ -35,58 +35,8 @@ namespace ft
 			value = ft::make_pair(Key(), mapped_type());
 		}
 
-		tree_node(const mapped_type &_value, node_type *_left, node_type *_right, node_type *_parent, std::string _color):value(ft::make_pair(Key(), _value)), color(_color)
+		tree_node(const value_type &_value, std::string _color): value(_value),  left(nullptr), right(nullptr), parent(nullptr), color(_color)
 		{
-			if (_left != nullptr)
-				left = new node_type(_left->value, _left->right, _left->left, _left->parent, _left->color);
-			else
-				left = nullptr;
-
-			if (_right != nullptr)
-				right = new node_type(_right->value, _right->right, _right->left, _right->parent, _right->color);
-			else
-				right = nullptr;
-
-			if (_parent != nullptr)
-				parent = new node_type(_parent->value, _parent->right, _parent->left, _parent->parent, _parent->color);
-			else
-				parent = nullptr;
-		}
-
-		tree_node(const key_type &_value, node_type *_left, node_type *_right, node_type *_parent, std::string _color):value(ft::make_pair(_value, mapped_type())), color(_color)
-		{
-			if (_left != nullptr)
-				left = new node_type(_left->value, _left->right, _left->left, _left->parent, _left->color);
-			else
-				left = nullptr;
-
-			if (_right != nullptr)
-				right = new node_type(_right->value, _right->right, _right->left, _right->parent, _right->color);
-			else
-				right = nullptr;
-
-			if (_parent != nullptr)
-				parent = new node_type(_parent->value, _parent->right, _parent->left, _parent->parent, _parent->color);
-			else
-				parent = nullptr;
-		}
-
-		tree_node(const value_type &_value, node_type *_left, node_type *_right, node_type *_parent, std::string _color): value(_value), color(_color)
-		{
-			if (_left != nullptr)
-				left = new node_type(_left->value, _left->right, _left->left, _left->parent, _left->color);
-			else
-				left = nullptr;
-
-			if (_right != nullptr)
-				right = new node_type(_right->value, _right->right, _right->left, _right->parent, _right->color);
-			else
-				right = nullptr;
-
-			if (_parent != nullptr)
-				parent = new node_type(_parent->value, _parent->right, _parent->left, _parent->parent, _parent->color);
-			else
-				parent = nullptr;
 		}
 
 		tree_node(const node_type &other)
@@ -126,7 +76,7 @@ namespace ft
 		std::string	get_color() const {return (color);}
 		bool		isNil()const
 		{
-			return (this->parent == this);//smart mf you are!
+			return parent == this;//doesnt work
 		}
 	};
 
@@ -136,7 +86,7 @@ namespace ft
 	{
 		if (lhs.get_key() == rhs.get_key())
 		{
-			if (lhs.get_maptype() == lhs.get_maptype())
+			if (lhs.get_maptype() == rhs.get_maptype())
 				return true;
 		}
 		return false;
@@ -165,7 +115,6 @@ namespace ft
 	}
 
 	template<typename Key, typename T, typename Compare, typename Allocator>
-	// template<typename Key, typename T, typename Compare = std::less<Key>, typename Allocator = std::allocator<ft::pair<const Key, T> > >
 	bool	operator<=(const tree_node<Key, T, Compare, Allocator>	&lhs, const tree_node<Key, T, Compare, Allocator>	&rhs)
 	{
 		return (!(lhs > rhs));

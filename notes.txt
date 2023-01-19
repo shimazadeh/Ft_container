@@ -10,6 +10,9 @@ template functions:
 
 	2. there is no difference between using <typename T> OR <class T>
 
+definition of lower bound and uppper bound:
+	Lower bound: first element that is greater-or-equal.
+	Upper bound: first element that is strictly greater.
 
 difference between struct and class
 	3.class and struct are almost the same in C++, the difference being the default access
@@ -22,12 +25,18 @@ difference between deallocate and destroy:
 	they have a chance to free any resources they own. Simply deallocating the memory would not
 	call the destructor of the object placed in that memory.
 
-why Iterator trait is structure but reverse_iterator is a calss???
-what is noexcept in some functions prototype??
-what is the benefit of move_constructors?
-what does auto type mean?
-should I make the destructors of all my containers virtual???
-use of explicit??
+**	The new operator should only be used if the data object should remain in memory until delete is called.
+	Otherwise if the new operator is not used, the object is automatically destroyed when it goes out of scope.
+
+
+enable_if usage:
+	iterators are address so they are integers. when you make template functions that are only
+	supposed to take iterators and nothing else you need to make sure that the argument given is an iterator and nothing else because
+	your function will break if something else is given.
+	so you use enable if with combination of if_integral to ensure the argument given is iterator and nothing else.
+	??what I dont understand is what if you give random number to the function instead of iterator??
+
+Iterator_traits: you can use it as a base class for all your iterators. it is not mandatory tho!
 
 
 tester:
@@ -40,24 +49,28 @@ https://www.programiz.com/dsa/red-black-tree#:~:text=Left%20Rotate,arrangements%
 https://daveparillo.github.io/cisc187-reader/trees/bst.html
 
 
+
+MY QUESTIONS:
+
+why Iterator trait is structure but reverse_iterator is a calss???
+what is noexcept in some functions prototype??
+what is the benefit of move_constructors?
+what does auto type mean?
+should I make the destructors of all my containers virtual???
+use of explicit??
+
+I dont understand why in iterator overload I cannot do a operator+ for two iterator and add the pointers???why I can
+do the same for operator- but not +???
+
+swap --> there is sth I dont understand about this, I get invalid read and invalid free if I do (map tmp = *this)
+
+
 understand the bugs:
 	2. map: [] doesnt get assigned: fixed but dont know why the first method didnt work?
 
 to do:
-	4. map: remove std::cout << *ite when ite is an iterator
 	5. vector & map: for operational comparison use std::equal
 	6. map at function is since c++11?? do I need to remove it??
 	7. clear function of map
-	8. insert of vectors dont compile correctly
-
-to write:
-	4. for maps: insert (pos, value)
 
 
-enable_if usage: iterators are address so they are integers. when you make template functions that are only
-supposed to take iterators and nothing else you need to make sure that the argument given is an iterator and nothing else because
-your function will break if something else is given.
-so you use enable if with combination of if_integral to ensure the argument given is iterator and nothing else.
-??what I dont understand is what if you give random number to the function instead of iterator??
-
-Iterator_traits: you can use it as a base class for all your iterators. it is not mandatory tho!

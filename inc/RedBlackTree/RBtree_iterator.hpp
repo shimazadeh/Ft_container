@@ -13,7 +13,9 @@ namespace	ft
 		typedef ft::pair<Key, T>													value_type;
 		typedef std::less<Key>														key_compare;
 		typedef std::allocator<value_type>											allocator_type;
-		typedef ft::tree_node<key_type, mapped_type, key_compare, allocator_type>	node_type;
+		typedef ft::tree_node<key_type, mapped_type, key_compare, allocator_type>	node_type;//shouuld be private??
+		typedef value_type															*pointer;
+		typedef value_type															&reference;
 
 		//member
 		node_type	*node;
@@ -22,23 +24,21 @@ namespace	ft
 		tree_iterator():node(nullptr), is_end(false)
 		{}
 
-		tree_iterator(const node_type	*n, bool	if_end): is_end(if_end)
+		tree_iterator(node_type	*n, bool	if_end): node(n), is_end(if_end)
 		{
-			if (n != nullptr)
-				node = new node_type(*n);
-			else
-				node = nullptr;
 		}
 
 		tree_iterator(const tree_iterator &other)
 		{
 			*this = other;
 		}
-		//===============================================================================================================
-		node_type &operator*()const
+
+		~tree_iterator()
 		{
-			return (*node);
 		}
+		//===============================================================================================================
+		pointer		operator->()const {return (&node->get_value());}
+		reference	operator*()const {return (node->get_value());}
 
 		tree_iterator &operator=(const tree_iterator &other)
 		{
@@ -49,15 +49,17 @@ namespace	ft
 			}
 			return (*this);
 		}
+		node_type	*get_node()const { return (node);}
 
-		// const	T&	operator*()const noexcept
-		// {}
+		//for debugging
+		bool	get_isend()const { return (is_end);}
 		//===============================================================================================================
 
 		tree_iterator&	operator++()
 		{
 			if (node == nullptr)
 				return (*this);
+			is_end = false;
 			if (node->right)//If the current node has a non-null right child,
 			{
 				node = node->right;
@@ -83,7 +85,7 @@ namespace	ft
 
 		tree_iterator&	operator++(int)
 		{
-			tree_iterator	*tmp = new tree_iterator(*this);
+			tree_iterator	*tmp (this);
 			++(*this);
 
 			return(*tmp);
@@ -93,6 +95,7 @@ namespace	ft
 		{
 			if (node == nullptr)
 				return (*this);
+			is_end = false;
 			if (node->left != nullptr)//If the current node has a non-null left child,
 			{
 				node = node->left;
@@ -123,9 +126,8 @@ namespace	ft
 		}
 	};
 
-	//IM not sure about these functions:
 	template<typename Key, typename T, typename Compare>
-	bool operator==(tree_iterator<Key, T, Compare> &lhs, tree_iterator<Key, T, Compare> &rhs)
+	bool operator==(const tree_iterator<Key, T, Compare> &lhs, const tree_iterator<Key, T, Compare> &rhs)
 	{
 		if (lhs.is_end && rhs.is_end)
 			return true;
@@ -135,13 +137,13 @@ namespace	ft
 	}
 
 	template<typename Key, typename T, typename Compare>
-	bool operator!=(tree_iterator<Key, T, Compare>& lhs, tree_iterator<Key, T, Compare>& rhs)
+	bool operator!=(const tree_iterator<Key, T, Compare>& lhs, const tree_iterator<Key, T, Compare>& rhs)
 	{
 		return (!(lhs == rhs));
 	}
 
 	template<typename Key, typename T, typename Compare>
-	bool operator<(tree_iterator<Key, T, Compare>& lhs, tree_iterator<Key, T, Compare>& rhs)
+	bool operator<(const tree_iterator<Key, T, Compare>& lhs, const tree_iterator<Key, T, Compare>& rhs)
 	{
 		return (*(lhs.node) < *(rhs.node));
 	}

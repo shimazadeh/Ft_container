@@ -9,7 +9,7 @@ namespace	ft
 	class reverse_iterator
 	{
 		public:
-			typedef	T					iterator_type;
+			typedef	ft::iterator<T>		iterator_type;
 			typedef	std::ptrdiff_t		difference_type;
 			typedef T					&reference;
 			typedef	const T				&const_reference;
@@ -19,7 +19,7 @@ namespace	ft
 		//=============================================Constructor==================================================
 			reverse_iterator():current(){}
 
-			explicit reverse_iterator(iterator_type x):current(x){}
+			explicit reverse_iterator(ft::iterator<T> &x):current(x._pointer - 1){}
 
 			template<typename U>//shouldnt the type be the same as T??
 			reverse_iterator(const reverse_iterator<U>& other):current(other.current){}
@@ -43,7 +43,8 @@ namespace	ft
 
 			reference operator*()const
 			{
-				iterator_type	tmp = current;
+				iterator_type	tmp(current);
+
 				return  (*(--tmp));//doesnt find this function
 			}
 
@@ -88,7 +89,7 @@ namespace	ft
 
 			reverse_iterator operator+(difference_type n) const
 			{
-				iterator_type	tmp = *this;
+				reverse_iterator	tmp = *this;
 
 				tmp->current -= n;
 				return (tmp);
@@ -142,7 +143,7 @@ namespace	ft
 			{return (lhs.current >= current);}
 
 		protected:
-			iterator_type	current;
+			pointer	current;
 	};
 }
 #endif

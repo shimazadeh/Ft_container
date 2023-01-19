@@ -38,7 +38,7 @@ namespace	ft
 			explicit	vector(const allocator_type &alloc = allocator_type()):arr(NULL), size_allocated(0), size_filled(0), _alloc(alloc)
 			{}
 
-			explicit	vector(size_type count, const value_type& value = value_type(), const allocator_type &alloc = allocator_type()):arr(NULL), size_allocated(0), size_filled(0), _alloc(alloc)
+			explicit	vector(size_type count, const value_type& value = value_type(), const allocator_type &alloc = allocator_type()):arr(NULL), size_filled(0), _alloc(alloc)
 			{
 				size_allocated = count * 2;
 				size_filled = count;
@@ -50,10 +50,8 @@ namespace	ft
 			template<class InputIterator>
 			vector(InputIterator first, InputIterator last, const allocator_type &alloc = allocator_type(),
 			typename ft::enable_if<!ft::is_integral<InputIterator>::value>:: type* = 0):
-			arr(NULL), size_allocated(0), size_filled(0), _alloc(alloc)
+			arr(NULL), size_filled(0), _alloc(alloc)
 			{
-				InputIterator	tmp(first);
-
 				size_allocated = (last - first) * 2;
 				arr = _alloc.allocate(size_allocated);
 				while (first != last)
@@ -72,11 +70,11 @@ namespace	ft
 			~vector(void)
 			{
 				this->clear();
-				if (size_allocated > 0)
-				{
+				// if (size_allocated > 0)// I had to remove this to fix a memory leak but see why size allocate is 0 at line 204
+				// {
 					_alloc.deallocate(arr, size_allocated);
 					size_allocated = 0;
-				}
+				// }
 			}
 
 		//======================================= Operator ========================================================
@@ -84,7 +82,7 @@ namespace	ft
 			{
 				if (this != &other)
 				{
-					_alloc = other->_alloc;
+					_alloc = other._alloc;
 					assign(other.begin(), other.end());
 					size_filled = other.size_filled;
 					size_allocated = other.size_allocated;
@@ -92,24 +90,22 @@ namespace	ft
 				return (*this);
 			}
 
-			void assign (size_type n, const value_type& val)
+			void assign(size_type n, const value_type& val)
 			{
 				if (n > size_allocated)
 					expand(n);
 				this->clear();
 				for (size_type i = 0; i < n; i++)
-					push_back(*val);
+					push_back(val);
 			}
 
 			template<class InputIterator>
-			void assign (InputIterator first, InputIterator last, typename ft::enable_if<ft::is_integral<InputIterator>::value>:: type = 0)
+			void assign (InputIterator first, InputIterator last, typename ft::enable_if<!ft::is_integral<InputIterator>::value>:: type* = 0)
 			{
-				size_type	size = 0;
+				size_type	size = last - first;
 
-				for (iterator i = first; i != last; i++)
-					size++;
 				if (size > size_allocated)
-					expand(size);
+					expand(size + size_allocated);
 				this->clear();
 				for(iterator i = first; i != last; i++)
 					push_back(*i);
@@ -117,7 +113,7 @@ namespace	ft
 
 			allocator_type	get_allocator()const
 			{
-				return (this->_alloc);
+				return (_alloc);
 			}
 
 			size_type capacity() const
@@ -126,18 +122,18 @@ namespace	ft
 			}
 
 		//======================================Element access=============================================================
-			reference back() {return (&arr[size_filled - 1]);}
-			const_reference back() const {return (&arr[size_filled - 1]);}
+			reference back() {return (arr[size_filled - 1]);}
+			const_reference back() const {return (arr[size_filled - 1]);}
 
-			reference	front() {return (&arr[0]);}
-			const_reference front() const {return (&arr[0]);}
+			reference	front() {return (arr[0]);}
+			const_reference front() const {return (arr[0]);}
 
 			reference at (size_type n)
 			{
 				if (n >= size_filled)
 					throw std::out_of_range("INDEX OUT OF RANGE");
 				else
-					return (&arr[n]);
+					return (arr[n]);
 			}
 
 			const_reference at (size_type n) const
@@ -145,17 +141,17 @@ namespace	ft
 				if (n >= size_filled)
 					throw std::out_of_range("INDEX OUT OF RANGE");
 				else
-					return (&arr[n]);
+					return (arr[n]);
 			}
 
 			reference	operator[](size_type n)
 			{
-				return (&arr[n]);
+				return (arr[n]);
 			}
 
 			const_reference	operator[](size_type n)const
 			{
-				return (&arr[n]);
+				return (arr[n]);
 			}
 		//========================================Iterators================================================================
 			iterator				begin(void){return (iterator(&arr[0]));}
@@ -164,11 +160,11 @@ namespace	ft
 			const_iterator			begin(void)const{return (const_iterator(&arr[0]));}
 			const_iterator			end(void)const{return (const_iterator(&arr[size_filled]));}
 
-			reverse_iterator		rbegin(void){return (reverse_iterator(&arr[0]));}
-			reverse_iterator		rend(void){return (reverse_iterator(&arr[size_filled]));}
+			reverse_iterator		rbegin(void){return (reverse_iterator(&arr[size_filled]));}
+			reverse_iterator		rend(void){return (reverse_iterator(&arr[0]));}
 
-			const_reverse_iterator	rbegin(void)const{return (const_reverse_iterator(&arr[0]));}
-			const_reverse_iterator	rend(void)const{return (const_reverse_iterator(&arr[size_filled]));}
+			const_reverse_iterator	rbegin(void)const{return (const_reverse_iterator(&arr[size_filled]));}
+			const_reverse_iterator	rend(void)const{return (const_reverse_iterator(&arr[0]));}
 
 		//========================================Capacity================================================================
 			void	reserve(size_type new_cap)
@@ -199,20 +195,16 @@ namespace	ft
 			void			clear()
 			{
 				for (size_t i = 0; i < size_filled; i++)
-				{
-					// printf("clearing\n");
 					_alloc.destroy(&arr[i]);
-				}
 				size_filled = 0;
 			}
 
 			iterator	insert(iterator pos, const value_type& value)
 			{
 				vector	new_vec(pos, end());//should be begin() + pos!!??
-
+				std::cout << "new vec size allocated : %lu" << new_vec.size_allocated << "****************************************************************" << std::endl;
 				if (size_filled == size_allocated)
 					expand(size_filled * 2);
-				// printf("size filled is %lu, allocated is %lu, new vec size is %lu\n", size_filled, size_allocated, new_vec.size());
 
 				for (size_type i = 0; i < new_vec.size(); i++)
 					pop_back();
@@ -266,40 +258,31 @@ namespace	ft
 
 			iterator		erase(iterator pos)
 			{
-				vector		new_arr(*this);
-				iterator	j;
-				iterator	i;
+				vector		new_arr(pos, end());
+				size_t		dist = end() - pos;
 
-				clear();
-				j = begin();
-				i = j;
-				while (j != new_arr.end())
-				{
-					if (*j != *pos)
-					{
-						_alloc.construct((arr + i), new_arr[j]);
-						i++;
-					}
-					j++;
-				}
-				size_filled--;
-				return ((arr + pos));
+				for (size_t i = 0; i < dist; i++)
+					pop_back();
+
+				for(iterator i = new_arr.begin() + 1; i != new_arr.end(); i++)
+					insert(end(), *i);
+				return (arr + dist);
 			}
 
 			iterator		erase(iterator first, iterator last)
 			{
+				size_t	pos = first - begin();
+
 				for (iterator i = first; i != last; i++)
 					erase(i);
-				return (arr + first);
+				return (arr + pos);
 			}
 
 			void			push_back(const value_type& value)
 			{
-				// printf("size filled is %lu, allocated is %lu\n", size_filled, size_allocated);
 				if (size_allocated == 0 || size_filled >= size_allocated)
 					expand(size_filled * 2);
 				_alloc.construct(&arr[size_filled], value);
-				printf("size filled is %lu, with the value %d\n", size_filled, arr[size_filled]);
 				size_filled++;
 			}
 
@@ -315,7 +298,6 @@ namespace	ft
 			void			resize(size_type count, value_type val = value_type())
 			{
 				value_type	*new_arr;
-				(void)val;
 
 				new_arr = _alloc.allocate(count);
 				if (size() > count)
@@ -327,7 +309,7 @@ namespace	ft
 				{
 					for (size_type i = 0; i < size_filled; i++)
 						new_arr[i] = arr[i];
-					new_arr->insert(new_arr->end(), count - size_filled, 0);
+					new_arr->insert(new_arr->end(), count - size_filled, val);
 				}
 				_alloc.deallocate(arr, size_allocated);
 				arr = new_arr;

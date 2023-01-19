@@ -10,6 +10,7 @@
 #include "./utils/equal.hpp"
 #include "./utils/Is_Integral.hpp"
 #include "./utils/pair.hpp"
+#include <cstdio>
 
 namespace ft
 {
@@ -55,21 +56,31 @@ namespace ft
 		};
 		//=========================================== Constructor ===================================================
 		explicit map(const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type()):_bstree(bstree<Key, T, Compare, Allocator>()), _cmp(comp), _alloc(alloc)
-		{}
+		{
+			_lastelem = new node_type();
+			_rev_lastelem = new node_type();
+		}
 
 		template< typename InputIterator >
 		map(InputIterator first, InputIterator last, const Compare& comp = Compare(),
-		const Allocator& alloc = Allocator(), typename ft::enable_if<ft::is_integral<InputIterator>::value>:: type = 0):
+		const Allocator& alloc = Allocator(), typename ft::enable_if<!ft::is_integral<InputIterator>::value>:: type* = 0):
 		_bstree(bstree<Key, T, Compare, Allocator>()), _cmp(comp), _alloc(alloc)
 		{
+			_lastelem = new node_type();
+			_rev_lastelem = new node_type();
 			this->insert(first, last);
 		}
 
-		map(const map& other):_bstree(other._bstree), _cmp(other._cmp), _alloc(other._alloc)
+		map(const map& other):_bstree(other._bstree), _cmp(other._cmp), _alloc(other._alloc), _allocNode(other._allocNode), _lastelem(other._lastelem), _rev_lastelem(other._lastelem)
 		{}
 
 		//=========================================== Destructor ===================================================
-		~map(){this->clear();}
+		~map()
+		{
+			this->clear();
+			delete _lastelem;
+			delete _rev_lastelem;
+		}
 		//=========================================== Operator ===================================================
 		map& operator=( const map& other )
 		{
@@ -88,7 +99,7 @@ namespace ft
 		//=========================================== Access ===================================================
 		mapped_type& at(const key_type& key)//ref page says since c++11!!!!!???
 		{
-			if (!_bstree.find_node(key, _bstree.get_root()))
+			if (!_bstree.find_node_key(key, _bstree.get_root()))
 				throw std::out_of_range("key is out of range");
 			else
 				return ((*this)[key]);
@@ -96,7 +107,7 @@ namespace ft
 
 		const mapped_type& at( const key_type& key ) const
 		{
-			if (!_bstree.find_node(key, _bstree.get_root()))
+			if (!_bstree.find_node_key(key, _bstree.get_root()))
 				throw std::out_of_range("key is out of range");
 			else
 				return ((*this)[key]);
@@ -104,8 +115,8 @@ namespace ft
 
 		mapped_type& operator[]( const key_type& key )
 		{
-			_bstree.insert(key);
-			node_type	*tmp = _bstree.find_node(key, _bstree.get_root());
+			_bstree.insert_by_key(key);
+			node_type	*tmp = _bstree.find_node_key(key, _bstree.get_root());
 
 			//think about this: why this method didnt work???
 			// ft::pair<iterator, bool>	tmp = insert(ft::make_pair(key, mapped_type()));
@@ -125,11 +136,12 @@ namespace ft
 		{
 			bool		whatever = false;
 			node_type	*end_element = _bstree.max_element(_bstree.get_root(), whatever);
-			node_type	*res = new node_type();
+			// node_type	*res = new node_type();
 
-			res->parent = end_element;
+			// res->parent = end_element;
 
-			return (iterator(res, true));
+			_lastelem->parent = end_element;
+			return (iterator(_lastelem, true));
 		}
 
 		const_iterator	begin() const
@@ -142,42 +154,48 @@ namespace ft
 		{
 			bool		whatever = false;
 			node_type	*end_element = _bstree.max_element(_bstree.get_root(), whatever);
-			node_type	*res = new node_type();
+			// node_type	*res = new node_type();
 
-			res->parent = end_element;
-			return (const_iterator(res, true));
+			// res->parent = end_element;
+			_lastelem->parent = end_element;
+			return (const_iterator(_lastelem, true));
 		}
 
 		reverse_iterator		rbegin()
 		{
-			bool		whatever = false;
-			node_type	*end_element = _bstree.max_element(_bstree.get_root(), whatever);
-			node_type	*res = new node_type();
+			bool	if_end = false;
 
-			res->parent = end_element;
-			return (reverse_iterator(res, true));
+			return (reverse_iterator(_bstree.max_element(_bstree.get_root(), if_end), if_end));
 		}
 
 		reverse_iterator		rend()
 		{
-			bool	if_end = false;
-			return (reverse_iterator(_bstree.min_element(_bstree.get_root(), if_end), if_end));
+			bool		whatever = false;
+			node_type	*end_element = _bstree.min_element(_bstree.get_root(), whatever);
+			// node_type	*res = new node_type();
+
+			// res->parent = end_element;
+			_rev_lastelem->parent = end_element;
+			return (reverse_iterator(_rev_lastelem, true));
 		}
 
 		const_reverse_iterator	rbegin() const
 		{
-			bool		whatever = false;
-			node_type	*end_element = _bstree.max_element(_bstree.get_root(), whatever);
-			node_type	*res = new node_type();
+			bool	if_end = false;
 
-			res->parent = end_element;
-			return (const_reverse_iterator(res, true));
+			return (const_reverse_iterator(_bstree.max_element(_bstree.get_root(), if_end), if_end));
 		}
 
 		const_reverse_iterator	rend() const
 		{
-			bool	if_end = false;
-			return (const_reverse_iterator(_bstree.min_element(_bstree.get_root(), if_end), if_end));
+			bool		whatever = false;
+			node_type	*end_element = _bstree.min_element(_bstree.get_root(), whatever);
+			// node_type	*res = new node_type();
+
+			// res->parent = end_element;
+			_rev_lastelem->parent = end_element;
+
+			return (const_reverse_iterator(_rev_lastelem, true));
 		}
 
 		//=========================================== Capacity ===================================================
@@ -198,12 +216,12 @@ namespace ft
 			iterator	result;
 			node_type	*tmp;
 
-			tmp = _bstree.find_node(value.first, _bstree.get_root());
+			tmp = _bstree.find_node_key(value.first, _bstree.get_root());
 			if (tmp == nullptr)//if tmp was not found
 			{
-				_bstree.insert(value);
+				_bstree.insert_by_value(value);
 				was_inserted = true;
-				tmp = _bstree.find_node(value.first, _bstree.get_root());
+				tmp = _bstree.find_node_key(value.first, _bstree.get_root());
 				result = iterator(tmp, tmp->isNil());
 			}
 			else
@@ -213,17 +231,26 @@ namespace ft
 
 		iterator insert( iterator pos, const value_type& value )
 		{
-			(void)pos;
-			(void)value;
-			//????
+			node_type	*res;
+
+			res = _bstree.find_node_key(value.first, _bstree.get_root());
+			if (res == nullptr)
+			{
+				if ((*pos).first + 1 == value.first)
+					_bstree.insert_by_value(value, pos.get_node());
+				else
+					_bstree.insert_by_value(value);
+				res = _bstree.find_node_key(value.first, _bstree.get_root());
+			}
+			return (iterator(res, res->isNil()));
 		}
 
 		template< typename InputIterator >
-		void insert( InputIterator first, InputIterator last, typename ft::enable_if<ft::is_integral<InputIterator>::value>:: type = 0)
+		void insert( InputIterator first, InputIterator last)
 		{
 			while (first != last)
 			{
-				_bstree.insert(first->node->get_value());//insert as a pair
+				_bstree.insert_by_value(*first);
 				first++;
 			}
 		}
@@ -245,34 +272,38 @@ namespace ft
 
 		size_type erase( const Key& key )
 		{
-			return (_bstree.erase(key));
+			if (_bstree.find_node_key(key, _bstree.get_root()))
+			{
+				_bstree.erase_by_key(key);
+				return (1);
+			}
+			return (0);
 		}
 
-		//================================================================
+		//=============================================================================================================
 		void	swap(map &other)
 		{
-			map		tmp = *this;
-
-			this->_bstree = other._bstree;
-			this->_cmp = other._cmp;
-			this->_alloc = other._alloc;
-
-			other._bstree = tmp._bstree;
-			other._cmp = tmp._cmp;
-			other._alloc = tmp._alloc;
+			swap(_bstree, other._bstree);
+			swap(_cmp,  other._cmp);
+			swap(_alloc, other._alloc);
+			swap(_allocNode, other._allocNode);
+			swap(_lastelem, other._lastelem);
+			swap(_rev_lastelem, other._rev_lastelem);
+			print_tree("inside swap: test0");
+			other.print_tree("inside swap: test1");
 		}
 
 		//=========================================== LookUps ===================================================
 		size_type count( const Key& key ) const
 		{
-			if (_bstree.find_node(key, _bstree.get_root()))
+			if (_bstree.find_node_key(key, _bstree.get_root()))
 				return (1);
 			return (0);
 		}
 
 		iterator find( const Key& key )
 		{
-			node_type *res = _bstree.find_node(key, _bstree.get_root());
+			node_type *res = _bstree.find_node_key(key, _bstree.get_root());
 
 			if (res != nullptr)
 				return (iterator(res, res->isNil()));
@@ -281,7 +312,7 @@ namespace ft
 
 		const_iterator find( const Key& key ) const
 		{
-			node_type *res = _bstree.find_node(key, _bstree.get_root());
+			node_type *res = _bstree.find_node_key(key, _bstree.get_root());
 
 			if (res != nullptr)
 				return (const_iterator(res, res->isNil()));
@@ -349,16 +380,29 @@ namespace ft
 
 		//================================================= DEBUGGING TOOLS ==============================================================
 
-		void	print_tree(void)
+		void	print_tree(std::string str)
 		{
-			std::cout << "printing the tree" << std::endl;
+			std::cout << "printing tree:" << str << std::endl;
 			_bstree.print(_bstree.get_root());
 		}
 		//=================================================================================================================
 		private:
 			bstree<Key, T, Compare, Allocator>			_bstree;
-			key_compare		_cmp;
-			allocator_type	_alloc;
+			key_compare									_cmp;
+			allocator_type								_alloc;
+			std::allocator<node_type>					_allocNode;
+			node_type									*_lastelem;
+			node_type									*_rev_lastelem;
+
+			template <typename U>
+			void swap(U& a, U& b)
+			{
+				U tmp;
+
+				tmp = a;
+				a = b;
+				b = tmp;
+			}
 	};
 		//===========================================Non-Member functions===================================================
 		template <class Key, class T, class Compare, class Allocator>
@@ -399,6 +443,7 @@ namespace ft
 				return false;
 			while (lhs_start != lhs_end && rhs_start != rhs_end)
 			{
+				// std::cout << "operator <" << std::endl;
 				if (lhs_start != rhs_start)
 					return (lhs_start < rhs_start);//???double check this
 				lhs_start++;
@@ -412,7 +457,7 @@ namespace ft
 		template <class Key, class T, class Compare, class Allocator>
 		bool operator<=( const ft::map<Key,T,Compare,Allocator>& lhs, const ft::map<Key,T,Compare,Allocator>& rhs )
 		{
-			return(!(rhs > lhs));
+			return(!(lhs > rhs));
 		}
 
 		template <class Key, class T, class Compare, class Allocator>

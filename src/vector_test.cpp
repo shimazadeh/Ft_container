@@ -3,81 +3,91 @@
 
 using namespace ft;
 
-int vector_test()
+template <typename T>
+void	print_vector(ft::vector<T>	_vector, std::string msg)
 {
-    // Create a vector containing integers
-	ft::vector<int>	testedVector;
-	size_t			numberOfPushes = 10;
-
-	for (size_t i = 0; i < numberOfPushes; i++)
-	{
-		printf("i is %lu\n", i);
-		// testedVector.insert(testedVector.begin(), i);
-		testedVector.push_back(i);
-	}
-
-	std::cout << "begin is " << *(testedVector.begin()) << "end is " << *(testedVector.end() - 1) << std::endl;
-	std::cout << "original v = {";
-	for(ft::vector<int>::iterator i = testedVector.begin(); i != testedVector.end(); i++)
+	std::cout << msg << ": {";
+	for(typename ft::vector<T>::iterator i = _vector.begin(); i != _vector.end(); i++)
 		std::cout << *i << ",";
 	std::cout << "}" << std::endl;
-
-	ft::vector<int>	test2(testedVector.begin(), testedVector.end());
-	// testedVector.clear();
-	std::cout << "copy v = {";
-	for(ft::vector<int>::iterator i = test2.begin(); i != test2.end(); i++)
-		std::cout << *i << ",";
-	std::cout << "}" << std::endl;
-
-
-
-	// std::cout << "v = { ";
-	// for(ft::vector<int>::reverse_iterator i = test2.rbegin(); i != test2.rend(); i++)
-	// 	// std::cout << *i << ",";
-	// std::cout << "}" << std::endl;
-
-    // vector<int> v (1, 4);
-    // vector<int>::iterator   it;
-
-    // std::cout << "max_size: " << v.max_size() << std::endl;
-    // std::cout << "capacity: " << v.capacity() << std::endl;
-    // std::cout << "size: " << v.size() << std::endl;
-
-    // // Add two more integers to vector
-    // v.push_back(25);
-    // v.push_back(13);
-
-    // // Print out the vector
-    // std::cout << "v = { ";
-	// // for (ft::vector<int>::iterator i = 0; i != v.end(); i++)
-	// // 	std::cout << *i << ",";
-    // std::cout << "}" << std::endl;
-	return (0);
 }
 
-// #include <vector>
-// #include <stdio.h>
-// #include <iostream>
+int vector_test()
+{
+    // testing default constructor + insert + push_back + iterator + basic getters
+	ft::vector<int>	test1;
 
-// using namespace std;
+	for (size_t i = 0; i < 10; i++)
+	{
+		test1.insert(test1.begin(), i);
+		test1.push_back(i);
+	}
+    std::cout << "test1 vector info: " << std::endl;
+    std::cout << "max_size: " << test1.max_size() << std::endl;
+    std::cout << "capacity: " << test1.capacity() << std::endl;
+    std::cout << "size: " << test1.size() << std::endl;
+    std::cout << "is empty?: " << test1.empty() << std::endl;
 
-// int vector_test()
-// {
-//     // Create a vector containing integers
-// 	vector<int>	testedVector;
-// 	size_t			numberOfPushes = 10;
+	std::cout << "begin is " << *(test1.begin()) << " end is " << *(test1.end() - 1) << std::endl;
+	print_vector(test1, "test1 v");
 
-// 	for (size_t i = 0; i < numberOfPushes; i++)
-// 	{
-// 		// testedVector.insert(testedVector.begin(), i);
-// 		testedVector.push_back(i);
-// 	}
+	//testing at + operator[] + front + back
+	try
+	{
+		std::cout << "test1 front: " << test1.front() << std::endl;
+		std::cout << "test1 back: " << test1.back() << std::endl;
+		std::cout << "test1 at 4: " << test1. at(4) << std::endl;
+		std::cout << "test1[4]: " << test1[4] << std::endl;
+		std::cout << "test1 at 0: " << test1. at(0) << std::endl;
+		std::cout << "test1[0]: " << test1[0] << std::endl;
+		std::cout << "test1 at 9: " << test1. at(9) << std::endl;
+		std::cout << "test1[9]: " << test1[9] << std::endl;
+		std::cout << "test1 at 100: " << test1.at(100) << std::endl;
+	}
+	catch(std::exception &e)
+	{
+		std::cout << e.what() << std::endl;
+	}
 
-// 	std::cout << "v = {";
-// 	for(vector<int>::iterator i = testedVector.begin(); i != testedVector.end(); i++)
-// 		std::cout << *i << ",";
-// 	std::cout << "}" << std::endl;
+	//testing copy constructor
+	ft::vector<int>	test2(test1.begin(), test1.end());
 
-// 	return (0);
-// }
+	print_vector(test2, "test2 v");
 
+	//testing constructor + assign function
+	ft::vector<int>	test3(2, 17);
+
+	print_vector(test3, "test3 original v");
+
+	test3.clear();
+	test3.assign(test2.begin(), test2.end());
+
+	print_vector(test3, "assigning test2 to test3 vector: v");
+
+	test3.assign(5, 18);
+	print_vector(test3, "replacing test3 by 5 18s: v");
+
+	//testing erase + operator= + swap + resize
+	ft::vector<int>	test4(5, 90);
+
+	print_vector(test1, "test1 before swap v");
+	print_vector(test4, "test4 before swap v");
+
+	test4.swap(test1);
+
+	print_vector(test1, "test1 after swap v");
+	print_vector(test4, "test4 after swap v");
+
+	test1.erase(test1.begin(), test1.begin() + 2);
+
+	print_vector(test1, "test1 after erase v:");
+
+	//testing reverse iterator
+
+	std::cout << "printing test4 in reverse: {";
+	// for(ft::vector<int>::reverse_iterator i = test4.rbegin(); i != test4.rend(); i++)
+	// 	std::cout << *i << ",";
+	// std::cout << "}" << std::endl;
+
+	return (0);
+}
