@@ -70,85 +70,86 @@ int map_test()
   //   if (foo>=bar) std::cout << "foo is greater than or equal to bar\n";
   // }
 
-  // std::cout << "test2: insert, erase, find, lower bound, upper bound" << std::endl;
-  // {
-  //   map<char,int> test0;
-  //   map<char, int> test1;
-
-  //   test1['a'] = 0;
-  //   test1['b'] = 2;
-  //   test1['c'] = 3;
-
-  //   test0.insert(test1.begin(), test1.end());//insert with two iterator
-  //   test0.insert(test0.find('a'), *(test1.find('a')));//repetative element
-
-  //   test1['d'] = 4;
-  //   test0.insert(test0.find('c'), *(test1.find('d')));//actual element
-
-  //   // test0.print_tree("test0");
-  //   // test1.print_tree("test1");
-
-  //   std::cout << test0.count('a') << std::endl;
-  //   std::cout << test1.lower_bound('a')->first << std::endl;
-  //   std::cout << test1.upper_bound('c')->first << std::endl;
-  //   // test0.print_tree("before erase: test0");
-
-  //   test0.erase('a');
-  //   test0.erase('b');
-  //   // test0.print_tree("after erase: test0");
-
-  //   // std::cout << test0.count('a') << std::endl;
-  // }
-  // std::cout << "test3: swap" << std::endl;
-  // {
-  //   map<char,int>   test0;
-  //   map<char, int>  test1;
-
-  //   test1['3'] = 1;
-  //   test1['2'] = 2;
-  //   test1['1'] = 3;
-
-  //   test0['4'] = 1;
-  //   test0['5'] = 2;
-  //   test0['6'] = 3;
-
-  //   // test0.insert(test1.begin(), test1.end());
-
-  //   //if you put these lines before insert it wont work properly
-  //   // test0['4'] = 1;
-  //   // test0['5'] = 2;
-  //   // test0['6'] = 3;
-
-  //   // test0.insert(test0.find('4'), *(test1.find('3')));
-  //   test0.print_tree("before swap: test0");
-  //   test1.print_tree("before swap: test1");
-
-  //   // print_map(test1, "before swap: test1");
-  //   test0.swap(test1);
-  //   test0.print_tree("after swap: test0");
-  //   test1.print_tree("after swap: test1");
-
-  //   // print_map(test0, "after swap: test0");
-  //   // print_map(test1, "after swap: test1");
-  // }
-  std::cout << "test4: same type pair" << std::endl;
+  std::cout << "test2: insert, erase, find, lower bound, upper bound" << std::endl;
   {
-    map<char,char>   test0;
-    map<char, char>  test1;
+    map<char,int> test0;
+    map<char, int> test1;
 
-    test1['3'] = '1';
-    test1['2'] = '2';
-    test1['1'] = '3';
+    test1['a'] = 0;
+    test1['b'] = 2;
+    test1['c'] = 3;
 
-    test0['4'] = '1';
-    test0['5'] = '2';
-    test0['6'] = '3';
+    test0.insert(test1.begin(), test1.end());//insert with two iterator
+    test0.insert(test0.find('a'), *(test1.find('a')));//repetative element
 
-    test0.insert(test1.begin(), test1.end());
+    test1['d'] = 4;
+    test0.insert(test0.find('c'), *(test1.find('d')));//actual element
 
-    test0.print_tree("test0");
-    test1.print_tree("test1");
+    test0.print_tree("before erase: test0");
+    test1.print_tree("before erase: test1");
+
+    std::cout << test0.count('a') << std::endl;
+    std::cout << test1.lower_bound('a')->first << std::endl;
+    std::cout << test1.upper_bound('c')->first << std::endl;
+
+    test0.erase('a');
+    // test0.erase('b');
+    test0.print_tree("after erase: test0");
+    test1.print_tree("after erase: test1");
+
+    // std::cout << test0.count('a') << std::endl;
   }
+  std::cout << "test3: swap" << std::endl;
+  {
+    map<char,int>   test0;
+    map<char, int>  test1;
+
+    test1['3'] = 1;
+    test1['2'] = 2;
+    test1['1'] = 3;
+
+    std::cout << "swaping empty to nonempty" << std::endl;
+    test0.print_tree("before first swap: test0");
+    test1.print_tree("before first swap: test1");
+
+    test0.swap(test1);
+
+    test0.print_tree("after first swap: test0");
+    test1.print_tree("after first swap: test1");
+
+    // test1['4'] = 1;
+    // test1['5'] = 2;
+    // test1['6'] = 3;
+
+    // std::cout << "swaping nonempty to nonempty" << std::endl;
+    // test0.print_tree("before second swap: test0");
+    // test1.print_tree("before second swap: test1");
+
+    // test0.swap(test1);
+
+    // test0.print_tree("after second swap: test0");
+    // test1.print_tree("after second swap: test1");
+
+  }
+  // std::cout << "test4: same type pair" << std::endl;
+  // {
+  //   map<char,char>   test0;
+  //   map<char, char>  test1;
+
+  //   test1['3'] = '1';
+  //   test1['2'] = '2';
+  //   test1['1'] = '3';
+
+  //   test0['4'] = '1';
+  //   test0['5'] = '2';
+  //   test0['6'] = '3';
+
+  //   ft::map<char, char>::iterator tmp = test1.begin()++;
+  //   test0.insert(test1.begin(), tmp++);
+
+  //   test0.print_tree("test0");
+  //   // test1.print_tree("test1");
+  // }
   return 0;
 }
 

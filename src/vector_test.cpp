@@ -19,7 +19,7 @@ int vector_test()
 
 	for (size_t i = 0; i < 10; i++)
 	{
-		test1.insert(test1.begin(), i);
+		test1.insert(test1.begin(), 3);
 		test1.push_back(i);
 	}
     std::cout << "test1 vector info: " << std::endl;
@@ -31,7 +31,7 @@ int vector_test()
 	std::cout << "begin is " << *(test1.begin()) << " end is " << *(test1.end() - 1) << std::endl;
 	print_vector(test1, "test1 v");
 
-	//testing at + operator[] + front + back
+	// //testing at + operator[] + front + back
 	try
 	{
 		std::cout << "test1 front: " << test1.front() << std::endl;
@@ -82,12 +82,18 @@ int vector_test()
 
 	print_vector(test1, "test1 after erase v:");
 
-	//testing reverse iterator
+	// testing reverse iterator && underlying expand
 
-	std::cout << "printing test4 in reverse: {";
-	// for(ft::vector<int>::reverse_iterator i = test4.rbegin(); i != test4.rend(); i++)
-	// 	std::cout << *i << ",";
-	// std::cout << "}" << std::endl;
+	ft::vector<int>	test5(5, 1);
+	for (int i = 0; i < 1; i++)
+		test5.push_back(i);
+	print_vector(test5, "test5: in order");
+	std::cout << "reverse start: " <<  *(test5.rbegin()) << std::endl;
+	std::cout << "reverse end: " << *(--test5.rend()) << std::endl;
+	std::cout << "printing test5 using rev it: {";
+	for(ft::vector<int>::reverse_iterator i = test5.rbegin(); i != test5.rend(); i--)
+		std::cout << *i << ",";
+	std::cout << "}" << std::endl;
 
 	return (0);
 }

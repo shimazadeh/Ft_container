@@ -28,10 +28,11 @@ namespace	ft
 			typedef	const value_type								&const_reference;
 			typedef	value_type										*pointer;
 			typedef	const pointer									const_pointer;
+
 			typedef	ft::iterator<T>									iterator;
-			typedef	ft::iterator<T>									const_iterator;
+			typedef	ft::iterator<T, true>							const_iterator;
 			typedef	ft::reverse_iterator<iterator>					reverse_iterator;
-			typedef	ft::reverse_iterator<const_iterator>			const_reverse_iterator;
+			typedef	ft::reverse_iterator<const_iterator, true>		const_reverse_iterator;
 
 		//========================================Constructors==========================================================
 
@@ -53,7 +54,8 @@ namespace	ft
 			arr(NULL), size_filled(0), _alloc(alloc)
 			{
 				size_allocated = (last - first) * 2;
-				arr = _alloc.allocate(size_allocated);
+				if (size_allocated > 0)
+					arr = _alloc.allocate(size_allocated);
 				while (first != last)
 				{
 					push_back(*first);
@@ -70,11 +72,11 @@ namespace	ft
 			~vector(void)
 			{
 				this->clear();
-				// if (size_allocated > 0)// I had to remove this to fix a memory leak but see why size allocate is 0 at line 204
-				// {
+				if (size_allocated > 0)
+				{
 					_alloc.deallocate(arr, size_allocated);
 					size_allocated = 0;
-				// }
+				}
 			}
 
 		//======================================= Operator ========================================================
@@ -107,7 +109,7 @@ namespace	ft
 				if (size > size_allocated)
 					expand(size + size_allocated);
 				this->clear();
-				for(iterator i = first; i != last; i++)
+				for(InputIterator i = first; i != last; i++)
 					push_back(*i);
 			}
 
@@ -202,7 +204,7 @@ namespace	ft
 			iterator	insert(iterator pos, const value_type& value)
 			{
 				vector	new_vec(pos, end());//should be begin() + pos!!??
-				std::cout << "new vec size allocated : %lu" << new_vec.size_allocated << "****************************************************************" << std::endl;
+
 				if (size_filled == size_allocated)
 					expand(size_filled * 2);
 
@@ -280,7 +282,9 @@ namespace	ft
 
 			void			push_back(const value_type& value)
 			{
-				if (size_allocated == 0 || size_filled >= size_allocated)
+				if (size_allocated == 0)
+					expand(1);
+				if (size_filled >= size_allocated)
 					expand(size_filled * 2);
 				_alloc.construct(&arr[size_filled], value);
 				size_filled++;
@@ -344,7 +348,6 @@ namespace	ft
 				{
 					arr = _alloc.allocate(1);
 					size_allocated++;
-					// printf("expanding to 1\n");
 				}
 				else
 				{
@@ -352,7 +355,6 @@ namespace	ft
 
 					for (size_type i = 0; i < size_filled; i++)
 					{
-						// printf("size filled is %lu\n", i);
 						_alloc.construct(&new_arr[i] , arr[i]);
 						_alloc.destroy(&arr[i]);
 					}

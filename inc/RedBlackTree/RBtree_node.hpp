@@ -30,7 +30,7 @@ namespace ft
 
 		//============================================= Constructor & Destroctur=========================================================
 
-		tree_node(void): left(nullptr), right(nullptr), parent(nullptr), color("b")
+		tree_node(void):left(nullptr), right(nullptr), parent(nullptr), color("b")
 		{
 			value = ft::make_pair(Key(), mapped_type());
 		}
@@ -44,12 +44,13 @@ namespace ft
 			*this = other;
 		}
 
-		~tree_node()//Im not sure if I need to delete the pointers??
+		~tree_node()
 		{
 		}
 
 		tree_node &operator=(const tree_node &other)
 		{
+			std::cout << "===================================================assigning nodes" << std::endl;
 			if (this != &other)
 			{
 				value = other.value;

@@ -2,27 +2,26 @@
 #define _ITERATOR_HPP
 
 #include "./iterator_traits.hpp"
+#include "../utils/SelectConst.hpp"
 
 namespace	ft
 {
-	template<typename T>
+	template<typename T, bool IsConst = false>
 	class iterator
 	{
 		public:
-			typedef	T													value_type;
-			typedef T													&reference;
-			typedef const T												&const_reference;
-			typedef T													*pointer;
-			typedef const pointer										const_pointer;
-			typedef std::ptrdiff_t										difference_type;
-			typedef std::size_t											size_type;
+			typedef	T														value_type;
+			typedef typename ft::select_const<IsConst, const T&, T&>::type	reference;
+			typedef typename ft::select_const<IsConst, const T*, T*>::type	pointer;
+			typedef std::ptrdiff_t											difference_type;
+			typedef std::size_t												size_type;
+			typedef std::random_access_iterator_tag							iterator_category;
 
 			//===============================Constructor Destructor========================================
 			iterator():_pointer(NULL){}
 
-			iterator(const pointer	p):_pointer(p)
-			{
-			}
+			iterator(pointer p):_pointer(p)
+			{}
 
 			iterator(const iterator &other)
 			{
@@ -131,16 +130,16 @@ namespace	ft
 			bool	operator!=(const iterator	&lhs)const
 			{return (lhs._pointer != _pointer);}
 
-			bool	operator<(iterator	&lhs)const
+			bool	operator<(const iterator	&lhs)const
 			{return (lhs._pointer < _pointer);}
 
-			bool	operator<=(iterator	&lhs)const
+			bool	operator<=(const iterator	&lhs)const
 			{return (lhs._pointer <= _pointer);}
 
-			bool	operator>(iterator	&lhs)const
+			bool	operator>(const iterator	&lhs)const
 			{return (lhs._pointer > _pointer);}
 
-			bool	operator>=(iterator	&lhs)const
+			bool	operator>=(const iterator	&lhs)const
 			{return (lhs._pointer >= _pointer);}
 
 		private:

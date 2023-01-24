@@ -22,12 +22,10 @@ namespace ft
 
 		//================================= constructor =======================================================
 		bstree():root(nullptr), _size(0), _nodeAlloc(Allocator())
-		{}
-
-		// explicit	bstree(const mapped_type &value)
-		// {
-		// 	root = new node_type(value);
-		// }
+		{
+			initialize_nil();
+			// root = nil;
+		}
 
 		~bstree()
 		{
@@ -35,19 +33,31 @@ namespace ft
 		}
 		//==========================================copy constructor===============================
 		bstree(const bstree &other):root(other.root), _size(other._size), _nodeAlloc(other._nodeAlloc)
-		{}
+		{
+			initialize_nil();
+		}
 
 		bstree& operator=(const bstree &other)
 		{
 			if (this != &other)
 			{
-				root = other.root;
+				root = new node_type(other.root);
+				initialize_nil();
 				_size = other._size;
 				_nodeAlloc = other._nodeAlloc;
 			}
 			return (*this);
 		}
 		//==================================================member functions====================================================
+		void		initialize_nil()
+		{
+			value_type	nil_value = ft::make_pair(Key(), mapped_type());
+			nil = new node_type(nil_value , "b");
+			nil->parent = nil;
+			nil->left = nil;
+			nil->right = nil;
+		}
+
 		node_type	*min_element(node_type *node, bool	&if_end) const
 		{
 			if (node == nullptr || node->left == nullptr)
@@ -116,21 +126,21 @@ namespace ft
 
 		//make insert works with pair or key or mapped value????
 
-		void	insert_by_key(const Key 	&key, node_type	*parent = nullptr)
+		void	insert_by_key(const Key 	&key, node_type	*hint = nullptr)
 		{
 			node_type	*new_node = new node_type(ft::make_pair(key, mapped_type()), "r");
 
-			insert(new_node , parent);
+			insert(new_node , hint);
 		}
 
-		void	insert_by_value(const value_type &value, node_type	*parent = nullptr)
+		void	insert_by_value(const value_type &value, node_type	*hint = nullptr)
 		{
 			node_type	*new_node = new node_type(value, "r");
 
-			insert(new_node, parent);
+			insert(new_node, hint);
 		}
 
-		void	insert(node_type	*new_node, node_type	*parent = nullptr)
+		void	insert(node_type	*new_node, node_type	*hint = nullptr)
 		{
 			// node_type	*new_node = new node_type(key, "r");
 			node_type	*tmp = root;
@@ -143,8 +153,8 @@ namespace ft
 			}
 			else//we create a new node as a leaf
 			{
-				if (parent != nullptr)
-					tmp1 = parent;
+				if (hint != nullptr)
+					tmp1 = hint;
 				else
 				{
 					while(tmp != nullptr)//search to find the right position
@@ -162,7 +172,11 @@ namespace ft
 				else
 					tmp1->left = new_node;
 			}
+			// std::cout << "at insert before correction====================" << std::endl;
+			// print(root);
 			insertion_fix(new_node);
+			// std::cout << "at insert after correction====================" << std::endl;
+			// print(root);
 			_size++;
 		}
 
@@ -198,10 +212,16 @@ namespace ft
 						{
 							to_insert = to_insert->parent;
 							left_rotate(to_insert);
+// s							td::cout << "after the left rotate===============================" << std::endl;
+// 							print(root);
 						}
 						to_insert->parent->color = "b";
 						g->color = "r";
+						// std::cout << "before the right rotate===============================" << std::endl;
+						// print(root);
 						right_rotate(g);
+						// std::cout << "after the right rotate===============================" << std::endl;
+						// print(root);
 					}
 				}
 				else//if the inserted node is the right child
@@ -211,7 +231,7 @@ namespace ft
 						tmp = g->left;
 						if (tmp->color == "r")
 						{
-							to_insert->parent->color = "r";
+							to_insert->parent->color = "b";
 							tmp->color = "b";
 							g->color = "r";
 							to_insert = g;
@@ -250,43 +270,48 @@ namespace ft
 		void	erase(node_type *tmp)
 		{
 			node_type	*y = nullptr;//used to save the successor of to_delete
-			node_type	*tmp1 = nullptr;//used if to_delete has two childs
+			node_type	*tmp1 = nullptr;//used to save any children
 
 			if (root == nullptr)
 				return ;
 			if (tmp != nullptr)
 			{
+				//to save whatever comes after to_delete in a node
 				if (tmp->left == nullptr || tmp->right == nullptr)//a leaf or one child
 					y = tmp;
 				else
 					y = successor(tmp);
+
+				//saving the children of to_delete to tmp1
 				if (y->left != nullptr)
 					tmp1 = y->left;
+				else if (y->right != nullptr)
+					tmp1 = y->right;
 				else
-				{
-					if (y->right != nullptr)
-						tmp1 = y->right;
-					else
-						tmp1 = nullptr;
-				}
+					tmp1 = nullptr;//we are deleting a leaf node
+
+				// if (tmp1 == nullptr)//leaf node
+				// 	tmp1 = nil;
 				if (tmp1 != nullptr)
-					tmp1->parent = y->parent;
-				if (y->parent == NULL)
+					tmp1->parent = y->parent; //removing the node
+
+				if (y->parent == NULL)//reconnecting the root to tmp1
 					root = tmp1;
+				else if (y == y->parent->left)
+					y->parent->left = tmp1;
 				else
-				{
-					if (y == y->parent->left)
-						y->parent->left = tmp1;
-					else
-						y->parent->right = tmp1;
-				}
+					y->parent->right = tmp1;
+
 				if (y != tmp)
 				{
 					tmp->color = y->color;
 					tmp->value = y->value;
 				}
+				std::cout << "debuggginggggg ==== " << y->parent->value.first << std::endl;
+
 				if (y->color == "b")
 					erase_fix(tmp1);
+
 				_size--;
 				to_delete(tmp);
 			}
@@ -400,7 +425,7 @@ namespace ft
 			}
 			return (predecessor);
 		}
-		//rotating function
+
 		void	left_rotate(node_type	*node)
 		{
 			if (node->right == nullptr)
@@ -423,11 +448,13 @@ namespace ft
 				root = tmp;
 				root->parent = nullptr;//I added this but not sure for corner cases
 			}
-			else if (node->parent->right == node)//if node is the right child
-				node->parent->right = tmp;
 			else
-				node->parent->left = tmp;
-
+			{
+				if (node->parent->right == node)
+					node->parent->right = tmp;
+				else
+					node->parent->left = tmp;
+			}
 			tmp->left = node;
 			node->parent = tmp;
 		}
@@ -441,22 +468,25 @@ namespace ft
 			if (tmp->right != nullptr)
 			{
 				node->left = tmp->right;
-				tmp->right->parent = node;//i dont get this
+				tmp->right->parent = node;
 			}
 			else
 				node->left = nullptr;
 
 			if (node->parent != nullptr)
 				tmp->parent = node->parent;
-			else if (node->parent == nullptr)
+			if (node->parent == nullptr)
 			{
 				root = tmp;
 				root->parent = nullptr;
 			}
-			else if (node->parent->right == node)
-				node->parent->right = tmp;
 			else
-				node->parent->left = tmp;
+			{
+				if (node->parent->right == node)
+					node->parent->right = tmp;
+				else
+					node->parent->left = tmp;
+			}
 
 			tmp->right = node;
 			node->parent = tmp;
@@ -493,7 +523,13 @@ namespace ft
 
 		void	swap(bstree &other)
 		{
-			bstree	tmp = *this;
+			// bstree	tmp(*this);
+			node_type											*tmp_root = root;
+			size_type											tmp_size = _size;
+			key_compare											tmp_cmp = _cmp;
+			std::allocator<ft::pair<Key, T> >					tmp_valueAlloc = _valueAlloc;
+			std::allocator<node_type>							tmp_nodeAlloc = _nodeAlloc;
+
 
 			root = other.root;
 			_size = other._size;
@@ -501,11 +537,11 @@ namespace ft
 			_valueAlloc = other._valueAlloc;
 			_nodeAlloc = other._nodeAlloc;
 
-			other.root = tmp.root;
-			other._size = tmp._size;
-			other._cmp = tmp._cmp;
-			other._valueAlloc = tmp._valueAlloc;
-			other._nodeAlloc = tmp._nodeAlloc;
+			other.root = tmp_root;
+			other._size = tmp_size;
+			other._cmp = tmp_cmp;
+			other._valueAlloc = tmp_valueAlloc;
+			other._nodeAlloc = tmp_nodeAlloc;
 		}
 		//=================================================== Debugging tools =================================================================================
 		void	print(node_type	*node)
@@ -529,11 +565,15 @@ namespace ft
 				}
 				else
 				{
-					if (node->parent->right == node)
-						std:: cout << "\033[1;32mRightNode-----";
-					if (node->parent->left == node)
-						std:: cout << "\033[1;32mLeftNode-----";
-					std:: cout << node->value.first;
+					if (node->parent->right == node && node->color == "r")
+						std:: cout << "\033[1;31mRightNode-----:";
+					else if (node->parent->right == node)
+						std:: cout << "\033[1;32mRightNode-----:";
+					if (node->parent->left == node && node->color == "r")
+						std:: cout << "\033[1;31mLeftNode-----:";
+					else if (node->parent->left == node)
+						std:: cout << "\033[1;32mLeftNode-----:";
+					std::cout << node->value.first;
 					std::cout << ":" << node->value.second <<"\033[0m\n";
 				}
 				if (node->right != nullptr)
@@ -594,6 +634,7 @@ namespace ft
 
 		private:
 			node_type											*root;
+			node_type											*nil;
 			size_type											_size;
 			key_compare											_cmp;
 			std::allocator<ft::pair<Key, T> >					_valueAlloc;

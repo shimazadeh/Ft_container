@@ -2,27 +2,31 @@
 #define _REVERSE_ITERATOR_HPP
 
 #include "iterator_traits.hpp"
+#include "../utils/SelectConst.hpp"
 
 namespace	ft
 {
-	template<typename T>
+	template<typename T, bool IsConst = false>
 	class reverse_iterator
 	{
 		public:
-			typedef	ft::iterator<T>		iterator_type;
-			typedef	std::ptrdiff_t		difference_type;
-			typedef T					&reference;
-			typedef	const T				&const_reference;
-			typedef	T					*pointer;
-			typedef	const T				*const_pointer;
+			typedef	T														iterator_type;
+			typedef	std::ptrdiff_t											difference_type;
+			typedef typename ft::iterator_traits<T>::reference				reference;
+			typedef typename ft::iterator_traits<T>::pointer				pointer;
+
+
+			//I dont understand why this doesnt work
+			// typedef typename ft::select_const<IsConst, const T&, T&>::type	reference;
+			// typedef typename ft::select_const<IsConst, const T*, T*>::type	pointer;
 
 		//=============================================Constructor==================================================
 			reverse_iterator():current(){}
 
-			explicit reverse_iterator(ft::iterator<T> &x):current(x._pointer - 1){}
+			explicit reverse_iterator(const iterator_type &x):current(x.base()){}
 
 			template<typename U>//shouldnt the type be the same as T??
-			reverse_iterator(const reverse_iterator<U>& other):current(other.current){}
+			reverse_iterator(const reverse_iterator<U>& other):current(other.base()){}
 
 			//why no destructor is given in CPP reference page
 			~reverse_iterator()
@@ -43,9 +47,9 @@ namespace	ft
 
 			reference operator*()const
 			{
-				iterator_type	tmp(current);
+				iterator_type	tmp = current;
 
-				return  (*(--tmp));//doesnt find this function
+				return  (*--tmp);
 			}
 
 			pointer	operator->()const
@@ -143,7 +147,7 @@ namespace	ft
 			{return (lhs.current >= current);}
 
 		protected:
-			pointer	current;
+			iterator_type		current;
 	};
 }
 #endif

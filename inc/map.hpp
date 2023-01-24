@@ -71,8 +71,10 @@ namespace ft
 			this->insert(first, last);
 		}
 
-		map(const map& other):_bstree(other._bstree), _cmp(other._cmp), _alloc(other._alloc), _allocNode(other._allocNode), _lastelem(other._lastelem), _rev_lastelem(other._lastelem)
-		{}
+		map(const map& other)
+		{
+			*this = other;
+		}
 
 		//=========================================== Destructor ===================================================
 		~map()
@@ -90,6 +92,9 @@ namespace ft
 				this->insert(other.begin(), other.end());
 				_alloc = other._alloc;
 				_cmp = other._cmp;
+				_allocNode = other._allocNode;
+				_lastelem = other._lastelem;
+				_rev_lastelem = other._rev_lastelem;
 			}
 			return (*this);
 		}
@@ -283,14 +288,21 @@ namespace ft
 		//=============================================================================================================
 		void	swap(map &other)
 		{
-			swap(_bstree, other._bstree);
-			swap(_cmp,  other._cmp);
-			swap(_alloc, other._alloc);
-			swap(_allocNode, other._allocNode);
-			swap(_lastelem, other._lastelem);
-			swap(_rev_lastelem, other._rev_lastelem);
-			print_tree("inside swap: test0");
-			other.print_tree("inside swap: test1");
+			map			tmp(*this);
+
+			_bstree.swap(other._bstree);
+			_cmp = other._cmp;
+			_alloc = other._alloc;
+			_allocNode = other._allocNode;
+			_lastelem = other._lastelem;
+			_rev_lastelem = other._rev_lastelem;
+
+			other._bstree.swap(tmp._bstree);
+			other._cmp = tmp._cmp;
+			other._alloc = tmp._alloc;
+			other._allocNode = tmp._allocNode;
+			other._lastelem = tmp._lastelem;
+			other._rev_lastelem = tmp._rev_lastelem;
 		}
 
 		//=========================================== LookUps ===================================================
@@ -394,15 +406,14 @@ namespace ft
 			node_type									*_lastelem;
 			node_type									*_rev_lastelem;
 
-			template <typename U>
-			void swap(U& a, U& b)
-			{
-				U tmp;
+		template <typename U>
+		void	swap(U	*a, U	*b)
+		{
+			U	*tmp = a;
 
-				tmp = a;
-				a = b;
-				b = tmp;
-			}
+			a = b;
+			b = tmp;
+		}
 	};
 		//===========================================Non-Member functions===================================================
 		template <class Key, class T, class Compare, class Allocator>
