@@ -59,25 +59,23 @@ namespace	ft
 			if (node == nullptr)
 				return (*this);
 			is_end = false;
-			if (node->left)//If the current node has a non-null right child,
+			if (node->left && !node->left->isNil())//If the current node has a non-null right child,
 			{
 				node = node->left;
-				while(node->right != nullptr)
+				while(!node->right->isNil())
 					node = node->right;//Take a step down to the right Then run down to the left as far as possible
 			}
 			else//If the current node has a null right child Move up the tree until we have moved over a left child link
 			{
 				node_type	*node_up = node->parent;
-				while(node->parent != nullptr && node == node_up->left)
+				while(!node->parent->isNil() && node == node_up->left)
 				{
-					// std::cout << "current parent" << *node_up << std::endl;
 					node = node_up;
 					node_up = node_up->parent;
-					// std::cout << "next parent " << *node_up << std::endl;
 				}
 				node = node_up;
 			}
-			if (node == nullptr)
+			if (node->isNil())
 				is_end = true;
 			return (*this);
 		}
@@ -95,23 +93,23 @@ namespace	ft
 			if (node == nullptr)
 				return (*this);
 			is_end = false;
-			if (node->right != nullptr)//If the current node has a non-null left child,
+			if (node->right && !node->right->isNil())//If the current node has a non-null left child,
 			{
 				node = node->right;
-				while (node->left != nullptr)
+				while (!node->left->isNil())
 					node = node->left;// Take a step down to the left and run down to the right
 			}
 			else// If the current node has a null left child, Move up the tree until we have moved over a right child link
 			{
 				node_type	*node_up = node->parent;
-				while(node->parent != nullptr && node == node_up->right)
+				while(!node->parent->isNil() && node == node_up->right)
 				{
 					node = node_up;
 					node_up = node_up->parent;
 				}
 				node = node_up;
 			}
-			if (node == nullptr)
+			if (node->isNil())
 				is_end = true;
 			return (*this);
 		}

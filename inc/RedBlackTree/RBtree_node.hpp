@@ -46,11 +46,12 @@ namespace ft
 
 		~tree_node()
 		{
+			std::cout << "node destructor is called" << std::endl;
+			// clear_all();
 		}
 
 		tree_node &operator=(const tree_node &other)
 		{
-			std::cout << "===================================================assigning nodes" << std::endl;
 			if (this != &other)
 			{
 				value = other.value;
@@ -77,7 +78,32 @@ namespace ft
 		std::string	get_color() const {return (color);}
 		bool		isNil()const
 		{
-			return parent == this;//doesnt work
+			return parent == this;
+		}
+
+		void	clear_all()
+		{
+			clear_recursive(parent);
+		}
+
+		void	clear_recursive(node_type	*head)
+		{
+			// std::cout << "freeing: " << head->value.first << std::endl;
+			if (head && head->right != nullptr)
+				clear_recursive(head->right);
+			if (head && head->left != nullptr)
+				clear_recursive(head->left);
+			if (head)
+				to_delete(head);
+		}
+
+		void	to_delete(node_type	*node)
+		{
+			std::allocator<ft::pair<Key, T> >	_valueAlloc;
+			std::allocator<node_type>			_nodeAlloc;
+
+			_valueAlloc.destroy(&node->value);
+			_nodeAlloc.deallocate(node, 1);
 		}
 	};
 

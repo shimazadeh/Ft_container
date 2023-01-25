@@ -24,12 +24,14 @@ namespace ft
 		bstree():root(nullptr), _size(0), _nodeAlloc(Allocator())
 		{
 			initialize_nil();
-			// root = nil;
+			root = nil;
 		}
 
 		~bstree()
 		{
+			std::cout << "tree desctructor is called" << std::endl;
 			this->clear_all();
+			delete nil;
 		}
 		//==========================================copy constructor===============================
 		bstree(const bstree &other):root(other.root), _size(other._size), _nodeAlloc(other._nodeAlloc)
@@ -41,7 +43,7 @@ namespace ft
 		{
 			if (this != &other)
 			{
-				root = new node_type(other.root);
+				root = new node_type(*other.root);
 				initialize_nil();
 				_size = other._size;
 				_nodeAlloc = other._nodeAlloc;
@@ -53,16 +55,16 @@ namespace ft
 		{
 			value_type	nil_value = ft::make_pair(Key(), mapped_type());
 			nil = new node_type(nil_value , "b");
-			nil->parent = nil;
+			nil->parent = nil;//I think this shoud be a nullptr??
 			nil->left = nil;
 			nil->right = nil;
 		}
 
 		node_type	*min_element(node_type *node, bool	&if_end) const
 		{
-			if (node == nullptr || node->left == nullptr)
+			if (node == nil || node->left == nil)
 			{
-				if (node == nullptr)
+				if (node == nil)
 					if_end = true;
 				return node;
 			}
@@ -71,9 +73,9 @@ namespace ft
 
 		node_type	*max_element(node_type	*node, bool	&if_end) const
 		{
-			if (node == nullptr || node->right == nullptr)
+			if (node == nil || node->right == nil)
 			{
-				if (node == nullptr)
+				if (node == nil)
 					if_end = true;
 				return node;
 			}
@@ -82,24 +84,24 @@ namespace ft
 
 		node_type	*lower_bound(const key_type&	key, node_type	*node)
 		{
-			if (node == nullptr || key == node->get_key())
+			if (node == nil || key == node->get_key())
 				return (node);
 			if (_cmp(node->get_key(), key)) //if current key is less than the KEY
 				return (lower_bound(key, node->right));
 			node_type	*tmp = lower_bound(key, node->left);
-			if (tmp == nullptr)
+			if (tmp == nil)
 				return (node);
 			return (tmp);
 		}
 
 		node_type	*upper_bound(const key_type&	key, node_type	*node)
 		{
-			if (node == nullptr)
+			if (node == nil)
 				return (node);
 			if (_cmp(node->get_key(), key) || key == node->get_key())
 				return (upper_bound(key, node->right));
 			node_type	*tmp = upper_bound(key, node->left);
-			if (tmp == nullptr)
+			if (tmp == nil)
 				return (node);
 			return (tmp);
 		}
@@ -107,7 +109,7 @@ namespace ft
 		//finds the node from mapped value
 		node_type	*find_node_map(const mapped_type&	map, node_type	*to_search)const
 		{
-			if (to_search == nullptr || to_search->get_maptype() == map)
+			if (to_search == nil || to_search->get_maptype() == map)
 				return (to_search);
 			if(_cmp(map, to_search->get_maptype()))//if its less we go to the left branch
 				return (find_node_map(map, to_search->left));
@@ -117,7 +119,7 @@ namespace ft
 		//find the node form the key value
 		node_type	*find_node_key(const key_type&	key, node_type	*to_search) const
 		{
-			if (to_search == nullptr || to_search->get_key() == key)
+			if (to_search == nil || to_search->get_key() == key)
 				return (to_search);
 			if(_cmp(key, to_search->get_key()))//if its less we go to the left branch
 				return (find_node_key(key, to_search->left));
@@ -130,6 +132,10 @@ namespace ft
 		{
 			node_type	*new_node = new node_type(ft::make_pair(key, mapped_type()), "r");
 
+			new_node->right = nil;
+			new_node->left = nil;
+			new_node->parent = nil;
+
 			insert(new_node , hint);
 		}
 
@@ -137,27 +143,30 @@ namespace ft
 		{
 			node_type	*new_node = new node_type(value, "r");
 
+			new_node->right = nil;
+			new_node->left = nil;
+			new_node->parent = nil;
+
 			insert(new_node, hint);
 		}
 
 		void	insert(node_type	*new_node, node_type	*hint = nullptr)
 		{
-			// node_type	*new_node = new node_type(key, "r");
 			node_type	*tmp = root;
-			node_type	*tmp1 = nullptr;
+			node_type	*tmp1 = nil;
 
-			if (root == nullptr)//if the tree is empty set the new node to root
+			if (root == nil)//if the tree is empty set the new node to root
 			{
 				root = new_node;
-				new_node->parent = nullptr;
+				new_node->parent = nil;
 			}
-			else//we create a new node as a leaf
+			else//we find the right place
 			{
 				if (hint != nullptr)
 					tmp1 = hint;
 				else
 				{
-					while(tmp != nullptr)//search to find the right position
+					while(tmp != nil)//search to find the right position
 					{
 						tmp1 = tmp;
 						if (tmp->value.first < new_node->value.first)
@@ -172,11 +181,7 @@ namespace ft
 				else
 					tmp1->left = new_node;
 			}
-			// std::cout << "at insert before correction====================" << std::endl;
-			// print(root);
 			insertion_fix(new_node);
-			// std::cout << "at insert after correction====================" << std::endl;
-			// print(root);
 			_size++;
 		}
 
@@ -189,13 +194,13 @@ namespace ft
 				to_insert->color = "b";
 				return ;
 			}
-			while(to_insert->parent != nullptr && to_insert->parent->color == "r")//if the parent of the node is red we need to compare the parent sibiling color
+			while(to_insert->parent != nil && to_insert->parent->color == "r")//if the parent of the node is red we need to compare the parent sibiling color
 			{
 				node_type	*g = to_insert->parent->parent;//this is the grandparent
 
 				if (g->left == to_insert->parent)//if the inseted node is the left child
 				{
-					if (g->right != nullptr)//check the color of the sibiling
+					if (g->right != nil)//check the color of the sibiling
 					{
 						tmp = g->right;
 						if (tmp->color == "r")
@@ -212,21 +217,15 @@ namespace ft
 						{
 							to_insert = to_insert->parent;
 							left_rotate(to_insert);
-// s							td::cout << "after the left rotate===============================" << std::endl;
-// 							print(root);
 						}
 						to_insert->parent->color = "b";
 						g->color = "r";
-						// std::cout << "before the right rotate===============================" << std::endl;
-						// print(root);
 						right_rotate(g);
-						// std::cout << "after the right rotate===============================" << std::endl;
-						// print(root);
 					}
 				}
 				else//if the inserted node is the right child
 				{
-					if (g->left != nullptr)
+					if (g->left != nil)
 					{
 						tmp = g->left;
 						if (tmp->color == "r")
@@ -269,33 +268,34 @@ namespace ft
 
 		void	erase(node_type *tmp)
 		{
-			node_type	*y = nullptr;//used to save the successor of to_delete
-			node_type	*tmp1 = nullptr;//used to save any children
+			node_type	*y = nil;//used to save the successor of to_delete
+			node_type	*tmp1 = nil;//used to save any children
 
-			if (root == nullptr)
+			if (root == nil)
 				return ;
-			if (tmp != nullptr)
+			if (tmp != nil)
 			{
 				//to save whatever comes after to_delete in a node
-				if (tmp->left == nullptr || tmp->right == nullptr)//a leaf or one child
+				if (tmp->left == nil || tmp->right == nil)//a leaf or one child
 					y = tmp;
 				else
-					y = successor(tmp);
+					y = successor(tmp);//tmp++
 
+				std::cout << "y is " << y->get_key() << std::endl;
 				//saving the children of to_delete to tmp1
-				if (y->left != nullptr)
+				if (y->left != nil)
 					tmp1 = y->left;
-				else if (y->right != nullptr)
-					tmp1 = y->right;
 				else
-					tmp1 = nullptr;//we are deleting a leaf node
+				{
+					if (y->right != nil)
+						tmp1 = y->right;
+					else
+						tmp1 = nil;//we are deleting a leaf node so we need to reconnect a parent to it
+				}
+				// if (tmp1 != nil)
+					tmp1->parent = y->parent;
 
-				// if (tmp1 == nullptr)//leaf node
-				// 	tmp1 = nil;
-				if (tmp1 != nullptr)
-					tmp1->parent = y->parent; //removing the node
-
-				if (y->parent == NULL)//reconnecting the root to tmp1
+				if (y->parent == nil)//reconnecting the root to tmp1
 					root = tmp1;
 				else if (y == y->parent->left)
 					y->parent->left = tmp1;
@@ -307,22 +307,23 @@ namespace ft
 					tmp->color = y->color;
 					tmp->value = y->value;
 				}
-				std::cout << "debuggginggggg ==== " << y->parent->value.first << std::endl;
-
 				if (y->color == "b")
 					erase_fix(tmp1);
 
 				_size--;
-				to_delete(tmp);
+				if (y == tmp)
+					to_delete(tmp);
 			}
 		}
 
 		void	erase_fix(node_type	*to_fix)
 		{
 			node_type	*tmp;//set as the parent sibiling
+			std::cout << "recoloring " << to_fix->get_key() <<std::endl;
 
-			while(to_fix && to_fix != root && to_fix->color == "b")
+			while(to_fix != root && to_fix->color == "b")
 			{
+				std::cout << "recoloring " << to_fix->get_key() <<std::endl;
 				if (to_fix->parent->left == to_fix)
 				{
 					tmp = to_fix->parent->right;
@@ -343,6 +344,7 @@ namespace ft
 						if (tmp->right->color == "b")
 						{
 							tmp->left->color = "b";
+							tmp->color = "r";
 							right_rotate(tmp);
 							tmp = to_fix->parent->right;
 						}
@@ -384,40 +386,44 @@ namespace ft
 						to_fix = root;
 					}
 				}
-				to_fix->color = "b";
-				root->color = "b";
 			}
+			to_fix->color = "b";
+			root->color = "b";
 		}
 
 		node_type	*successor(node_type	*node)//returns node--
 		{
-			node_type	*successor = nullptr;
+			node_type	*successor = nil;
 
-			if (node->left != nullptr)
+			if (node->right != nil)
 			{
-				successor = node->left;
-				if (successor->right != nullptr)
-					successor = successor->right;
+				successor = node->right;
+				while (successor->left != nil)
+					successor = successor->left;
 			}
 			else
 			{
-				successor = node->right;
-				while(successor->left != nullptr)
-					successor = successor->left;
+				node_type	*node_up = node->parent;
+				while(!node->parent->isNil() && node == node_up->left)
+				{
+					node = node_up;
+					node_up = node_up->parent;
+				}
+				successor = node_up;
 			}
 			return (successor);
 		}
 
 		node_type	*predecessor(node_type	*node)//returns max of the branch
 		{
-			node_type	*predecessor = nullptr;
+			node_type	*predecessor = nil;
 
-			if (node->left != nullptr)
+			if (node->left != nil)
 				return (max_element(node->left));
 			else
 			{
 				predecessor = node->parent;
-				while (predecessor != nullptr && node == predecessor->left)
+				while (predecessor != nil && node == predecessor->left)
 				{
 					node = predecessor;
 					predecessor = predecessor->parent;
@@ -428,25 +434,25 @@ namespace ft
 
 		void	left_rotate(node_type	*node)
 		{
-			if (node->right == nullptr)
+			if (node->right == nil)
 				return ;
 
 			node_type	*tmp = node->right;
 
-			if (tmp->left != nullptr)
+			if (tmp->left != nil)
 			{
 				node->right = tmp->left;
 				tmp->left->parent = node;
 			}
 			else
-				node->right = nullptr;
+				node->right = nil;
 
-			if (node->parent != nullptr)
+			if (node->parent != nil)
 				tmp->parent = node->parent;
-			if (node->parent == nullptr)
+			if (node->parent == nil)
 			{
 				root = tmp;
-				root->parent = nullptr;//I added this but not sure for corner cases
+				root->parent = nil;//I added this but not sure for corner cases
 			}
 			else
 			{
@@ -461,24 +467,24 @@ namespace ft
 
 		void	right_rotate(node_type	*node)
 		{
-			if (node->left == nullptr)
+			if (node->left == nil)
 				return ;
 			node_type	*tmp = node->left;
 
-			if (tmp->right != nullptr)
+			if (tmp->right != nil)
 			{
 				node->left = tmp->right;
 				tmp->right->parent = node;
 			}
 			else
-				node->left = nullptr;
+				node->left = nil;
 
-			if (node->parent != nullptr)
+			if (node->parent != nil)
 				tmp->parent = node->parent;
-			if (node->parent == nullptr)
+			if (node->parent == nil)
 			{
 				root = tmp;
-				root->parent = nullptr;
+				root->parent = nil;
 			}
 			else
 			{
@@ -500,16 +506,16 @@ namespace ft
 
 		void	clear_all()
 		{
-			if (root)
+			if (root != nil)
 				clear_recursive(root);
-			root = nullptr;
 		}
 
 		void	clear_recursive(node_type	*head)
 		{
-			if (head->right != nullptr)
+			// std::cout << "freeing: " << head->value.first << std::endl;
+			if (head->right != nil)
 				clear_recursive(head->right);
-			if (head->left != nullptr)
+			if (head->left != nil)
 				clear_recursive(head->left);
 			to_delete(head);
 			_size--;
@@ -523,7 +529,6 @@ namespace ft
 
 		void	swap(bstree &other)
 		{
-			// bstree	tmp(*this);
 			node_type											*tmp_root = root;
 			size_type											tmp_size = _size;
 			key_compare											tmp_cmp = _cmp;
@@ -546,7 +551,7 @@ namespace ft
 		//=================================================== Debugging tools =================================================================================
 		void	print(node_type	*node)
 		{
-			if (node != nullptr)
+			if (node != nil)
 			{
 				if (node == root)
 				{
@@ -576,7 +581,7 @@ namespace ft
 					std::cout << node->value.first;
 					std::cout << ":" << node->value.second <<"\033[0m\n";
 				}
-				if (node->right != nullptr)
+				if (node->right != nil)
 				{
 					if (node->right->color == "r")
 					{
@@ -593,7 +598,7 @@ namespace ft
 				}
 				else
 					std::cout << "right; nill" << std::endl;
-				if (node->left != nullptr)
+				if (node->left != nil)
 				{
 					if (node->left->color == "r")
 					{
@@ -610,7 +615,7 @@ namespace ft
 				}
 				else
 					std::cout << "left; nill" << std::endl;
-				if (node->parent != nullptr)
+				if (node->parent != nil)
 				{
 					if (node->parent->color == "r")
 					{
@@ -626,7 +631,7 @@ namespace ft
 					}
 				}
 				else
-					std::cout << "parent; nill" << std::endl;
+					std::cout << "parent; nil" << std::endl;
 				print(node->right);
 				print(node->left);
 			}

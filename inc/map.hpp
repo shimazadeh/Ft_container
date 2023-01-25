@@ -79,7 +79,7 @@ namespace ft
 		//=========================================== Destructor ===================================================
 		~map()
 		{
-			this->clear();
+			std::cout << "map destructor is called " << std::endl;
 			delete _lastelem;
 			delete _rev_lastelem;
 		}
@@ -141,9 +141,6 @@ namespace ft
 		{
 			bool		whatever = false;
 			node_type	*end_element = _bstree.max_element(_bstree.get_root(), whatever);
-			// node_type	*res = new node_type();
-
-			// res->parent = end_element;
 
 			_lastelem->parent = end_element;
 			return (iterator(_lastelem, true));
@@ -159,9 +156,7 @@ namespace ft
 		{
 			bool		whatever = false;
 			node_type	*end_element = _bstree.max_element(_bstree.get_root(), whatever);
-			// node_type	*res = new node_type();
 
-			// res->parent = end_element;
 			_lastelem->parent = end_element;
 			return (const_iterator(_lastelem, true));
 		}
@@ -177,9 +172,7 @@ namespace ft
 		{
 			bool		whatever = false;
 			node_type	*end_element = _bstree.min_element(_bstree.get_root(), whatever);
-			// node_type	*res = new node_type();
 
-			// res->parent = end_element;
 			_rev_lastelem->parent = end_element;
 			return (reverse_iterator(_rev_lastelem, true));
 		}
@@ -195,11 +188,8 @@ namespace ft
 		{
 			bool		whatever = false;
 			node_type	*end_element = _bstree.min_element(_bstree.get_root(), whatever);
-			// node_type	*res = new node_type();
 
-			// res->parent = end_element;
 			_rev_lastelem->parent = end_element;
-
 			return (const_reverse_iterator(_rev_lastelem, true));
 		}
 
@@ -222,7 +212,7 @@ namespace ft
 			node_type	*tmp;
 
 			tmp = _bstree.find_node_key(value.first, _bstree.get_root());
-			if (tmp == nullptr)//if tmp was not found
+			if (tmp->isNil())//if tmp was not found
 			{
 				_bstree.insert_by_value(value);
 				was_inserted = true;
@@ -239,7 +229,7 @@ namespace ft
 			node_type	*res;
 
 			res = _bstree.find_node_key(value.first, _bstree.get_root());
-			if (res == nullptr)
+			if (res->isNil())
 			{
 				if ((*pos).first + 1 == value.first)
 					_bstree.insert_by_value(value, pos.get_node());
@@ -317,7 +307,7 @@ namespace ft
 		{
 			node_type *res = _bstree.find_node_key(key, _bstree.get_root());
 
-			if (res != nullptr)
+			if (!res->isNil())
 				return (iterator(res, res->isNil()));
 			return (this->end());
 		}
@@ -326,7 +316,7 @@ namespace ft
 		{
 			node_type *res = _bstree.find_node_key(key, _bstree.get_root());
 
-			if (res != nullptr)
+			if (!res->isNil())
 				return (const_iterator(res, res->isNil()));
 			return (this->end());
 		}
@@ -353,7 +343,7 @@ namespace ft
 		{
 			node_type	*res = _bstree.lower_bound(key, _bstree.get_root());
 
-			if (res == nullptr)
+			if (res->isNil())
 				return (this->end());
 			return (iterator(res, res->isNil()));
 		}
@@ -362,7 +352,7 @@ namespace ft
 		{
 			node_type	*res = _bstree.lower_bound(key, _bstree.get_root());
 
-			if (res == nullptr)
+			if (res->isNil())
 				return (this->end());
 			return (const_iterator(res, res->isNil()));
 		}
@@ -371,7 +361,7 @@ namespace ft
 		{
 			node_type	*res = _bstree.upper_bound(key, _bstree.get_root());
 
-			if (res == nullptr)
+			if (res->isNil())
 				return (this->end());
 			return (const_iterator(res, res->isNil()));
 		}
@@ -380,7 +370,7 @@ namespace ft
 		{
 			node_type	*res = _bstree.upper_bound(key, _bstree.get_root());
 
-			if (res == nullptr)
+			if (res->isNil())
 				return (this->end());
 			return (const_iterator(res, res->isNil()));
 		}
@@ -406,14 +396,14 @@ namespace ft
 			node_type									*_lastelem;
 			node_type									*_rev_lastelem;
 
-		template <typename U>
-		void	swap(U	*a, U	*b)
-		{
-			U	*tmp = a;
+			template <typename U>
+			void	swap(U	*a, U	*b)
+			{
+				U	*tmp = a;
 
-			a = b;
-			b = tmp;
-		}
+				a = b;
+				b = tmp;
+			}
 	};
 		//===========================================Non-Member functions===================================================
 		template <class Key, class T, class Compare, class Allocator>
