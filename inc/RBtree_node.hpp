@@ -2,7 +2,7 @@
 #define	_RBTREE_NODE_HPP
 
 
-#include "../utils/pair.hpp"
+#include "./pair.hpp"
 #include <memory>
 #include <iostream>
 #include <string>
@@ -46,8 +46,6 @@ namespace ft
 
 		~tree_node()
 		{
-			std::cout << "node destructor is called" << std::endl;
-			// clear_all();
 		}
 
 		tree_node &operator=(const tree_node &other)
@@ -79,31 +77,6 @@ namespace ft
 		bool		isNil()const
 		{
 			return parent == this;
-		}
-
-		void	clear_all()
-		{
-			clear_recursive(parent);
-		}
-
-		void	clear_recursive(node_type	*head)
-		{
-			// std::cout << "freeing: " << head->value.first << std::endl;
-			if (head && head->right != nullptr)
-				clear_recursive(head->right);
-			if (head && head->left != nullptr)
-				clear_recursive(head->left);
-			if (head)
-				to_delete(head);
-		}
-
-		void	to_delete(node_type	*node)
-		{
-			std::allocator<ft::pair<Key, T> >	_valueAlloc;
-			std::allocator<node_type>			_nodeAlloc;
-
-			_valueAlloc.destroy(&node->value);
-			_nodeAlloc.deallocate(node, 1);
 		}
 	};
 
@@ -163,14 +136,6 @@ namespace ft
 		return (!(lhs < rhs));
 	}
 
-	template<typename Key, typename T, typename Compare, typename Allocator>
-	std::ostream	&operator<<(std::ostream &o, const tree_node<Key, T, Compare, Allocator> &src)
-	{
-		if (src.isNil() == false)
-			o << "Key: " << src.get_key() << " with value of:" << src.get_maptype();
-
-		return o;
-	}
 }
 
 #endif

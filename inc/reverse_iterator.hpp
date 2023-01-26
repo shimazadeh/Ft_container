@@ -2,7 +2,7 @@
 #define _REVERSE_ITERATOR_HPP
 
 #include "iterator_traits.hpp"
-#include "../utils/SelectConst.hpp"
+#include "./SelectConst.hpp"
 
 namespace	ft
 {
@@ -95,7 +95,7 @@ namespace	ft
 			{
 				reverse_iterator	tmp = *this;
 
-				tmp->current -= n;
+				tmp.current -= n;
 				return (tmp);
 			}
 
@@ -103,7 +103,7 @@ namespace	ft
 			{
 				reverse_iterator	tmp = *this;
 
-				tmp->current += n;
+				tmp.current += n;
 				return (tmp);
 			}
 

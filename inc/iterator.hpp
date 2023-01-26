@@ -2,7 +2,7 @@
 #define _ITERATOR_HPP
 
 #include "./iterator_traits.hpp"
-#include "../utils/SelectConst.hpp"
+#include "./SelectConst.hpp"
 
 namespace	ft
 {
@@ -23,9 +23,8 @@ namespace	ft
 			iterator(pointer p):_pointer(p)
 			{}
 
-			iterator(const iterator &other)
+			iterator(const iterator<T> &other):_pointer(other.base())
 			{
-				*this = other;
 			}
 
 			~iterator()
@@ -125,22 +124,22 @@ namespace	ft
 
 			//============================================Relational Operators===================================================
 			bool	operator==(const iterator	&lhs)const
-			{return (lhs._pointer == _pointer);}
+			{return (_pointer == lhs._pointer);}
 
 			bool	operator!=(const iterator	&lhs)const
-			{return (lhs._pointer != _pointer);}
+			{return (_pointer != lhs._pointer);}
 
 			bool	operator<(const iterator	&lhs)const
-			{return (lhs._pointer < _pointer);}
+			{return (_pointer < lhs._pointer);}
 
 			bool	operator<=(const iterator	&lhs)const
-			{return (lhs._pointer <= _pointer);}
+			{return (_pointer <= lhs._pointer);}
 
 			bool	operator>(const iterator	&lhs)const
-			{return (lhs._pointer > _pointer);}
+			{return (_pointer > lhs._pointer);}
 
 			bool	operator>=(const iterator	&lhs)const
-			{return (lhs._pointer >= _pointer);}
+			{return (_pointer >= lhs._pointer);}
 
 		private:
 			pointer	_pointer;

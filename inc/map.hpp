@@ -3,13 +3,13 @@
 
 #include <iostream>
 #include <memory>
-#include "./RedBlackTree/RBtree_iterator.hpp"
-#include "./RedBlackTree/RBtree_ReverseIterator.hpp"
-#include "./RedBlackTree/RBtree_node.hpp"
-#include "./RedBlackTree/RBtree.hpp"
-#include "./utils/equal.hpp"
-#include "./utils/Is_Integral.hpp"
-#include "./utils/pair.hpp"
+#include "./RBtree_iterator.hpp"
+#include "./RBtree_ReverseIterator.hpp"
+#include "./RBtree_node.hpp"
+#include "./RBtree.hpp"
+#include "./equal.hpp"
+#include "./Is_Integral.hpp"
+#include "./pair.hpp"
 #include <cstdio>
 
 namespace ft
@@ -73,13 +73,14 @@ namespace ft
 
 		map(const map& other)
 		{
+			_lastelem = new node_type();
+			_rev_lastelem = new node_type();
 			*this = other;
 		}
 
 		//=========================================== Destructor ===================================================
 		~map()
 		{
-			std::cout << "map destructor is called " << std::endl;
 			delete _lastelem;
 			delete _rev_lastelem;
 		}
@@ -93,8 +94,8 @@ namespace ft
 				_alloc = other._alloc;
 				_cmp = other._cmp;
 				_allocNode = other._allocNode;
-				_lastelem = other._lastelem;
-				_rev_lastelem = other._rev_lastelem;
+				*_lastelem = *other._lastelem;
+				*_rev_lastelem = *other._rev_lastelem;
 			}
 			return (*this);
 		}
@@ -212,7 +213,7 @@ namespace ft
 			node_type	*tmp;
 
 			tmp = _bstree.find_node_key(value.first, _bstree.get_root());
-			if (tmp->isNil())//if tmp was not found
+			if (tmp->isNil())
 			{
 				_bstree.insert_by_value(value);
 				was_inserted = true;
@@ -241,7 +242,7 @@ namespace ft
 		}
 
 		template< typename InputIterator >
-		void insert( InputIterator first, InputIterator last)
+		void insert( InputIterator first, InputIterator last, typename ft::enable_if<!ft::is_integral<InputIterator>::value>:: type* = 0)
 		{
 			while (first != last)
 			{
@@ -284,15 +285,15 @@ namespace ft
 			_cmp = other._cmp;
 			_alloc = other._alloc;
 			_allocNode = other._allocNode;
-			_lastelem = other._lastelem;
-			_rev_lastelem = other._rev_lastelem;
+			*_lastelem = *other._lastelem;
+			*_rev_lastelem = *other._rev_lastelem;
 
 			other._bstree.swap(tmp._bstree);
 			other._cmp = tmp._cmp;
 			other._alloc = tmp._alloc;
 			other._allocNode = tmp._allocNode;
-			other._lastelem = tmp._lastelem;
-			other._rev_lastelem = tmp._rev_lastelem;
+			*other._lastelem = *tmp._lastelem;
+			*other._rev_lastelem = *tmp._rev_lastelem;
 		}
 
 		//=========================================== LookUps ===================================================
@@ -405,85 +406,84 @@ namespace ft
 				b = tmp;
 			}
 	};
-		//===========================================Non-Member functions===================================================
-		template <class Key, class T, class Compare, class Allocator>
-		bool operator==( const ft::map<Key,T,Compare,Allocator>& lhs, const ft::map<Key,T,Compare,Allocator>& rhs )
-		{
-			typename map<Key,T,Compare,Allocator>::iterator	lhs_start = lhs.begin();
-			typename map<Key,T,Compare,Allocator>::iterator	lhs_end = lhs.end();
-			typename map<Key,T,Compare,Allocator>::iterator	rhs_start = rhs.begin();
-			typename map<Key,T,Compare,Allocator>::iterator	rhs_end = rhs.end();
+	//===========================================Non-Member functions===================================================
+	template <class Key, class T, class Compare, class Allocator>
+	bool operator==( const ft::map<Key,T,Compare,Allocator>& lhs, const ft::map<Key,T,Compare,Allocator>& rhs )
+	{
+		typename map<Key,T,Compare,Allocator>::iterator	lhs_start = lhs.begin();
+		typename map<Key,T,Compare,Allocator>::iterator	lhs_end = lhs.end();
+		typename map<Key,T,Compare,Allocator>::iterator	rhs_start = rhs.begin();
+		typename map<Key,T,Compare,Allocator>::iterator	rhs_end = rhs.end();
 
-			while (lhs_start != lhs_end && rhs_start != rhs_end)
-			{
-				if (lhs_start != rhs_start)
-					return false;
-				lhs_start++;
-				rhs_start++;
-			}
-			if (lhs_start != lhs_end || rhs_start != rhs_end)
+		while (lhs_start != lhs_end && rhs_start != rhs_end)
+		{
+			if (lhs_start != rhs_start)
 				return false;
-			return true;
+			lhs_start++;
+			rhs_start++;
 		}
+		if (lhs_start != lhs_end || rhs_start != rhs_end)
+			return false;
+		return true;
+	}
 
-		template <class Key, class T, class Compare, class Allocator>
-		bool operator!=( const ft::map<Key,T,Compare,Allocator>& lhs, const ft::map<Key,T,Compare,Allocator>& rhs )
+	template <class Key, class T, class Compare, class Allocator>
+	bool operator!=( const ft::map<Key,T,Compare,Allocator>& lhs, const ft::map<Key,T,Compare,Allocator>& rhs )
+	{
+		return (!(lhs == rhs));
+	}
+
+	template <class Key, class T, class Compare, class Allocator>
+	bool operator<( const ft::map<Key,T,Compare,Allocator>& lhs, const ft::map<Key,T,Compare,Allocator>& rhs )
+	{
+		typename ft::map<Key,T,Compare,Allocator>::iterator	lhs_start = lhs.begin();
+		typename ft::map<Key,T,Compare,Allocator>::iterator	lhs_end = lhs.end();
+		typename ft::map<Key,T,Compare,Allocator>::iterator	rhs_start = rhs.begin();
+		typename ft::map<Key,T,Compare,Allocator>::iterator	rhs_end = rhs.end();
+
+		if (lhs == rhs)
+			return false;
+		while (lhs_start != lhs_end && rhs_start != rhs_end)
 		{
-			return (!(lhs == rhs));
+			if (lhs_start != rhs_start)
+				return (lhs_start < rhs_start);
+			lhs_start++;
+			rhs_start++;
 		}
+		if (rhs_start == rhs_end)
+			return false;
+		return true;
+	}
 
-		template <class Key, class T, class Compare, class Allocator>
-		bool operator<( const ft::map<Key,T,Compare,Allocator>& lhs, const ft::map<Key,T,Compare,Allocator>& rhs )
-		{
-			typename ft::map<Key,T,Compare,Allocator>::iterator	lhs_start = lhs.begin();
-			typename ft::map<Key,T,Compare,Allocator>::iterator	lhs_end = lhs.end();
-			typename ft::map<Key,T,Compare,Allocator>::iterator	rhs_start = rhs.begin();
-			typename ft::map<Key,T,Compare,Allocator>::iterator	rhs_end = rhs.end();
+	template <class Key, class T, class Compare, class Allocator>
+	bool operator<=( const ft::map<Key,T,Compare,Allocator>& lhs, const ft::map<Key,T,Compare,Allocator>& rhs )
+	{
+		return(!(lhs > rhs));
+	}
 
-			if (lhs == rhs)
-				return false;
-			while (lhs_start != lhs_end && rhs_start != rhs_end)
-			{
-				// std::cout << "operator <" << std::endl;
-				if (lhs_start != rhs_start)
-					return (lhs_start < rhs_start);//???double check this
-				lhs_start++;
-				rhs_start++;
-			}
-			if (rhs_start == rhs_end)
-				return false;
-			return true;
-		}
+	template <class Key, class T, class Compare, class Allocator>
+	bool operator>( const ft::map<Key,T,Compare,Allocator>& lhs, const ft::map<Key,T,Compare,Allocator>& rhs )
+	{
+		if (lhs == rhs)
+			return false;
+		if (lhs < rhs)
+			return false;
+		return (true);
+	}
 
-		template <class Key, class T, class Compare, class Allocator>
-		bool operator<=( const ft::map<Key,T,Compare,Allocator>& lhs, const ft::map<Key,T,Compare,Allocator>& rhs )
-		{
-			return(!(lhs > rhs));
-		}
+	template <class Key, class T, class Compare, class Allocator>
+	bool operator>=( const ft::map<Key,T,Compare,Allocator>& lhs, const ft::map<Key,T,Compare,Allocator>& rhs )
+	{
+		return(!(lhs < rhs));
+	}
 
-		template <class Key, class T, class Compare, class Allocator>
-		bool operator>( const ft::map<Key,T,Compare,Allocator>& lhs, const ft::map<Key,T,Compare,Allocator>& rhs )
-		{
-			if (lhs == rhs)
-				return false;
-			if (lhs < rhs)
-				return false;
-			return (true);
-		}
+	template <class Key, class T, class Compare, class Allocator>
+	void swap (map<Key,T,Compare,Allocator>& x, map<Key,T,Compare,Allocator>& y)
+	{
+		map<Key, T, Compare, Allocator> tmp = x;
 
-		template <class Key, class T, class Compare, class Allocator>
-		bool operator>=( const ft::map<Key,T,Compare,Allocator>& lhs, const ft::map<Key,T,Compare,Allocator>& rhs )
-		{
-			return(!(lhs < rhs));
-		}
-
-		template <class Key, class T, class Compare, class Allocator>
-		void swap (map<Key,T,Compare,Allocator>& x, map<Key,T,Compare,Allocator>& y)
-		{
-			map<Key, T, Compare, Allocator> tmp = x;
-
-			x = y;
-			y = tmp;
-		}
+		x = y;
+		y = tmp;
+	}
 }
 #endif

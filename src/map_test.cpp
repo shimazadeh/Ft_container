@@ -13,63 +13,147 @@ void	print_map(ft::map<Key, T>	_map, std::string msg)
 
 int map_test()
 {
-  // std::cout << "test1: basic constructor, operator[], iter & rev-it (with ++ & --), comparison of maps" << std::endl;
-  // {
-  //   map<char,int> foo;
-  //   map<char,int> bar;
+  std::cout << "===========================================================TEST0: BASIC CONSTRUCTOR, OPERATOR[], ITER, REV_ITER (WITH ++ & --)=================================================================" << std::endl;
+  {
+    map<char,int> foo;
+    map<char,int> bar;
 
-  //   foo['a']= 1;
-  //   foo['b']= 1000;
-  //   foo['c'] = 6;
+    foo['a']= 1;
+    foo['b']= 1000;
+    foo['c'] = 6;
 
-  //   bar['a']= 1;
-  //   bar['b']= 1000;
-  //   bar['c'] = 1;
+    bar['a']= 1;
+    bar['b']= 1000;
+    bar['c'] = 1;
 
-  //   map<char, int>::iterator  it, ite;
+    map<char, int>::iterator  it, ite;
 
-  //   it = foo.begin();
-  //   ite = foo.end();
-  //   std::cout << "begin iterator is : "<< it.get_isend() << it->first << ", " << it->second << std::endl;
-  //   std::cout << "end iterator is: " <<  ite.get_isend() << ite->first << ", " << ite->second << std::endl;
+    it = foo.begin();
+    ite = foo.end();
+    std::cout << "begin iterator is : "<< it.get_isend() << it->first << ", " << it->second << std::endl;
+    std::cout << "end iterator is: " <<  ite.get_isend() << ite->first << ", " << ite->second << std::endl;
 
-  //   std::cout << "printing with iterator forward" << std::endl;
-  //   for (map<char, int>::iterator i = it; i != ite; i++)
-  //     std::cout << i->first << ", " << i->second << " " << i.get_isend() << std::endl;
+    std::cout << "printing with iterator forward" << std::endl;
+    for (map<char, int>::iterator i = it; i != ite; i++)
+      std::cout << i->first << ", " << i->second << " " << i.get_isend() << std::endl;
 
-  //   std::cout << "printing with iterator backward" << std::endl;
-  //   for (map<char, int>::iterator i = ite; i != it; i--)
-  //   {
-  //       std::cout << i->first << ", " << i->second << " " << i.get_isend() << std::endl;
-  //   }
+    std::cout << "printing with iterator backward" << std::endl;
+    for (map<char, int>::iterator i = ite; i != it; i--)
+    {
+        std::cout << i->first << ", " << i->second << " " << i.get_isend() << std::endl;
+    }
 
-  //   map<char, int>::reverse_iterator  is, ise;
+    map<char, int>::reverse_iterator  is, ise;
 
-  //   is = foo.rbegin();
-  //   ise = foo.rend();
+    is = foo.rbegin();
+    ise = foo.rend();
 
-  //   std::cout << "rend is: " << ise->first << ", " << ise->second << std::endl;
-  //   std::cout << "rbegin is: " << is->first <<  ", " << is->second << std::endl;
-
-
-  //   std::cout << "printing with rev_iter forward" << std::endl;
-  //   for (map<char, int>::reverse_iterator i = ise; i != is; i--)
-  //     std::cout << i->first << ", " << i->second << std::endl;
+    std::cout << "rend is: " << ise->first << ", " << ise->second << std::endl;
+    std::cout << "rbegin is: " << is->first <<  ", " << is->second << std::endl;
 
 
-  //   std::cout << "printing with rev_iter backward" << std::endl;
-  //   for (map<char, int>::reverse_iterator i = is; i != ise; i++)
-  //     std::cout << i->first << ", " << i->second << std::endl;
+    std::cout << "printing with rev_iter forward" << std::endl;
+    for (map<char, int>::reverse_iterator i = ise; i != is; i--)
+      std::cout << i->first << ", " << i->second << std::endl;
 
-  //   if (foo == bar) std::cout << "foo and bar are equal\n";
-  //   if (foo!=bar) std::cout << "foo and bar are not equal\n";
-  //   if (foo< bar) std::cout << "foo is less than bar\n";
-  //   if (foo> bar) std::cout << "foo is greater than bar\n";
-  //   if (foo<=bar) std::cout << "foo is less than or equal to bar\n";
-  //   if (foo>=bar) std::cout << "foo is greater than or equal to bar\n";
-  // }
 
-  std::cout << "test2: insert, erase, find, lower bound, upper bound" << std::endl;
+    std::cout << "printing with rev_iter backward" << std::endl;
+    for (map<char, int>::reverse_iterator i = is; i != ise; i++)
+      std::cout << i->first << ", " << i->second << std::endl;
+
+  }
+
+  std::cout << "=================================================================================TEST1: MAP COMPARISON=========================================================================================" << std::endl;
+  {
+    std::cout << "FOO and BAR have same size , key and value" << std::endl;
+    {
+      map<char,int> foo;
+      map<char,int> bar;
+
+      foo['a']= 1;
+      foo['b']= 1000;
+      foo['c'] = 1;
+
+      bar['a']= 1;
+      bar['b']= 1000;
+      bar['c'] = 1;
+
+      if (foo == bar) std::cout << "                -foo and bar are equal\n";
+      if (foo!=bar) std::cout << "                -foo and bar are not equal\n";
+      if (foo< bar) std::cout << "                -foo is less than bar\n";
+      if (foo> bar) std::cout << "                -foo is greater than bar\n";
+      if (foo<=bar) std::cout << "                -foo is less than or equal to bar\n";
+      if (foo>=bar) std::cout << "                -foo is greater than or equal to bar\n";
+    }
+
+    std::cout << "FOO and BAR have same size , key but foo last value is greater" << std::endl;
+    {
+      map<char,int> foo;
+      map<char,int> bar;
+
+      foo['a']= 1;
+      foo['b']= 1000;
+      foo['c'] = 6;
+
+      bar['a']= 1;
+      bar['b']= 1000;
+      bar['c'] = 1;
+
+      if (foo == bar) std::cout << "                -foo and bar are equal\n";
+      if (foo!=bar) std::cout << "                -foo and bar are not equal\n";
+      if (foo< bar) std::cout << "                -foo is less than bar\n";
+      if (foo> bar) std::cout << "                -foo is greater than bar\n";
+      if (foo<=bar) std::cout << "                -foo is less than or equal to bar\n";
+      if (foo>=bar) std::cout << "                -foo is greater than or equal to bar\n";
+    }
+
+    std::cout << "FOO and BAR have same size , value but foo last key value is greater" << std::endl;
+    {
+      map<char,int> foo;
+      map<char,int> bar;
+
+      foo['a']= 1;
+      foo['b']= 1000;
+      foo['d'] = 1;
+
+      bar['a']= 1;
+      bar['b']= 1000;
+      bar['c'] = 1;
+
+      if (foo == bar) std::cout << "                -foo and bar are equal\n";
+      if (foo!=bar) std::cout << "                -foo and bar are not equal\n";
+      if (foo< bar) std::cout << "                -foo is less than bar\n";
+      if (foo> bar) std::cout << "                -foo is greater than bar\n";
+      if (foo<=bar) std::cout << "                -foo is less than or equal to bar\n";
+      if (foo>=bar) std::cout << "                -foo is greater than or equal to bar\n";
+    }
+
+    std::cout << "FOO has one extra element than bar" << std::endl;
+    {
+      map<char,int> foo;
+      map<char,int> bar;
+
+      foo['a']= 1;
+      foo['b']= 1000;
+      foo['c'] = 1;
+      foo['d'] = 0;
+
+      bar['a']= 1;
+      bar['b']= 1000;
+      bar['c'] = 1;
+
+      if (foo == bar) std::cout << "                -foo and bar are equal\n";
+      if (foo!=bar) std::cout << "                -foo and bar are not equal\n";
+      if (foo< bar) std::cout << "                -foo is less than bar\n";
+      if (foo> bar) std::cout << "                -foo is greater than bar\n";
+      if (foo<=bar) std::cout << "                -foo is less than or equal to bar\n";
+      if (foo>=bar) std::cout << "                -foo is greater than or equal to bar\n";
+    }
+
+
+  }
+
+  std::cout << "===============================================================TEST2: INSERT, ERASE, FIND , LOWER BOUND, UPPER BOUND===========================================================================" << std::endl;
   {
     map<char,int> test0;
     map<char, int> test1;
@@ -88,73 +172,73 @@ int map_test()
     test0.print_tree("before erase: test0");
     test1.print_tree("before erase: test1");
 
-    // std::cout << test0.count('a') << std::endl;
-    // std::cout << test1.lower_bound('a')->first << std::endl;
-    // std::cout << test1.upper_bound('c')->first << std::endl;
+    std::cout << "count of a in test0" << test0.count('a') << std::endl;
+    std::cout << "lower bound of a in test1" << test1.lower_bound('a')->first << std::endl;
+    std::cout << "upper bound of c in test1" << test1.upper_bound('c')->first << std::endl;
 
     test2 = test0;
-    test1.print_tree("before erase: test2");
+    test2.print_tree("before erase: test2");
 
     test1.erase('a');//deleting a leaf
     test0.erase('b');//deleting the root /a node with two child
-    // test2.erase('c');//deleting a middle member
+    test2.erase('c');//deleting a middle member
 
-    test0.print_tree("after erase: test0");
-    test1.print_tree("after erase: test1");
-    test2.print_tree("after erase: test2");
+    test0.print_tree("after erase of b: test0");
+    test1.print_tree("after erase of a: test1");
+    test2.print_tree("after erase of c: test2");
 
   }
-  // std::cout << "test3: swap" << std::endl;
-  // {
-  //   map<char,int>   test0;
-  //   map<char, int>  test1;
+  std::cout << "====================================================================TEST3: SWAP=========================================================================================" << std::endl;
+  {
+    map<char,int>   test0;
+    map<char, int>  test1;
 
-  //   test1['3'] = 1;
-  //   test1['2'] = 2;
-  //   test1['1'] = 3;
+    test1['3'] = 1;
+    test1['2'] = 2;
+    test1['1'] = 3;
 
-  //   std::cout << "swaping empty to nonempty" << std::endl;
-  //   test0.print_tree("before first swap: test0");
-  //   test1.print_tree("before first swap: test1");
+    std::cout << "swaping empty to nonempty" << std::endl;
+    test0.print_tree("before first swap: test0");
+    test1.print_tree("before first swap: test1");
 
-  //   test0.swap(test1);
+    test0.swap(test1);
 
-  //   test0.print_tree("after first swap: test0");
-  //   test1.print_tree("after first swap: test1");
+    test0.print_tree("after first swap: test0");
+    test1.print_tree("after first swap: test1");
 
-  //   // test1['4'] = 1;
-  //   // test1['5'] = 2;
-  //   // test1['6'] = 3;
+    test1['4'] = 1;
+    test1['5'] = 2;
+    test1['6'] = 3;
 
-  //   // std::cout << "swaping nonempty to nonempty" << std::endl;
-  //   // test0.print_tree("before second swap: test0");
-  //   // test1.print_tree("before second swap: test1");
+    std::cout << "swaping nonempty to nonempty" << std::endl;
+    test0.print_tree("before second swap: test0");
+    test1.print_tree("before second swap: test1");
 
-  //   // test0.swap(test1);
+    test0.swap(test1);
 
-  //   // test0.print_tree("after second swap: test0");
-  //   // test1.print_tree("after second swap: test1");
+    test0.print_tree("after second swap: test0");
+    test1.print_tree("after second swap: test1");
 
-  // }
-  // std::cout << "test4: same type pair" << std::endl;
-  // {
-  //   map<char,char>   test0;
-  //   map<char, char>  test1;
+  }
+  std::cout << "===============================================================TEST4: SAME TYPE PAIR =====================================================================================" << std::endl;
+  {
+    map<char,char>   test0;
+    map<char, char>  test1;
 
-  //   test1['3'] = '1';
-  //   test1['2'] = '2';
-  //   test1['1'] = '3';
+    test1['3'] = '1';
+    test1['2'] = '2';
+    test1['1'] = '3';
 
-  //   test0['4'] = '1';
-  //   test0['5'] = '2';
-  //   test0['6'] = '3';
+    test0['4'] = '1';
+    test0['5'] = '2';
+    test0['6'] = '3';
 
-  //   ft::map<char, char>::iterator tmp = test1.begin()++;
-  //   test0.insert(test1.begin(), tmp++);
+    ft::map<char, char>::iterator tmp = test1.begin()++;
+    test0.insert(test1.begin(), tmp++);
 
-  //   test0.print_tree("test0");
-  //   // test1.print_tree("test1");
-  // }
+    test0.print_tree("test0");
+    test1.print_tree("test1");
+  }
   return 0;
 }
 

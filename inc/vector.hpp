@@ -5,11 +5,11 @@
 #include <memory>
 #include <stdexcept>
 #include <limits>
-#include "./iterators/iterator.hpp"
-#include "./iterators/reverse_iterator.hpp"
-#include "./utils/equal.hpp"
-#include "./utils/Is_Integral.hpp"
-#include "./utils/pair.hpp"
+#include "./iterator.hpp"
+#include "./reverse_iterator.hpp"
+#include "./equal.hpp"
+#include "./Is_Integral.hpp"
+#include "./pair.hpp"
 #include <cstdio>
 
 namespace	ft
@@ -84,6 +84,12 @@ namespace	ft
 			{
 				if (this != &other)
 				{
+					this->clear();
+					if (size_allocated > 0)
+					{
+						_alloc.deallocate(arr, size_allocated);
+						size_allocated = 0;
+					}
 					_alloc = other._alloc;
 					assign(other.begin(), other.end());
 					size_filled = other.size_filled;
@@ -135,7 +141,7 @@ namespace	ft
 				if (n >= size_filled)
 					throw std::out_of_range("INDEX OUT OF RANGE");
 				else
-					return (arr[n]);
+					return ((*this)[n]);
 			}
 
 			const_reference at (size_type n) const
@@ -143,7 +149,7 @@ namespace	ft
 				if (n >= size_filled)
 					throw std::out_of_range("INDEX OUT OF RANGE");
 				else
-					return (arr[n]);
+					return ((*this)[n]);
 			}
 
 			reference	operator[](size_type n)
@@ -171,10 +177,12 @@ namespace	ft
 		//========================================Capacity================================================================
 			void	reserve(size_type new_cap)
 			{
-				T	*new_arr;
-
+				if (new_cap > max_size())
+					throw std::length_error("vector::reserve");
 				if (new_cap <= size_allocated)
 					return ;
+				if (size_allocated == 0)
+					expand(1);
 				expand(new_cap);
 			}
 
@@ -185,12 +193,12 @@ namespace	ft
 
 			size_type		size(void)const
 			{
-				return (this->size_filled);
+				return (size_filled);
 			}
 
 			size_type		max_size(void)const
 			{
-				return (std::numeric_limits<size_type>::max());
+				return (_alloc.max_size());
 			}
 
 		//=======================================Modifiers================================================================
@@ -220,13 +228,9 @@ namespace	ft
 
 			void	insert(iterator pos, size_type count, const value_type& value)
 			{
-				vector	new_vec(pos, end());//should be begin() + pos!!??
+				vector	new_vec(pos , end());//should be begin() + pos!!??
 
-				if (size_filled + count > size_allocated)
-					expand((size_filled * 2) + count);
-				size_filled += count;
-
-				for (int i = 0; i < new_vec.size(); i++)
+				for (size_type i = 0; i < new_vec.size(); i++)
 					pop_back();
 
 				for (size_type i = 0; i < count; i++)
@@ -237,21 +241,14 @@ namespace	ft
 			}
 
 			template<class InputIterator>
-			void	insert(iterator pos, InputIterator first, InputIterator last, typename ft::enable_if<ft::is_integral<InputIterator>::value>:: type = 0)
+			void	insert(iterator pos, InputIterator first, InputIterator last, typename ft::enable_if<!ft::is_integral<InputIterator>::value>:: type* = 0)
 			{
-				vector		new_vec(pos, end());//should be begin()+ pos
-				size_type	diff = 0;
+				vector		new_vec(pos, end());
 
-				for (iterator i = first; i != last; i++)
-					diff++;
-				if (size_filled + diff > size_allocated)
-					expand((size_filled * 2) + diff);
-				size_filled += diff;
-
-				for (int i = 0; i < new_vec.size(); i++)
+				for (size_type i = 0; i < new_vec.size(); i++)
 					pop_back();
 
-				for (iterator i = first; i != last; i++)
+				for (InputIterator i = first; i != last; i++)
 					push_back(*i);
 
 				for (iterator tmp = new_vec.begin(); tmp != new_vec.end(); tmp++)
@@ -260,24 +257,37 @@ namespace	ft
 
 			iterator		erase(iterator pos)
 			{
-				vector		new_arr(pos, end());
+				vector		new_arr(pos + 1, end());
 				size_t		dist = end() - pos;
 
 				for (size_t i = 0; i < dist; i++)
 					pop_back();
 
-				for(iterator i = new_arr.begin() + 1; i != new_arr.end(); i++)
+				for(iterator i = new_arr.begin(); i != new_arr.end(); i++)
 					insert(end(), *i);
-				return (arr + dist);
+				return (iterator(&arr[dist]));
 			}
 
 			iterator		erase(iterator first, iterator last)
 			{
-				size_t	pos = first - begin();
+				size_type	pos = end() - last;
+				pointer		tmp = first.base();
 
-				for (iterator i = first; i != last; i++)
-					erase(i);
-				return (arr + pos);
+				while(first != last)
+				{
+					_alloc.destroy(first.base());
+					first++;
+					size_filled--;
+				}
+
+				for (size_type i = 0; i < pos; i++)
+				{
+					_alloc.construct(tmp + i, *(last.base() + i));
+					_alloc.destroy(last.base() + i);
+				}
+
+				return (iterator(&arr[pos]));
+
 			}
 
 			void			push_back(const value_type& value)
@@ -303,7 +313,8 @@ namespace	ft
 			{
 				value_type	*new_arr;
 
-				new_arr = _alloc.allocate(count);
+				if (count > 0)
+					new_arr = _alloc.allocate(count);
 				if (size() > count)
 				{
 					for (size_type i = 0; i < count; i++)
@@ -313,7 +324,8 @@ namespace	ft
 				{
 					for (size_type i = 0; i < size_filled; i++)
 						new_arr[i] = arr[i];
-					new_arr->insert(new_arr->end(), count - size_filled, val);
+					for (size_type i = size_filled; i < count; i++)
+						new_arr[i] = val;
 				}
 				_alloc.deallocate(arr, size_allocated);
 				arr = new_arr;
@@ -323,17 +335,20 @@ namespace	ft
 
 			void			swap(vector &other)
 			{
-				T			*tmp_arr = arr;
-				size_type	tmp_filled = size_filled;
-				size_type	tmp_allocated = size_allocated;
+				T				*tmp_arr = arr;
+				size_type		tmp_filled = size_filled;
+				size_type		tmp_allocated = size_allocated;
+				allocator_type	tmp_alloc = _alloc;
 
 				arr = other.arr;
 				size_filled = other.size_filled;
 				size_allocated = other.size_allocated;
+				_alloc = other._alloc;
 
 				other.arr = tmp_arr;
 				other.size_allocated = tmp_allocated;
 				other.size_filled = tmp_filled;
+				other._alloc = tmp_alloc;
 			}
 		//=================================================================================================================
 		private:
@@ -370,7 +385,7 @@ namespace	ft
 	{
 		if (other.size() != src.size())
 			return false;
-		return (ft::equal<ft::iterator<T>, ft::iterator<T> >(other.begin(), other.end(), src.begin(), src.end()));
+		return (ft::equal<ft::iterator<T, true>, ft::iterator<T, true> >(other.begin(), other.end(), src.begin(), src.end()));
 	}
 
 	template <class T, class Alloc>
@@ -382,18 +397,20 @@ namespace	ft
 	template <class T, class Alloc>
 	bool	operator<(const vector<T, Alloc> &other, const vector<T, Alloc> &src)
 	{
-		ft::iterator<T>	other_b = other.begin();
-		ft::iterator<T>	src_b = src.begin();
+		typename ft::vector<T, Alloc>::const_iterator	other_b = other.begin();
+		typename ft::vector<T, Alloc>::const_iterator	src_b = src.begin();
+		typename ft::vector<T, Alloc>::const_iterator	other_e = other.end();
+		typename ft::vector<T, Alloc>::const_iterator	src_e = src.end();
 
 		if (other == src)
 			return false;
-		while (other_b != other.end() && src_b != src.end() && *src_b == *other_b)
+		while (other_b != other_e && src_b != src_e && *src_b == *other_b)
 		{
 			other_b++;
 			src_b++;
 		}
-		if (src_b == src.end())
-			return false;
+		if (other_b == other_e)
+			return true;
 		return (*other_b < *src_b);
 	}
 
@@ -408,7 +425,9 @@ namespace	ft
 	{
 		if (other == src)
 			return false;
-		return (!(other < src));
+		if (other < src)
+			return false;
+		return (true);
 	}
 
 	template <class T, class Alloc>

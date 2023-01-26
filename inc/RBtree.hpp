@@ -29,8 +29,7 @@ namespace ft
 
 		~bstree()
 		{
-			std::cout << "tree desctructor is called" << std::endl;
-			this->clear_all();
+			clear_all();
 			delete nil;
 		}
 		//==========================================copy constructor===============================
@@ -43,7 +42,8 @@ namespace ft
 		{
 			if (this != &other)
 			{
-				root = new node_type(*other.root);
+				// node_type	*tmp = other.root;
+				root =  other.root;
 				initialize_nil();
 				_size = other._size;
 				_nodeAlloc = other._nodeAlloc;
@@ -55,7 +55,7 @@ namespace ft
 		{
 			value_type	nil_value = ft::make_pair(Key(), mapped_type());
 			nil = new node_type(nil_value , "b");
-			nil->parent = nil;//I think this shoud be a nullptr??
+			nil->parent = nil;
 			nil->left = nil;
 			nil->right = nil;
 		}
@@ -86,7 +86,7 @@ namespace ft
 		{
 			if (node == nil || key == node->get_key())
 				return (node);
-			if (_cmp(node->get_key(), key)) //if current key is less than the KEY
+			if (_cmp(node->get_key(), key))
 				return (lower_bound(key, node->right));
 			node_type	*tmp = lower_bound(key, node->left);
 			if (tmp == nil)
@@ -106,27 +106,23 @@ namespace ft
 			return (tmp);
 		}
 
-		//finds the node from mapped value
 		node_type	*find_node_map(const mapped_type&	map, node_type	*to_search)const
 		{
 			if (to_search == nil || to_search->get_maptype() == map)
 				return (to_search);
-			if(_cmp(map, to_search->get_maptype()))//if its less we go to the left branch
+			if(_cmp(map, to_search->get_maptype()))
 				return (find_node_map(map, to_search->left));
 			return (find_node_map(map, to_search->right));
 		}
 
-		//find the node form the key value
 		node_type	*find_node_key(const key_type&	key, node_type	*to_search) const
 		{
 			if (to_search == nil || to_search->get_key() == key)
 				return (to_search);
-			if(_cmp(key, to_search->get_key()))//if its less we go to the left branch
+			if(_cmp(key, to_search->get_key()))
 				return (find_node_key(key, to_search->left));
 			return (find_node_key(key, to_search->right));
 		}
-
-		//make insert works with pair or key or mapped value????
 
 		void	insert_by_key(const Key 	&key, node_type	*hint = nullptr)
 		{
@@ -281,7 +277,6 @@ namespace ft
 				else
 					y = successor(tmp);//tmp++
 
-				std::cout << "y is " << y->get_key() << std::endl;
 				//saving the children of to_delete to tmp1
 				if (y->left != nil)
 					tmp1 = y->left;
@@ -307,23 +302,21 @@ namespace ft
 					tmp->color = y->color;
 					tmp->value = y->value;
 				}
+
 				if (y->color == "b")
 					erase_fix(tmp1);
 
 				_size--;
-				if (y == tmp)
-					to_delete(tmp);
+				to_delete(y);
 			}
 		}
 
 		void	erase_fix(node_type	*to_fix)
 		{
 			node_type	*tmp;//set as the parent sibiling
-			std::cout << "recoloring " << to_fix->get_key() <<std::endl;
 
 			while(to_fix != root && to_fix->color == "b")
 			{
-				std::cout << "recoloring " << to_fix->get_key() <<std::endl;
 				if (to_fix->parent->left == to_fix)
 				{
 					tmp = to_fix->parent->right;
@@ -414,6 +407,7 @@ namespace ft
 			return (successor);
 		}
 
+		//this function is not used anywhere
 		node_type	*predecessor(node_type	*node)//returns max of the branch
 		{
 			node_type	*predecessor = nil;
@@ -452,7 +446,7 @@ namespace ft
 			if (node->parent == nil)
 			{
 				root = tmp;
-				root->parent = nil;//I added this but not sure for corner cases
+				root->parent = nil;
 			}
 			else
 			{
@@ -512,7 +506,6 @@ namespace ft
 
 		void	clear_recursive(node_type	*head)
 		{
-			// std::cout << "freeing: " << head->value.first << std::endl;
 			if (head->right != nil)
 				clear_recursive(head->right);
 			if (head->left != nil)
@@ -530,6 +523,7 @@ namespace ft
 		void	swap(bstree &other)
 		{
 			node_type											*tmp_root = root;
+			node_type											*tmp_nil = nil;
 			size_type											tmp_size = _size;
 			key_compare											tmp_cmp = _cmp;
 			std::allocator<ft::pair<Key, T> >					tmp_valueAlloc = _valueAlloc;
@@ -537,12 +531,14 @@ namespace ft
 
 
 			root = other.root;
+			nil = other.nil;
 			_size = other._size;
 			_cmp = other._cmp;
 			_valueAlloc = other._valueAlloc;
 			_nodeAlloc = other._nodeAlloc;
 
 			other.root = tmp_root;
+			other.nil = tmp_nil;
 			other._size = tmp_size;
 			other._cmp = tmp_cmp;
 			other._valueAlloc = tmp_valueAlloc;
