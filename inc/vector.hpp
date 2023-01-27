@@ -41,7 +41,7 @@ namespace	ft
 
 			explicit	vector(size_type count, const value_type& value = value_type(), const allocator_type &alloc = allocator_type()):arr(NULL), size_filled(0), _alloc(alloc)
 			{
-				size_allocated = count * 2;
+				size_allocated = count;//removed * 2
 				size_filled = count;
 				arr = _alloc.allocate(size_allocated);
 				for (size_type i = 0; i < size_filled; i++)
@@ -53,7 +53,7 @@ namespace	ft
 			typename ft::enable_if<!ft::is_integral<InputIterator>::value>:: type* = 0):
 			arr(NULL), size_filled(0), _alloc(alloc)
 			{
-				size_allocated = (last - first) * 2;
+				size_allocated = (last - first);//removed * 2
 				if (size_allocated > 0)
 					arr = _alloc.allocate(size_allocated);
 				while (first != last)
@@ -63,9 +63,11 @@ namespace	ft
 				}
 			}
 
-			vector(const vector &other):arr(NULL), size_allocated(0), size_filled(0), _alloc(other._alloc)
+			vector(const vector &other):arr(NULL), size_allocated(other.capacity()), size_filled(other.size()), _alloc(other._alloc)
 			{
-				*this = other;
+				arr = _alloc.allocate(size_allocated);
+				for (size_type i = 0; i < size(); i++)
+					_alloc.construct(&arr[i], other.arr[i]);
 			}
 
 		//=======================================Destructor==============================================================
@@ -84,24 +86,22 @@ namespace	ft
 			{
 				if (this != &other)
 				{
-					this->clear();
-					if (size_allocated > 0)
-					{
-						_alloc.deallocate(arr, size_allocated);
-						size_allocated = 0;
-					}
 					_alloc = other._alloc;
 					assign(other.begin(), other.end());
-					size_filled = other.size_filled;
-					size_allocated = other.size_allocated;
 				}
 				return (*this);
 			}
 
 			void assign(size_type n, const value_type& val)
 			{
-				if (n > size_allocated)
-					expand(n);
+				if (size_filled + n > size_allocated * 2)
+					expand(size_filled + n);
+				else if (size_filled + n > size_allocated)
+					expand(size_allocated * 2);
+
+
+				// if (n > size_allocated)
+				// 	expand(n);
 				this->clear();
 				for (size_type i = 0; i < n; i++)
 					push_back(val);
@@ -112,8 +112,14 @@ namespace	ft
 			{
 				size_type	size = last - first;
 
-				if (size > size_allocated)
-					expand(size + size_allocated);
+				if (size_filled + size > size_allocated * 2)
+					expand(size_filled + size);
+				else if (size_filled + size > size_allocated)
+					expand(size_allocated * 2);
+
+
+				// if (size > size_allocated)
+				// 	expand(size + size_allocated);
 				this->clear();
 				for(InputIterator i = first; i != last; i++)
 					push_back(*i);
@@ -211,10 +217,7 @@ namespace	ft
 
 			iterator	insert(iterator pos, const value_type& value)
 			{
-				vector	new_vec(pos, end());//should be begin() + pos!!??
-
-				if (size_filled == size_allocated)
-					expand(size_filled * 2);
+				vector	new_vec(pos, end());
 
 				for (size_type i = 0; i < new_vec.size(); i++)
 					pop_back();
@@ -228,7 +231,12 @@ namespace	ft
 
 			void	insert(iterator pos, size_type count, const value_type& value)
 			{
-				vector	new_vec(pos , end());//should be begin() + pos!!??
+				vector	new_vec(pos , end());
+
+				if (size_filled + count > size_allocated * 2)
+					expand(size_filled + count);
+				else if (size_filled + count > size_allocated)
+					expand(size_allocated * 2);
 
 				for (size_type i = 0; i < new_vec.size(); i++)
 					pop_back();
@@ -244,6 +252,11 @@ namespace	ft
 			void	insert(iterator pos, InputIterator first, InputIterator last, typename ft::enable_if<!ft::is_integral<InputIterator>::value>:: type* = 0)
 			{
 				vector		new_vec(pos, end());
+
+				if (size_filled + (last - first) > size_allocated * 2)
+					expand(size_filled + (last - first));
+				else if (size_filled + (last - first) > size_allocated)
+					expand(size_allocated * 2);
 
 				for (size_type i = 0; i < new_vec.size(); i++)
 					pop_back();
@@ -294,8 +307,14 @@ namespace	ft
 			{
 				if (size_allocated == 0)
 					expand(1);
-				if (size_filled >= size_allocated)
-					expand(size_filled * 2);
+				if (size_filled == size_allocated)
+					expand(size_allocated * 2);
+				// else if (size_filled + 1 > size_allocated)
+				// 	expand(size_allocated * 2);
+
+				// std::cout << size_allocated << ", " << size_filled << std::endl;
+				// if (size_filled == size_allocated)
+				// 	expand(size_filled * 2);
 				_alloc.construct(&arr[size_filled], value);
 				size_filled++;
 			}
@@ -311,26 +330,31 @@ namespace	ft
 
 			void			resize(size_type count, value_type val = value_type())
 			{
-				value_type	*new_arr;
+				if (count < size())
+				{
+					for (int i = (int)size_filled - 1; i >= (int)count; i--)
+						_alloc.destroy(&arr[i]);
+					size_filled = count;
+				}
+				else if (count > size())
+				{
+					size_type	count_fill = count;
 
-				if (count > 0)
-					new_arr = _alloc.allocate(count);
-				if (size() > count)
-				{
-					for (size_type i = 0; i < count; i++)
-						new_arr[i] = arr[i];
-				}
-				else if (size() < count)
-				{
+					if (count < size_allocated * 2)
+						count = size_allocated * 2;
+
+					value_type	*new_arr = _alloc.allocate(count);
+
 					for (size_type i = 0; i < size_filled; i++)
-						new_arr[i] = arr[i];
-					for (size_type i = size_filled; i < count; i++)
-						new_arr[i] = val;
+						_alloc.construct(&new_arr[i], arr[i]);
+					for (size_type i = size_filled; i < count_fill; i++)
+						_alloc.construct(&new_arr[i], val);
+					clear();
+					_alloc.deallocate(arr, size_allocated);
+					arr = new_arr;
+					size_allocated = count;
+					size_filled = count_fill;
 				}
-				_alloc.deallocate(arr, size_allocated);
-				arr = new_arr;
-				size_allocated = count;
-				size_filled = count;
 			}
 
 			void			swap(vector &other)
