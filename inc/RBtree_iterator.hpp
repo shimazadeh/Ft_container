@@ -2,15 +2,16 @@
 #define _RBTREE_ITERATOR_HPP
 
 #include "RBtree.hpp"
+#include "./SelectConst.hpp"
 
 namespace	ft
 {
-	template<typename Key, typename T, typename Compare = std::less<Key> >
+	template<typename Key, typename T, typename Compare = std::less<Key> , bool IsConst = false>
 	struct tree_iterator
 	{
 		typedef	Key																	key_type;
 		typedef	T																	mapped_type;
-		typedef ft::pair<Key, T>													value_type;
+		typedef ft::pair<key_type, T>												value_type;
 		typedef std::less<Key>														key_compare;
 		typedef std::allocator<value_type>											allocator_type;
 		typedef ft::tree_node<key_type, mapped_type, key_compare, allocator_type>	node_type;//shouuld be private??
@@ -22,7 +23,8 @@ namespace	ft
 		bool		is_end;
 
 		tree_iterator():node(nullptr), is_end(false)
-		{}
+		{
+		}
 
 		tree_iterator(node_type	*n, bool	if_end): node(n), is_end(if_end)
 		{
@@ -37,6 +39,7 @@ namespace	ft
 		{
 		}
 		//===============================================================================================================
+
 		pointer		operator->()const {return (&node->get_value());}
 		reference	operator*()const {return (node->get_value());}
 
@@ -59,8 +62,9 @@ namespace	ft
 		{
 			if (node == nullptr)
 				return (*this);
+
 			is_end = false;
-			if (!node->right->isNil())//If the current node has a non-null right child,
+			if (node->right && !node->right->isNil())//If the current node has a non-null right child,
 			{
 				node = node->right;
 				while(!node->left->isNil())
@@ -81,12 +85,12 @@ namespace	ft
 			return (*this);
 		}
 
-		tree_iterator&	operator++(int)
+		tree_iterator	operator++(int)
 		{
-			tree_iterator	*tmp (this);
+			tree_iterator	tmp(*this);
 			++(*this);
 
-			return(*tmp);
+			return(tmp);
 		}
 
 		tree_iterator&	operator--()
@@ -115,33 +119,34 @@ namespace	ft
 			return (*this);
 		}
 
-		tree_iterator&	operator--(int)
+		tree_iterator	operator--(int)
 		{
-			tree_iterator	tmp = *this;
+			tree_iterator	tmp(*this);
 			--(*this);
 
-			return (*this);
+			return (tmp);
 		}
+
 	};
 
-	template<typename Key, typename T, typename Compare>
-	bool operator==(const tree_iterator<Key, T, Compare> &lhs, const tree_iterator<Key, T, Compare> &rhs)
+	template<typename Key, typename T, typename Compare, bool IsConst>
+	bool operator==(const tree_iterator<Key, T, Compare, IsConst> &lhs, const tree_iterator<Key, T, Compare, IsConst> &rhs)
 	{
 		if (lhs.is_end && rhs.is_end)
 			return true;
 		if (lhs.is_end || rhs.is_end)
 			return false;
-		return (*(lhs.node) == *(rhs.node));
+		return (lhs.node == rhs.node);
 	}
 
-	template<typename Key, typename T, typename Compare>
-	bool operator!=(const tree_iterator<Key, T, Compare>& lhs, const tree_iterator<Key, T, Compare>& rhs)
+	template<typename Key, typename T, typename Compare, bool IsConst>
+	bool operator!=(const tree_iterator<Key, T, Compare, IsConst>& lhs, const tree_iterator<Key, T, Compare, IsConst>& rhs)
 	{
 		return (!(lhs == rhs));
 	}
 
-	template<typename Key, typename T, typename Compare>
-	bool operator<(const tree_iterator<Key, T, Compare>& lhs, const tree_iterator<Key, T, Compare>& rhs)
+	template<typename Key, typename T, typename Compare, bool IsConst>
+	bool operator<(const tree_iterator<Key, T, Compare, IsConst>& lhs, const tree_iterator<Key, T, Compare, IsConst>& rhs)
 	{
 		return (*(lhs.node) < *(rhs.node));
 	}

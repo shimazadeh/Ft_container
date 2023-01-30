@@ -33,18 +33,18 @@ namespace ft
 		typedef typename allocator_type::const_pointer								const_pointer;
 
 		typedef	tree_iterator<Key, T, Compare>										iterator;
-		typedef	const iterator														const_iterator;
+		typedef	tree_iterator<Key, T, Compare, true>								const_iterator;
 		typedef	tree_reverse_iterator<Key, T, Compare>								reverse_iterator;
-		typedef	const reverse_iterator												const_reverse_iterator;
+		typedef	tree_reverse_iterator<Key, T, Compare, true>						const_reverse_iterator;
 		typedef ft::tree_node<key_type, mapped_type, key_compare, allocator_type>	node_type;
 
 		class	value_compare
 		{
-			protected:
+			public:
+
 				Compare	comp;
 				value_compare(Compare c): comp(c){}
 
-			public:
 				typedef	bool		result;
 				typedef	value_type	first;
 				typedef	value_type	second;
@@ -103,32 +103,13 @@ namespace ft
 		allocator_type get_allocator() const {return (_alloc);}
 
 		//=========================================== Access ===================================================
-		mapped_type& at(const key_type& key)//ref page says since c++11!!!!!???
-		{
-			if (!_bstree.find_node_key(key, _bstree.get_root()))
-				throw std::out_of_range("key is out of range");
-			else
-				return ((*this)[key]);
-		}
-
-		const mapped_type& at( const key_type& key ) const
-		{
-			if (!_bstree.find_node_key(key, _bstree.get_root()))
-				throw std::out_of_range("key is out of range");
-			else
-				return ((*this)[key]);
-		}
 
 		mapped_type& operator[]( const key_type& key )
 		{
-			_bstree.insert_by_key(key);
+			insert(ft::make_pair(key, mapped_type()));
 			node_type	*tmp = _bstree.find_node_key(key, _bstree.get_root());
 
-			//think about this: why this method didnt work???
-			// ft::pair<iterator, bool>	tmp = insert(ft::make_pair(key, mapped_type()));
-			// iterator					tmp2 = tmp.first;
-			// return ((*tmp2).value.second);
-			return (tmp->value.second);
+			return ((tmp->value).second);
 		}
 
 		//=========================================== Iterator ===================================================
@@ -218,17 +199,15 @@ namespace ft
 				_bstree.insert_by_value(value);
 				was_inserted = true;
 				tmp = _bstree.find_node_key(value.first, _bstree.get_root());
-				result = iterator(tmp, tmp->isNil());
 			}
-			else
-				result = this->end();
+			result = iterator(tmp, tmp->isNil());
 			return (ft::make_pair(result, was_inserted));
 		}
 
 		iterator insert( iterator pos, const value_type& value )
 		{
 			node_type	*res;
-
+			(void)pos;
 			res = _bstree.find_node_key(value.first, _bstree.get_root());
 			if (res->isNil())
 			{
@@ -254,21 +233,20 @@ namespace ft
 		//=======================================================================
 		void erase( iterator pos )
 		{
-			_bstree.erase(pos.get_value());
+			_bstree.erase_by_key((pos.node)->get_key());
 		}
 
 		void erase( iterator first, iterator last )
 		{
 			while (first != last)
 			{
-				erase(first);
-				first++;
+				erase(first++);
 			}
 		}
 
 		size_type erase( const Key& key )
 		{
-			if (_bstree.find_node_key(key, _bstree.get_root()))
+			if (!_bstree.find_node_key(key, _bstree.get_root())->isNil())
 			{
 				_bstree.erase_by_key(key);
 				return (1);
@@ -299,7 +277,7 @@ namespace ft
 		//=========================================== LookUps ===================================================
 		size_type count( const Key& key ) const
 		{
-			if (_bstree.find_node_key(key, _bstree.get_root()))
+			if (!_bstree.find_node_key(key, _bstree.get_root())->isNil())
 				return (1);
 			return (0);
 		}
@@ -364,7 +342,7 @@ namespace ft
 
 			if (res->isNil())
 				return (this->end());
-			return (const_iterator(res, res->isNil()));
+			return (iterator(res, res->isNil()));
 		}
 
 		const_iterator upper_bound( const Key& key ) const
@@ -410,10 +388,10 @@ namespace ft
 	template <class Key, class T, class Compare, class Allocator>
 	bool operator==( const ft::map<Key,T,Compare,Allocator>& lhs, const ft::map<Key,T,Compare,Allocator>& rhs )
 	{
-		typename map<Key,T,Compare,Allocator>::iterator	lhs_start = lhs.begin();
-		typename map<Key,T,Compare,Allocator>::iterator	lhs_end = lhs.end();
-		typename map<Key,T,Compare,Allocator>::iterator	rhs_start = rhs.begin();
-		typename map<Key,T,Compare,Allocator>::iterator	rhs_end = rhs.end();
+		typename map<Key,T,Compare,Allocator>::const_iterator			lhs_start = lhs.begin();
+		typename map<Key,T,Compare,Allocator>::const_iterator			lhs_end = lhs.end();
+		typename map<Key,T,Compare,Allocator>::const_iterator			rhs_start = rhs.begin();
+		typename map<Key,T,Compare,Allocator>::const_iterator			rhs_end = rhs.end();
 
 		while (lhs_start != lhs_end && rhs_start != rhs_end)
 		{
@@ -436,10 +414,10 @@ namespace ft
 	template <class Key, class T, class Compare, class Allocator>
 	bool operator<( const ft::map<Key,T,Compare,Allocator>& lhs, const ft::map<Key,T,Compare,Allocator>& rhs )
 	{
-		typename ft::map<Key,T,Compare,Allocator>::iterator	lhs_start = lhs.begin();
-		typename ft::map<Key,T,Compare,Allocator>::iterator	lhs_end = lhs.end();
-		typename ft::map<Key,T,Compare,Allocator>::iterator	rhs_start = rhs.begin();
-		typename ft::map<Key,T,Compare,Allocator>::iterator	rhs_end = rhs.end();
+		typename ft::map<Key,T,Compare,Allocator>::const_iterator		lhs_start = lhs.begin();
+		typename ft::map<Key,T,Compare,Allocator>::const_iterator		lhs_end = lhs.end();
+		typename ft::map<Key,T,Compare,Allocator>::const_iterator		rhs_start = rhs.begin();
+		typename ft::map<Key,T,Compare,Allocator>::const_iterator		rhs_end = rhs.end();
 
 		if (lhs == rhs)
 			return false;

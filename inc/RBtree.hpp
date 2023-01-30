@@ -21,7 +21,7 @@ namespace ft
 		typedef ft::tree_node<key_type, mapped_type, key_compare, allocator_type>	node_type;
 
 		//================================= constructor =======================================================
-		bstree():root(nullptr), _size(0), _nodeAlloc(Allocator())
+		bstree():root(nullptr), _size(0), _nodeAlloc(std::allocator<node_type>())
 		{
 			initialize_nil();
 			root = nil;
@@ -42,7 +42,6 @@ namespace ft
 		{
 			if (this != &other)
 			{
-				// node_type	*tmp = other.root;
 				root =  other.root;
 				initialize_nil();
 				_size = other._size;
@@ -159,17 +158,14 @@ namespace ft
 			else//we find the right place
 			{
 				if (hint != nullptr)
-					tmp1 = hint;
-				else
+					tmp = hint;
+				while(tmp != nil)//search to find the right position
 				{
-					while(tmp != nil)//search to find the right position
-					{
-						tmp1 = tmp;
-						if (tmp->value.first < new_node->value.first)
-							tmp = tmp->right;
-						else
-							tmp = tmp->left;
-					}
+					tmp1 = tmp;
+					if (tmp->value.first < new_node->value.first)
+						tmp = tmp->right;
+					else
+						tmp = tmp->left;
 				}
 				new_node->parent = tmp1;
 				if (tmp1->value.first < new_node->value.first)
@@ -183,7 +179,7 @@ namespace ft
 
 		void	insertion_fix(node_type	*to_insert)
 		{
-			node_type	*tmp;//this becomes parent sibiling
+			node_type	*tmp = nullptr;//this becomes parent sibiling
 
 			if (root == to_insert)//this means the tree was empty before so we set the color to black
 			{
@@ -196,16 +192,15 @@ namespace ft
 
 				if (g->left == to_insert->parent)//if the inseted node is the left child
 				{
-					if (g->right != nil)//check the color of the sibiling
+					tmp = g->right;
+
+					// if (g->right != nil)//check the color of the sibiling
+					if (tmp->color == "r")
 					{
-						tmp = g->right;
-						if (tmp->color == "r")
-						{
-							to_insert->parent->color = "b";
-							tmp->color = "b";
-							g->color = "r";
-							to_insert = g;
-						}
+						to_insert->parent->color = "b";
+						tmp->color = "b";
+						g->color = "r";
+						to_insert = g;
 					}
 					else//there is no sibiling
 					{
@@ -221,16 +216,13 @@ namespace ft
 				}
 				else//if the inserted node is the right child
 				{
-					if (g->left != nil)
+					tmp = g->left;
+					if (tmp->color == "r")
 					{
-						tmp = g->left;
-						if (tmp->color == "r")
-						{
-							to_insert->parent->color = "b";
-							tmp->color = "b";
-							g->color = "r";
-							to_insert = g;
-						}
+						to_insert->parent->color = "b";
+						tmp->color = "b";
+						g->color = "r";
+						to_insert = g;
 					}
 					else
 					{
@@ -492,9 +484,9 @@ namespace ft
 			node->parent = tmp;
 		}
 
-		size_type	size(){return (_size);}
+		size_type	size()const{return (_size);}
 
-		size_type	max_size(){return (_nodeAlloc.max_size());}
+		size_type	max_size()const{return (_nodeAlloc.max_size());}
 
 		node_type	*get_root()const{return(root);}
 
@@ -502,6 +494,7 @@ namespace ft
 		{
 			if (root != nil)
 				clear_recursive(root);
+			root = nil;
 		}
 
 		void	clear_recursive(node_type	*head)

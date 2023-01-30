@@ -5,7 +5,7 @@
 
 namespace	ft
 {
-	template<typename Key, typename T, typename Compare = std::less<Key> >
+	template<typename Key, typename T, typename Compare = std::less<Key> , bool IsConst = false >
 	struct tree_reverse_iterator
 	{
 		typedef	Key																	key_type;
@@ -46,12 +46,12 @@ namespace	ft
 			return (*this);
 		}
 
-		tree_reverse_iterator&	operator++(int)//i++
+		tree_reverse_iterator	operator++(int)//i++
 		{
-			tree_reverse_iterator	*tmp(this);
+			tree_reverse_iterator	tmp(this);
 			++(*this);
 
-			return(*tmp);
+			return(tmp);
 		}
 
 		tree_reverse_iterator&	operator++()//++i
@@ -80,12 +80,12 @@ namespace	ft
 			return (*this);
 		}
 
-		tree_reverse_iterator&	operator--(int)//i--
+		tree_reverse_iterator	operator--(int)//i--
 		{
-			tree_reverse_iterator	tmp = *this;
+			tree_reverse_iterator	tmp(*this);
 			--(*this);
 
-			return (*this);
+			return (tmp);
 		}
 
 		tree_reverse_iterator&	operator--()//--i
@@ -93,7 +93,7 @@ namespace	ft
 			if (node == nullptr)
 				return (*this);
 			is_end = false;
-			if (node->right && !node->right->isNil())//If the current node has a non-null left child,
+			if (!node->right->isNil())//If the current node has a non-null left child,
 			{
 				node = node->right;
 				while (!node->left->isNil())

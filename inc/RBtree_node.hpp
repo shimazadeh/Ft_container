@@ -62,25 +62,34 @@ namespace ft
 		}
 		//==========================Member functions=================================================================
 
-		value_type&	get_value() {return(value);}
-		key_type&	get_key() {return(value.first);}
-		mapped_type& get_maptype() {return(value.second);}
-		node_type	*get_rightnode() const {return(right);}
-		node_type	*get_leftnode() const {return (left);}
-		node_type	*get_parent() const {return (parent);}
+		value_type&		get_value() {return(value);}
+		key_type&		get_key() {return(value.first);}
+		mapped_type&	 get_maptype() {return(value.second);}
+		node_type		*get_rightnode() const {return(right);}
+		node_type		*get_leftnode() const {return (left);}
+		node_type		*get_parent() const {return (parent);}
 		std::string&	get_color() {return (color);}
 
-		value_type	get_value() const {return(value);}
-		key_type	get_key() const {return(value.first);}
-		mapped_type get_maptype() const {return(value.second);}
-		std::string	get_color() const {return (color);}
-		bool		isNil()const
+		value_type		get_value() const {return(value);}
+		key_type		get_key() const {return(value.first);}
+		mapped_type		get_maptype() const {return(value.second);}
+		std::string		get_color() const {return (color);}
+
+		bool			isNil()const
 		{
-			return parent == this;
+			value_type	is_empty = ft::make_pair(Key(), mapped_type());
+
+			if (value == is_empty && right != nullptr && right->get_value() == is_empty
+			&& left != nullptr && left->get_value() == is_empty)
+				return true;
+
+			return false;
+			// return (parent == this);
 		}
 	};
 
-	//=======================================Non-Member functions===============================================================
+	//iterator comparison uses this
+	// =======================================Non-Member functions===============================================================
 	template<typename Key, typename T, typename Compare, typename Allocator>
 	bool	operator==(const tree_node<Key, T, Compare, Allocator>	&lhs, const tree_node<Key, T, Compare, Allocator>	&rhs)
 	{
