@@ -24,8 +24,7 @@ namespace	ft
 			{}
 
 			iterator(const iterator<T> &other):_pointer(other.base())
-			{
-			}
+			{}
 
 			~iterator()
 			{}

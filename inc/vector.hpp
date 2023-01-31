@@ -98,11 +98,7 @@ namespace	ft
 					expand(size_filled + n);
 				else if (size_filled + n > size_allocated)
 					expand(size_allocated * 2);
-
-
-				// if (n > size_allocated)
-				// 	expand(n);
-				this->clear();
+				clear();
 				for (size_type i = 0; i < n; i++)
 					push_back(val);
 			}
@@ -116,24 +112,14 @@ namespace	ft
 					expand(size_filled + size);
 				else if (size_filled + size > size_allocated)
 					expand(size_allocated * 2);
-
-
-				// if (size > size_allocated)
-				// 	expand(size + size_allocated);
-				this->clear();
-				for(InputIterator i = first; i != last; i++)
+				clear();
+				for (InputIterator i = first; i != last; i++)
 					push_back(*i);
 			}
 
-			allocator_type	get_allocator()const
-			{
-				return (_alloc);
-			}
+			allocator_type	get_allocator()const{return (_alloc);}
 
-			size_type capacity() const
-			{
-				return (size_allocated);
-			}
+			size_type capacity() const{return (size_allocated);}
 
 		//======================================Element access=============================================================
 			reference back() {return (arr[size_filled - 1]);}

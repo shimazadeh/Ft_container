@@ -7,37 +7,35 @@
 namespace	ft
 {
 	template<typename Key, typename T, typename Compare = std::less<Key> , bool IsConst = false>
-	struct tree_iterator
+	class tree_iterator
 	{
-		typedef	Key																	key_type;
-		typedef	T																	mapped_type;
-		typedef ft::pair<key_type, T>												value_type;
-		typedef std::less<Key>														key_compare;
-		typedef std::allocator<value_type>											allocator_type;
-		typedef ft::tree_node<key_type, mapped_type, key_compare, allocator_type>	node_type;//shouuld be private??
-		typedef value_type															*pointer;
-		typedef value_type															&reference;
+		public:
+			typedef	Key																	key_type;
+			typedef	T																	mapped_type;
+			typedef ft::pair<key_type, mapped_type>										value_type;
+			typedef std::less<Key>														key_compare;
+			typedef std::allocator<value_type>											allocator_type;
+			typedef ft::tree_node<key_type, mapped_type, key_compare, allocator_type>	node_type;
+			typedef value_type															*pointer;
+			typedef value_type															&reference;
+			typedef std::random_access_iterator_tag										iterator_category;
 
-		//member
-		node_type	*node;
-		bool		is_end;
+		private:
+			node_type	*node;
 
-		tree_iterator():node(nullptr), is_end(false)
-		{
-		}
+		public:
+		tree_iterator():node(nullptr)
+		{}
 
-		tree_iterator(node_type	*n, bool	if_end): node(n), is_end(if_end)
-		{
-		}
+		tree_iterator(node_type	*n): node(n)
+		{}
 
-		tree_iterator(const tree_iterator &other)
-		{
-			*this = other;
-		}
+		tree_iterator(const tree_iterator<Key, T, Compare> &other):node(other.get_node())
+		{}
 
 		~tree_iterator()
-		{
-		}
+		{}
+
 		//===============================================================================================================
 
 		pointer		operator->()const {return (&node->get_value());}
@@ -46,31 +44,24 @@ namespace	ft
 		tree_iterator &operator=(const tree_iterator &other)
 		{
 			if (this != &other)
-			{
-				is_end = other.is_end;
 				node = other.node;
-			}
 			return (*this);
 		}
 		node_type	*get_node()const { return (node);}
 
-		//for debugging
-		bool	get_isend()const { return (is_end);}
 		//===============================================================================================================
 
 		tree_iterator&	operator++()
 		{
 			if (node == nullptr)
 				return (*this);
-
-			is_end = false;
-			if (node->right && !node->right->isNil())//If the current node has a non-null right child,
+			if (!node->right->isNil())
 			{
 				node = node->right;
-				while(!node->left->isNil())
-					node = node->left;//Take a step down to the right Then run down to the left as far as possible
+				while(node->left && !node->left->isNil())
+					node = node->left;
 			}
-			else//If the current node has a null right child Move up the tree until we have moved over a left child link
+			else
 			{
 				node_type	*node_up = node->parent;
 				while(!node->parent->isNil() && node == node_up->right)
@@ -80,8 +71,6 @@ namespace	ft
 				}
 				node = node_up;
 			}
-			if (node->isNil())
-				is_end = true;
 			return (*this);
 		}
 
@@ -97,14 +86,13 @@ namespace	ft
 		{
 			if (node == nullptr)
 				return (*this);
-			is_end = false;
-			if (node->left && !node->left->isNil())//If the current node has a non-null left child,
+			if (!node->isNil() && !node->left->isNil())
 			{
 				node = node->left;
 				while (!node->right->isNil())
-					node = node->right;// Take a step down to the left and run down to the right
+					node = node->right;
 			}
-			else// If the current node has a null left child, Move up the tree until we have moved over a right child link
+			else if (!node->isNil())
 			{
 				node_type	*node_up = node->parent;
 				while(!node->parent->isNil() && node == node_up->left)
@@ -114,8 +102,8 @@ namespace	ft
 				}
 				node = node_up;
 			}
-			if (node->isNil())
-				is_end = true;
+			else if (node->isNil())
+				node = node->parent;
 			return (*this);
 		}
 
@@ -127,29 +115,29 @@ namespace	ft
 			return (tmp);
 		}
 
+		bool operator==(const tree_iterator &rhs)
+		{
+			if (node->isNil() && rhs.node->isNil())
+				return true;
+			if (node->isNil() || rhs.node->isNil())
+				return false;
+			return (node == rhs.node);
+		}
+
+		bool operator!=(const tree_iterator& rhs)
+		{
+			if (node->isNil() && rhs.node->isNil())
+				return false;
+			if (node->isNil() || rhs.node->isNil())
+				return true;
+			return (node != rhs.node);
+		}
+
+		bool operator<(const tree_iterator& rhs)
+		{
+			return (*(node) < *(rhs.node));
+		}
+
 	};
-
-	template<typename Key, typename T, typename Compare, bool IsConst>
-	bool operator==(const tree_iterator<Key, T, Compare, IsConst> &lhs, const tree_iterator<Key, T, Compare, IsConst> &rhs)
-	{
-		if (lhs.is_end && rhs.is_end)
-			return true;
-		if (lhs.is_end || rhs.is_end)
-			return false;
-		return (lhs.node == rhs.node);
-	}
-
-	template<typename Key, typename T, typename Compare, bool IsConst>
-	bool operator!=(const tree_iterator<Key, T, Compare, IsConst>& lhs, const tree_iterator<Key, T, Compare, IsConst>& rhs)
-	{
-		return (!(lhs == rhs));
-	}
-
-	template<typename Key, typename T, typename Compare, bool IsConst>
-	bool operator<(const tree_iterator<Key, T, Compare, IsConst>& lhs, const tree_iterator<Key, T, Compare, IsConst>& rhs)
-	{
-		return (*(lhs.node) < *(rhs.node));
-	}
-
 }
 #endif

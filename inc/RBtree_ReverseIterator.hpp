@@ -6,66 +6,67 @@
 namespace	ft
 {
 	template<typename Key, typename T, typename Compare = std::less<Key> , bool IsConst = false >
-	struct tree_reverse_iterator
+	class tree_reverse_iterator
 	{
-		typedef	Key																	key_type;
-		typedef	T																	mapped_type;
-		typedef ft::pair<Key, T>													value_type;
-		typedef std::less<Key>														key_compare;
-		typedef std::allocator<value_type>											allocator_type;
-		typedef ft::tree_node<key_type, mapped_type, key_compare, allocator_type>	node_type;///should be private??
-		typedef value_type															*pointer;
-		typedef value_type															&reference;
+		public:
+			typedef	Key																	key_type;
+			typedef	T																	mapped_type;
+			typedef ft::pair<Key, T>													value_type;
+			typedef std::less<Key>														key_compare;
+			typedef std::allocator<value_type>											allocator_type;
+			typedef ft::tree_node<key_type, mapped_type, key_compare, allocator_type>	node_type;
+			typedef value_type															*pointer;
+			typedef value_type															&reference;
+			typedef std::random_access_iterator_tag										iterator_category;
 
-		//member
-		node_type	*node;
-		bool		is_end;
+		private:
+			node_type	*node;
 
-		tree_reverse_iterator():node(nullptr), is_end(false)
+		public:
+		tree_reverse_iterator():node(nullptr)
 		{}
 
-		tree_reverse_iterator(node_type	*n, bool	if_end): node(n), is_end(if_end)
-		{
-		}
+		tree_reverse_iterator(node_type	*n): node(n)
+		{}
+
+		tree_reverse_iterator(const tree_reverse_iterator<Key, T, Compare> &other):node(other.get_node())
+		{}
 		~tree_reverse_iterator()
-		{
-		}
+		{}
 
 		//=============================================================================================================================
 
 		reference	operator*()const{return (node->get_value());}
 		pointer		operator->()const{return (&node->get_value());}
 
+		node_type	*get_node()const { return (node);}
+
 		tree_reverse_iterator&	operator=(const tree_reverse_iterator &other)
 		{
 			if (this != &other)
-			{
-				is_end = other.is_end;
 				node = other.node;
-			}
 			return (*this);
 		}
 
-		tree_reverse_iterator	operator++(int)//i++
+		tree_reverse_iterator	operator++(int)
 		{
-			tree_reverse_iterator	tmp(this);
+			tree_reverse_iterator	tmp(*this);
 			++(*this);
 
 			return(tmp);
 		}
 
-		tree_reverse_iterator&	operator++()//++i
+		tree_reverse_iterator&	operator++()
 		{
 			if (node == nullptr)
 				return (*this);
-			is_end = false;
-			if (node->left && !node->left->isNil())//If the current node has a non-null right child,
+			if (!node->left->isNil())
 			{
 				node = node->left;
 				while(!node->right->isNil())
-					node = node->right;//Take a step down to the right Then run down to the left as far as possible
+					node = node->right;
 			}
-			else//If the current node has a null right child Move up the tree until we have moved over a left child link
+			else
 			{
 				node_type	*node_up = node->parent;
 				while(!node->parent->isNil() && node == node_up->left)
@@ -75,12 +76,10 @@ namespace	ft
 				}
 				node = node_up;
 			}
-			if (node->isNil())
-				is_end = true;
 			return (*this);
 		}
 
-		tree_reverse_iterator	operator--(int)//i--
+		tree_reverse_iterator	operator--(int)
 		{
 			tree_reverse_iterator	tmp(*this);
 			--(*this);
@@ -88,18 +87,17 @@ namespace	ft
 			return (tmp);
 		}
 
-		tree_reverse_iterator&	operator--()//--i
+		tree_reverse_iterator&	operator--()
 		{
 			if (node == nullptr)
 				return (*this);
-			is_end = false;
-			if (!node->right->isNil())//If the current node has a non-null left child,
+			if (!node->isNil() && !node->right->isNil())
 			{
 				node = node->right;
-				while (!node->left->isNil())
-					node = node->left;// Take a step down to the left and run down to the right
+				while (node->left && !node->left->isNil())
+					node = node->left;
 			}
-			else// If the current node has a null left child, Move up the tree until we have moved over a right child link
+			else if (!node->isNil())
 			{
 				node_type	*node_up = node->parent;
 				while(!node->parent->isNil() && node == node_up->right)
@@ -109,33 +107,33 @@ namespace	ft
 				}
 				node = node_up;
 			}
-			if (node->isNil())
-				is_end = true;
+			else if (node->isNil())
+				node = node->parent;
 			return (*this);
 		}
+
+		bool operator==(const tree_reverse_iterator& rhs)
+		{
+			if (node->isNil() && rhs.node->isNil())
+				return true;
+			if (node->isNil() || rhs.node->isNil())
+				return false;
+			return (node == rhs.node);
+		}
+
+		bool operator!=(const tree_reverse_iterator& rhs)
+		{
+			if (node->isNil() && rhs.node->isNil())
+				return false;
+			if (node->isNil() || rhs.node->isNil())
+				return true;
+			return !(node == rhs.node);
+		}
+		bool operator<(const tree_reverse_iterator& rhs)
+		{
+			return (*(node) < *(rhs.node));
+		}
 	};
-
-	template<typename Key, typename T, typename Compare>
-	bool operator==(const ft::tree_reverse_iterator<Key, T, Compare> &lhs, const ft::tree_reverse_iterator<Key, T, Compare> &rhs)
-	{
-		if (lhs.is_end && rhs.is_end)
-			return true;
-		if (lhs.is_end || rhs.is_end)
-			return false;
-		return (*(lhs.node) == *(rhs.node));
-	}
-
-	template<typename Key, typename T, typename Compare>
-	bool operator!=(const ft::tree_reverse_iterator<Key, T, Compare>& lhs, const ft::tree_reverse_iterator<Key, T, Compare>& rhs)
-	{
-		return (!(lhs == rhs));
-	}
-
-	template<typename Key, typename T, typename Compare>
-	bool operator<(const ft::tree_reverse_iterator<Key, T, Compare>& lhs, const ft::tree_reverse_iterator<Key, T, Compare>& rhs)
-	{
-		return (*(lhs.node) < *(rhs.node));
-	}
 
 }
 #endif

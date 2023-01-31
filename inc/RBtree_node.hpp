@@ -36,8 +36,7 @@ namespace ft
 		}
 
 		tree_node(const value_type &_value, std::string _color): value(_value),  left(nullptr), right(nullptr), parent(nullptr), color(_color)
-		{
-		}
+		{}
 
 		tree_node(const node_type &other)
 		{
@@ -45,8 +44,7 @@ namespace ft
 		}
 
 		~tree_node()
-		{
-		}
+		{}
 
 		tree_node &operator=(const tree_node &other)
 		{
@@ -79,72 +77,59 @@ namespace ft
 		{
 			value_type	is_empty = ft::make_pair(Key(), mapped_type());
 
-			if (value == is_empty && right != nullptr && right->get_value() == is_empty
-			&& left != nullptr && left->get_value() == is_empty)
-				return true;
-
-			return false;
-			// return (parent == this);
-		}
-	};
-
-	//iterator comparison uses this
-	// =======================================Non-Member functions===============================================================
-	template<typename Key, typename T, typename Compare, typename Allocator>
-	bool	operator==(const tree_node<Key, T, Compare, Allocator>	&lhs, const tree_node<Key, T, Compare, Allocator>	&rhs)
-	{
-		if (lhs.get_key() == rhs.get_key())
-		{
-			if (lhs.get_maptype() == rhs.get_maptype())
-				return true;
-		}
-		return false;
-	}
-
-	template<typename Key, typename T, typename Compare, typename Allocator>
-	bool	operator!=(const tree_node<Key, T, Compare, Allocator>	&lhs, const tree_node<Key, T, Compare, Allocator>	&rhs)
-	{
-		return (!(lhs == rhs));
-	}
-
-	template<typename Key, typename T, typename Compare, typename Allocator>
-	bool	operator<(const tree_node<Key, T, Compare, Allocator>	&lhs, const tree_node<Key, T, Compare, Allocator>	&rhs)
-	{
-		Compare	_cmp;
-
-		if (lhs.get_key() == rhs.get_key())
-		{
-			if (_cmp(lhs.get_maptype(), rhs.get_maptype()))
+			if (value == is_empty && right == nullptr && left == nullptr)
 				return true;
 			return false;
 		}
-		else if (_cmp(lhs.get_key(), rhs.get_key()))
+
+		bool	operator==(const tree_node	&rhs)
+		{
+			if (get_key() == rhs.get_key())
+			{
+				if (get_maptype() == rhs.get_maptype())
+					return true;
+			}
+			return false;
+		}
+
+		bool	operator!=(const tree_node	&rhs)
+		{
+			return (!(*this == rhs));
+		}
+
+		bool	operator<(const tree_node	&rhs)
+		{
+			if (get_key() == rhs.get_key())
+			{
+				if (std::less<mapped_type>()(get_maptype(), rhs.get_maptype()))
+					return true;
+				return false;
+			}
+			else if (std::less<key_type>()(get_key(), rhs.get_key()))
+				return true;
+			return false;
+		}
+
+		bool	operator<=(const tree_node	&rhs)
+		{
+			return (!(*this > rhs));
+		}
+
+		bool	operator>(const tree_node	&rhs)
+		{
+			if (*this == rhs)
+				return false;
+			if (*this < rhs)
+				return false;
 			return true;
-		return false;
-	}
+		}
 
-	template<typename Key, typename T, typename Compare, typename Allocator>
-	bool	operator<=(const tree_node<Key, T, Compare, Allocator>	&lhs, const tree_node<Key, T, Compare, Allocator>	&rhs)
-	{
-		return (!(lhs > rhs));
-	}
+		bool	operator>=(const tree_node	&rhs)
+		{
+			return (!(*this < rhs));
+		}
 
-	template<typename Key, typename T, typename Compare, typename Allocator>
-	bool	operator>(const tree_node<Key, T, Compare, Allocator>	&lhs, const tree_node<Key, T, Compare, Allocator>	&rhs)
-	{
-		if (lhs == rhs)
-			return false;
-		if (lhs < rhs)
-			return false;
-		return true;
-	}
-
-	template<typename Key, typename T, typename Compare, typename Allocator>
-	bool	operator>=(const tree_node<Key, T, Compare, Allocator>	&lhs, const tree_node<Key, T, Compare, Allocator>	&rhs)
-	{
-		return (!(lhs < rhs));
-	}
-
+	};
 }
 
 #endif

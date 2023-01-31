@@ -37,8 +37,6 @@ namespace ft
 		InputIt1 i = first1;
 		InputIt2 j = first2;
 
-		if (last1 - first1 != last2 - first2)
-			return false;
 		while (i != last1 && j != last2 && *i == *j)
 		{
 			i++;
