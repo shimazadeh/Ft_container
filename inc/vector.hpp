@@ -63,7 +63,7 @@ namespace	ft
 				}
 			}
 
-			vector(const vector &other):arr(NULL), size_allocated(other.capacity()), size_filled(other.size()), _alloc(other._alloc)
+			vector(const vector &other):arr(NULL), size_allocated(other.size()), size_filled(other.size()), _alloc(other._alloc)
 			{
 				arr = _alloc.allocate(size_allocated);
 				for (size_type i = 0; i < size(); i++)
@@ -87,6 +87,8 @@ namespace	ft
 				if (this != &other)
 				{
 					_alloc = other._alloc;
+					if (arr == NULL)
+						expand(1);
 					assign(other.begin(), other.end());
 				}
 				return (*this);
@@ -94,10 +96,13 @@ namespace	ft
 
 			void assign(size_type n, const value_type& val)
 			{
-				if (size_filled + n > size_allocated * 2)
-					expand(size_filled + n);
-				else if (size_filled + n > size_allocated)
-					expand(size_allocated * 2);
+				if ( n > size_allocated)
+				{
+					if (n > size_filled * 2)
+						expand(n);
+					else
+						expand(size_filled * 2);
+				}
 				clear();
 				for (size_type i = 0; i < n; i++)
 					push_back(val);
@@ -108,10 +113,13 @@ namespace	ft
 			{
 				size_type	size = last - first;
 
-				if (size_filled + size > size_allocated * 2)
-					expand(size_filled + size);
-				else if (size_filled + size > size_allocated)
-					expand(size_allocated * 2);
+				if (size > size_allocated)
+				{
+					if (size > size_filled * 2)
+						expand(size);
+					else
+						expand(size_filled * 2);
+				}
 				clear();
 				for (InputIterator i = first; i != last; i++)
 					push_back(*i);
@@ -203,7 +211,8 @@ namespace	ft
 
 			iterator	insert(iterator pos, const value_type& value)
 			{
-				vector	new_vec(pos, end());
+				vector		new_vec(pos, end());
+				size_type	index = pos - begin();
 
 				for (size_type i = 0; i < new_vec.size(); i++)
 					pop_back();
@@ -212,17 +221,20 @@ namespace	ft
 				for (iterator tmp = new_vec.begin(); tmp != new_vec.end(); tmp++)
 					push_back(*tmp);
 
-				return (iterator(&arr[pos - begin()]));
+				return (iterator(&arr[index]));
 			}
 
 			void	insert(iterator pos, size_type count, const value_type& value)
 			{
 				vector	new_vec(pos , end());
 
-				if (size_filled + count > size_allocated * 2)
-					expand(size_filled + count);
-				else if (size_filled + count > size_allocated)
-					expand(size_allocated * 2);
+				if (size_filled + count > size_allocated)
+				{
+					if (size_filled + count > size_filled * 2)
+						expand(size_filled + count);
+					else
+						expand(size_filled * 2);
+				}
 
 				for (size_type i = 0; i < new_vec.size(); i++)
 					pop_back();
@@ -239,10 +251,13 @@ namespace	ft
 			{
 				vector		new_vec(pos, end());
 
-				if (size_filled + (last - first) > size_allocated * 2)
-					expand(size_filled + (last - first));
-				else if (size_filled + (last - first) > size_allocated)
-					expand(size_allocated * 2);
+				if (size_filled + (last - first) > size_allocated)
+				{
+					if (size_filled + (last - first) > size_filled * 2)
+						expand(size_filled + (last - first));
+					else
+						expand(size_filled * 2);
+				}
 
 				for (size_type i = 0; i < new_vec.size(); i++)
 					pop_back();
@@ -258,19 +273,21 @@ namespace	ft
 			{
 				vector		new_arr(pos + 1, end());
 				size_t		dist = end() - pos;
+				size_t		index = pos - begin();
 
 				for (size_t i = 0; i < dist; i++)
 					pop_back();
 
 				for(iterator i = new_arr.begin(); i != new_arr.end(); i++)
 					insert(end(), *i);
-				return (iterator(&arr[dist]));
+				return (iterator(&arr[index]));
 			}
 
 			iterator		erase(iterator first, iterator last)
 			{
 				size_type	pos = end() - last;
 				pointer		tmp = first.base();
+				size_type	index = first - begin();
 
 				while(first != last)
 				{
@@ -285,7 +302,7 @@ namespace	ft
 					_alloc.destroy(last.base() + i);
 				}
 
-				return (iterator(&arr[pos]));
+				return (iterator(&arr[index]));
 
 			}
 
@@ -294,13 +311,8 @@ namespace	ft
 				if (size_allocated == 0)
 					expand(1);
 				if (size_filled == size_allocated)
-					expand(size_allocated * 2);
-				// else if (size_filled + 1 > size_allocated)
-				// 	expand(size_allocated * 2);
+					expand(size_filled * 2);
 
-				// std::cout << size_allocated << ", " << size_filled << std::endl;
-				// if (size_filled == size_allocated)
-				// 	expand(size_filled * 2);
 				_alloc.construct(&arr[size_filled], value);
 				size_filled++;
 			}
@@ -324,22 +336,18 @@ namespace	ft
 				}
 				else if (count > size())
 				{
-					size_type	count_fill = count;
+					size_type	old_size = size();
+					if (count > size_allocated)
+					{
+						if (count > size_filled * 2)
+							expand(count);
+						else
+							expand(size_filled * 2);
+					}
 
-					if (count < size_allocated * 2)
-						count = size_allocated * 2;
-
-					value_type	*new_arr = _alloc.allocate(count);
-
-					for (size_type i = 0; i < size_filled; i++)
-						_alloc.construct(&new_arr[i], arr[i]);
-					for (size_type i = size_filled; i < count_fill; i++)
-						_alloc.construct(&new_arr[i], val);
-					clear();
-					_alloc.deallocate(arr, size_allocated);
-					arr = new_arr;
-					size_allocated = count;
-					size_filled = count_fill;
+					for (size_type i = old_size; i < count; i++)
+						_alloc.construct(&arr[i], val);
+					size_filled = count;
 				}
 			}
 
@@ -363,11 +371,11 @@ namespace	ft
 		//=================================================================================================================
 		private:
 			T						*arr;
-			size_type				size_allocated;//size allocated
-			size_type				size_filled;//size filled/saved
+			size_type				size_allocated;
+			size_type				size_filled;
 			allocator_type			_alloc;
 
-			void	expand(size_type	count)// only calls this function when count > size_allocated
+			void	expand(size_type	count)
 			{
 				if (size_allocated == 0)
 				{
@@ -414,14 +422,16 @@ namespace	ft
 
 		if (other == src)
 			return false;
-		while (other_b != other_e && src_b != src_e && *src_b == *other_b)
+		while (other_b != other_e && src_b != src_e)
 		{
+			if (*other_b != *src_b)
+				return (*other_b < *src_b);
 			other_b++;
 			src_b++;
 		}
 		if (other_b == other_e)
 			return true;
-		return (*other_b < *src_b);
+		return (false);
 	}
 
 	template <class T, class Alloc>

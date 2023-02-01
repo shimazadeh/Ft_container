@@ -128,23 +128,23 @@ namespace	ft
 
 			//============================================Relational Operators===================================================
 
-			bool operator==( const reverse_iterator &lhs)const
-			{return (lhs.current == current);}
+			bool operator==( const reverse_iterator<T, true> &lhs)
+			{return (lhs.base() == current);}
 
-			bool operator!=( const reverse_iterator &lhs)const
-			{return (lhs.current != current);}
+			bool operator!=( const reverse_iterator<T, true> &lhs)
+			{return (lhs.base() != current);}
 
-			bool operator<( const reverse_iterator &lhs)const
-			{return (lhs.current < current);}
+			bool operator<( const reverse_iterator<T, true> &lhs)
+			{return (lhs.base() < current);}
 
-			bool operator<=( const reverse_iterator &lhs)const
-			{return (lhs.current <= current);}
+			bool operator<=( const reverse_iterator<T, true> &lhs)
+			{return (lhs.base() <= current);}
 
-			bool operator>( const reverse_iterator &lhs)const
-			{return (lhs.current > current);}
+			bool operator>( const reverse_iterator<T, true> &lhs)
+			{return (lhs.base() > current);}
 
-			bool operator>=( const reverse_iterator &lhs)const
-			{return (lhs.current >= current);}
+			bool operator>=( const reverse_iterator<T, true> &lhs)
+			{return (lhs.base() >= current);}
 
 		protected:
 			iterator_type		current;

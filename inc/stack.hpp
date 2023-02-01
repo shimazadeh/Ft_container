@@ -17,7 +17,10 @@ namespace ft
 		typedef std::size_t							size_type;
 
 		//==================================Constructors================================================================
-		explicit stack(const Container &cont = container_type()):c(cont){}
+		explicit stack(const Container &cont = container_type())
+		{
+			c = cont;//why do I leak when I do c(cont)??
+		}
 
 		//==================================Destructor==================================================================
 
@@ -43,7 +46,7 @@ namespace ft
 		//==================================Modifiers===================================================================
 		void	push(const value_type& value){this->c.push_back(value);}
 
-		void	pop(){c.pop_back();}
+		void	pop(){this->c.pop_back();}
 
 		friend bool operator==(const stack<T,Container>& lhs, const stack<T, Container>& rhs)
 		{
@@ -78,12 +81,11 @@ namespace ft
 		{
 			return (!(lhs < rhs));
 		}
+
 		private:
 			Container	c;
 
 	};//class end
 	//==================================Non-Member functions========================================================
-
-
 }//namespace end
 #endif

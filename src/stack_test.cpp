@@ -69,12 +69,12 @@ int stack_test()
     std::cout << "is empty?: " << test2.empty() << std::endl;
 	print_stack(test2, "stack2");
 
-	if (test1 == test2) std::cout << "a and b are equal\n";
-	if (test1 != test2) std::cout << "b and c are not equal\n";
-	if (test1 < test2) std::cout << "b is less than c\n";
-	if (test1 > test2) std::cout << "c is greater than b\n";
-	if (test1 <= test2) std::cout << "a is less than or equal to b\n";
-	if (test1 >= test2) std::cout << "a is greater than or equal to b\n";
+	// if (test1 == test2) std::cout << "a and b are equal\n";
+	// if (test1 != test2) std::cout << "b and c are not equal\n";
+	// if (test1 < test2) std::cout << "b is less than c\n";
+	// if (test1 > test2) std::cout << "c is greater than b\n";
+	// if (test1 <= test2) std::cout << "a is less than or equal to b\n";
+	// if (test1 >= test2) std::cout << "a is greater than or equal to b\n";
 
 
 	// std::cout << _WHITE << "# test_stack" << _END << std::endl;

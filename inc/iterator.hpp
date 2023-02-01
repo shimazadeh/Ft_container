@@ -122,23 +122,23 @@ namespace	ft
 			}
 
 			//============================================Relational Operators===================================================
-			bool	operator==(const iterator	&lhs)const
-			{return (_pointer == lhs._pointer);}
+			bool	operator==(const iterator<T, true>	&lhs)
+			{return (_pointer == lhs.base());}
 
-			bool	operator!=(const iterator	&lhs)const
-			{return (_pointer != lhs._pointer);}
+			bool	operator!=(const iterator<T, true>	&lhs)
+			{return (_pointer != lhs.base());}
 
-			bool	operator<(const iterator	&lhs)const
-			{return (_pointer < lhs._pointer);}
+			bool	operator<(const iterator<T, true>	&lhs)
+			{return (_pointer < lhs.base());}
 
-			bool	operator<=(const iterator	&lhs)const
-			{return (_pointer <= lhs._pointer);}
+			bool	operator<=(const iterator<T, true>	&lhs)
+			{return (_pointer <= lhs.base());}
 
-			bool	operator>(const iterator	&lhs)const
-			{return (_pointer > lhs._pointer);}
+			bool	operator>(const iterator<T, true>	&lhs)
+			{return (_pointer > lhs.base());}
 
-			bool	operator>=(const iterator	&lhs)const
-			{return (_pointer >= lhs._pointer);}
+			bool	operator>=(const iterator<T, true>	&lhs)
+			{return (_pointer >= lhs.base());}
 
 		private:
 			pointer	_pointer;

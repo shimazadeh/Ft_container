@@ -481,12 +481,12 @@ namespace ft
 
 		size_type	size()const{return (_size);}
 
-		size_type	max_size()const
-		{
-			std::allocator<node_type> _nodeAlloc;
+		// size_type	max_size()const
+		// {
+		// 	std::allocator<node_type> _nodeAlloc;
 
-			return (_nodeAlloc.max_size());
-		}
+		// 	return (_nodeAlloc.max_size());
+		// }
 
 		node_type	*get_root()const{return(root);}
 

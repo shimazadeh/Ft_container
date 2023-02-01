@@ -169,7 +169,7 @@ namespace ft
 
 		size_type	size()const { return (_bstree.size());}
 
-		size_type	max_size()const{ return(_bstree.max_size());}
+		size_type	max_size()const{ return(_allocNode.max_size());}
 		//=========================================== Modifiers ===================================================
 		void clear()
 		{
