@@ -53,7 +53,9 @@ namespace	ft
 			typename ft::enable_if<!ft::is_integral<InputIterator>::value>:: type* = 0):
 			arr(NULL), size_filled(0), _alloc(alloc)
 			{
-				size_allocated = (last - first);//removed * 2
+				// size_allocated = (last - first);//removed * 2
+				size_allocated = input_iter_diff(first, last);
+
 				if (size_allocated > 0)
 					arr = _alloc.allocate(size_allocated);
 				while (first != last)
@@ -111,7 +113,8 @@ namespace	ft
 			template<class InputIterator>
 			void assign (InputIterator first, InputIterator last, typename ft::enable_if<!ft::is_integral<InputIterator>::value>:: type* = 0)
 			{
-				size_type	size = last - first;
+				// size_type	size = last - first;
+				size_type 	size = input_iter_diff(first, last);
 
 				if (size > size_allocated)
 				{
@@ -251,10 +254,10 @@ namespace	ft
 			{
 				vector		new_vec(pos, end());
 
-				if (size_filled + (last - first) > size_allocated)
+				if (size_filled + input_iter_diff(first, last) > size_allocated)
 				{
-					if (size_filled + (last - first) > size_filled * 2)
-						expand(size_filled + (last - first));
+					if (size_filled + input_iter_diff(first, last) > size_filled * 2)
+						expand(size_filled + input_iter_diff(first, last));
 					else
 						expand(size_filled * 2);
 				}
@@ -396,6 +399,21 @@ namespace	ft
 					size_allocated = count;
 				}
 			}
+
+			template<class InputIterator>
+			size_type	input_iter_diff(InputIterator first, InputIterator last, typename ft::enable_if<!ft::is_integral<InputIterator>::value>:: type* = 0)
+			{
+				size_type	count = 0;
+
+				while(first != last)
+				{
+					count++;
+					first++;
+				}
+				return(count);
+			}
+
+
 	};//class end
 	//====================================================Non Member functions=====================================================
 	template <class T, class Alloc>

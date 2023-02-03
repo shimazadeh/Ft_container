@@ -77,7 +77,7 @@ namespace ft
 		{
 			value_type	is_empty = ft::make_pair(Key(), mapped_type());
 
-			if (value == is_empty && right == nullptr && left == nullptr)
+			if (/*value == is_empty && */ right == nullptr && left == nullptr)
 				return true;
 			return false;
 		}
@@ -99,15 +99,13 @@ namespace ft
 
 		bool	operator<(const tree_node	&rhs)
 		{
+			if (*this == rhs)
+				return false;
 			if (get_key() == rhs.get_key())
 			{
-				if (std::less<mapped_type>()(get_maptype(), rhs.get_maptype()))
-					return true;
-				return false;
+				return (std::less<mapped_type>()(get_maptype(), rhs.get_maptype()));
 			}
-			else if (std::less<key_type>()(get_key(), rhs.get_key()))
-				return true;
-			return false;
+			return (std::less<key_type>()(get_key(), rhs.get_key()));
 		}
 
 		bool	operator<=(const tree_node	&rhs)

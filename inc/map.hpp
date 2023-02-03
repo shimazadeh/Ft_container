@@ -214,7 +214,8 @@ namespace ft
 		{
 			while (first != last)
 			{
-				_bstree.insert_by_value(*first);
+				if ((find((*first).first)).get_node()->isNil())
+					_bstree.insert_by_value(*first);
 				first++;
 			}
 		}
@@ -404,14 +405,16 @@ namespace ft
 			return false;
 		while (lhs_start != lhs_end && rhs_start != rhs_end)
 		{
-			if (lhs_start != rhs_start)
-				return (lhs_start < rhs_start);
+			if (lhs_start < rhs_start)
+				return true;
+			if (lhs_start > rhs_start)
+				return false;
 			lhs_start++;
 			rhs_start++;
 		}
-		if (rhs_start == rhs_end)
-			return false;
-		return true;
+		if (lhs_start == lhs_end)
+			return true;
+		return false;
 	}
 
 	template <class Key, class T, class Compare, class Allocator>

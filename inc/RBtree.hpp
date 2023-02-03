@@ -73,7 +73,7 @@ namespace ft
 			return (max_element(node->right));
 		}
 
-		node_type	*lower_bound(const key_type&	key, node_type	*node)
+		node_type	*lower_bound(const key_type&	key, node_type	*node)const
 		{
 			if (node->isNil() || key == node->get_key())
 				return (node);
@@ -85,7 +85,7 @@ namespace ft
 			return (tmp);
 		}
 
-		node_type	*upper_bound(const key_type&	key, node_type	*node)
+		node_type	*upper_bound(const key_type&	key, node_type	*node)const
 		{
 			if (node->isNil())
 				return (node);

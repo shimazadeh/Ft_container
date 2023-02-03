@@ -40,7 +40,7 @@ namespace	ft
 
 			reference	operator*()const {return (*_pointer);}
 			pointer		operator->()const {return (_pointer);}
-			reference	operator[](int n) const {return *(this + n);}
+			reference	operator[](int n) const {return _pointer[n];}
 
 			//====================================================================================
 			iterator&	operator++()
@@ -122,22 +122,22 @@ namespace	ft
 			}
 
 			//============================================Relational Operators===================================================
-			bool	operator==(const iterator<T, true>	&lhs)
+			bool	operator==(const iterator<T, true>	&lhs)const
 			{return (_pointer == lhs.base());}
 
-			bool	operator!=(const iterator<T, true>	&lhs)
+			bool	operator!=(const iterator<T, true>	&lhs)const
 			{return (_pointer != lhs.base());}
 
-			bool	operator<(const iterator<T, true>	&lhs)
+			bool	operator<(const iterator<T, true>	&lhs)const
 			{return (_pointer < lhs.base());}
 
-			bool	operator<=(const iterator<T, true>	&lhs)
+			bool	operator<=(const iterator<T, true>	&lhs)const
 			{return (_pointer <= lhs.base());}
 
-			bool	operator>(const iterator<T, true>	&lhs)
+			bool	operator>(const iterator<T, true>	&lhs)const
 			{return (_pointer > lhs.base());}
 
-			bool	operator>=(const iterator<T, true>	&lhs)
+			bool	operator>=(const iterator<T, true>	&lhs)const
 			{return (_pointer >= lhs.base());}
 
 		private:

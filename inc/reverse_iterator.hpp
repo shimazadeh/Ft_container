@@ -11,32 +11,27 @@ namespace	ft
 	{
 		public:
 			typedef	T														iterator_type;
-			typedef	std::ptrdiff_t											difference_type;
+			typedef typename ft::iterator_traits<T>::difference_type		difference_type;
 			typedef typename ft::iterator_traits<T>::reference				reference;
 			typedef typename ft::iterator_traits<T>::pointer				pointer;
-
-
-			//I dont understand why this doesnt work
-			// typedef typename ft::select_const<IsConst, const T&, T&>::type	reference;
-			// typedef typename ft::select_const<IsConst, const T*, T*>::type	pointer;
+			typedef	typename ft::iterator_traits<T>::value_type				value_type;
 
 		//=============================================Constructor==================================================
 			reverse_iterator():current(){}
 
-			explicit reverse_iterator(const iterator_type &x):current(x.base()){}
+			explicit reverse_iterator(iterator_type x):current(x){}
 
-			template<typename U>//shouldnt the type be the same as T??
+			// reverse_iterator(iterator_type<T, IsConst> &other):current(other){}
+
+			template<typename U>
 			reverse_iterator(const reverse_iterator<U>& other):current(other.base()){}
 
-			//why no destructor is given in CPP reference page
 			~reverse_iterator()
 			{}
 		//=========================================== Operator equal =======================================================
-
-			template<typename U>
-			reverse_iterator& operator=(const reverse_iterator<U>& other)
+			reverse_iterator& operator=(const reverse_iterator& other)
 			{
-				if (this != other)
+				if (this != &other)
 					current = other.current;
 				return (*this);
 			}
@@ -49,7 +44,7 @@ namespace	ft
 			{
 				iterator_type	tmp = current;
 
-				return  (*--tmp);
+				return  (*(--tmp));
 			}
 
 			pointer	operator->()const
@@ -121,29 +116,29 @@ namespace	ft
 
 			//=========================================Arithmetic Operators==================================================================================
 			friend reverse_iterator	operator+(difference_type n, const reverse_iterator &it )
-			{return (reverse_iterator(it.base() + n));}
+			{return (it + n);}
 
 			friend difference_type operator-(const reverse_iterator &lhs, const reverse_iterator &rhs)
-			{return (difference_type(lhs.base() - rhs.base()));}
+			{return (difference_type(rhs.base() - lhs.base()));}
 
 			//============================================Relational Operators===================================================
 
-			bool operator==( const reverse_iterator<T, true> &lhs)
+			bool operator==( const reverse_iterator<T, IsConst> &lhs)const
 			{return (lhs.base() == current);}
 
-			bool operator!=( const reverse_iterator<T, true> &lhs)
+			bool operator!=( const reverse_iterator<T, IsConst> &lhs)const
 			{return (lhs.base() != current);}
 
-			bool operator<( const reverse_iterator<T, true> &lhs)
+			bool operator<( const reverse_iterator<T, IsConst> &lhs)const
 			{return (lhs.base() < current);}
 
-			bool operator<=( const reverse_iterator<T, true> &lhs)
+			bool operator<=( const reverse_iterator<T, IsConst> &lhs)const
 			{return (lhs.base() <= current);}
 
-			bool operator>( const reverse_iterator<T, true> &lhs)
+			bool operator>( const reverse_iterator<T, IsConst> &lhs)const
 			{return (lhs.base() > current);}
 
-			bool operator>=( const reverse_iterator<T, true> &lhs)
+			bool operator>=( const reverse_iterator<T, IsConst> &lhs)const
 			{return (lhs.base() >= current);}
 
 		protected:

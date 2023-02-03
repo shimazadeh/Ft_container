@@ -10,15 +10,16 @@ namespace	ft
 	class tree_iterator
 	{
 		public:
-			typedef	Key																	key_type;
-			typedef	T																	mapped_type;
-			typedef ft::pair<key_type, mapped_type>										value_type;
-			typedef std::less<Key>														key_compare;
-			typedef std::allocator<value_type>											allocator_type;
-			typedef ft::tree_node<key_type, mapped_type, key_compare, allocator_type>	node_type;
-			typedef value_type															*pointer;
-			typedef value_type															&reference;
-			typedef std::random_access_iterator_tag										iterator_category;
+			typedef	Key																						key_type;
+			typedef	T																						mapped_type;
+			typedef ft::pair<key_type, mapped_type>															value_type;
+			typedef std::less<Key>																			key_compare;
+			typedef std::allocator<value_type>																allocator_type;
+
+			typedef ft::tree_node<key_type, mapped_type, key_compare, allocator_type>						node_type;
+			typedef typename ft::select_const<IsConst, const value_type&, value_type&>::type				reference;
+			typedef typename ft::select_const<IsConst, const value_type*, value_type*>::type				pointer;
+			typedef std::random_access_iterator_tag															iterator_category;
 
 		private:
 			node_type	*node;
@@ -138,6 +139,11 @@ namespace	ft
 			return (*(node) < *(rhs.node));
 		}
 
+
+		bool operator>(const tree_iterator& rhs)
+		{
+			return (*(node) > *(rhs.node));
+		}
 	};
 }
 #endif
