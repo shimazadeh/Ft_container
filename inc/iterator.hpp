@@ -10,12 +10,12 @@ namespace	ft
 	class iterator
 	{
 		public:
-			typedef	T														value_type;
-			typedef typename ft::select_const<IsConst, const T&, T&>::type	reference;
-			typedef typename ft::select_const<IsConst, const T*, T*>::type	pointer;
+			typedef typename ft::select_const<IsConst, T const , T>::type	value_type;
+			typedef value_type&												reference;
+			typedef value_type*												pointer;
 			typedef std::ptrdiff_t											difference_type;
 			typedef std::size_t												size_type;
-			typedef std::random_access_iterator_tag							iterator_category;
+			typedef std::bidirectional_iterator_tag							iterator_category;
 
 			//===============================Constructor Destructor========================================
 			iterator():_pointer(NULL){}
@@ -23,7 +23,8 @@ namespace	ft
 			iterator(pointer p):_pointer(p)
 			{}
 
-			iterator(const iterator<T> &other):_pointer(other.base())
+			template <typename U, bool IfConst>
+			iterator(const iterator<U, IfConst> &other):_pointer(other.base())
 			{}
 
 			~iterator()
@@ -71,7 +72,7 @@ namespace	ft
 				return (tmp);
 			}
 
-			iterator	operator+(int n)
+			iterator	operator+(difference_type n)
 			{
 				iterator	tmp = *this;
 
@@ -79,7 +80,7 @@ namespace	ft
 				return (tmp);
 			}
 
-			iterator	operator-(int n)
+			iterator	operator-(difference_type n)
 			{
 				iterator	tmp = *this;
 
@@ -87,61 +88,57 @@ namespace	ft
 				return (tmp);
 			}
 
-			iterator&	operator+=(int n)
+			iterator&	operator+=(difference_type n)
 			{
 				_pointer += n;
 				return (*this);
 			}
 
-			iterator&	operator-=(int n)
+			iterator&	operator-=(difference_type n)
 			{
 				_pointer -= n;
 				return (*this);
 			}
 
-			//=========================================Arithmetic Operators==================================================================================
-
-			friend iterator	operator+(int n, const iterator	&rhs)
-			{
-				return (iterator(rhs._pointer + n));
-			}
-
-			friend iterator	operator-(int n, const iterator	&rhs)
-			{
-				return (iterator(rhs._pointer - n));
-			}
-
-			friend difference_type	operator-(const iterator &rhs, const iterator	&lhs)
-			{
-				return (rhs.base() - lhs.base());
-			}
-
-			friend iterator	operator+(difference_type n, const iterator	&lhs)
-			{
-				return (iterator(lhs.base() + n));
-			}
-
-			//============================================Relational Operators===================================================
-			bool	operator==(const iterator<T, true>	&lhs)const
-			{return (_pointer == lhs.base());}
-
-			bool	operator!=(const iterator<T, true>	&lhs)const
-			{return (_pointer != lhs.base());}
-
-			bool	operator<(const iterator<T, true>	&lhs)const
-			{return (_pointer < lhs.base());}
-
-			bool	operator<=(const iterator<T, true>	&lhs)const
-			{return (_pointer <= lhs.base());}
-
-			bool	operator>(const iterator<T, true>	&lhs)const
-			{return (_pointer > lhs.base());}
-
-			bool	operator>=(const iterator<T, true>	&lhs)const
-			{return (_pointer >= lhs.base());}
-
-		private:
+		protected:
 			pointer	_pointer;
 	};
+
+	template<class T, bool IsConst1, bool IsConst2>
+	typename iterator<T, IsConst1>::difference_type	operator-(const iterator<T, IsConst1> &rhs, const iterator<T, IsConst2> &lhs)
+	{
+		return (rhs.base() - lhs.base());
+	}
+
+	template<class T, bool IsConst >
+	iterator<T, IsConst>	operator+(typename iterator<T, IsConst>::difference_type n, const iterator<T,IsConst>	&rhs)
+	{
+		return (iterator<T, IsConst>(rhs.base() + n));
+	}
+
+	template<class T, bool IsConst1, bool IsConst2>
+	bool	operator==(const iterator<T, IsConst1>	&lhs, const iterator<T, IsConst2> &rhs)
+	{return (lhs.base() == rhs.base());}
+
+	template<class T, bool IsConst1, bool IsConst2>
+	bool	operator!=(const iterator<T, IsConst1>	&lhs, const iterator<T, IsConst2> &rhs)
+	{return (lhs.base() != rhs.base());}
+
+	template<class T, bool IsConst1, bool IsConst2>
+	bool	operator<(const iterator<T, IsConst1>	&lhs, const iterator<T, IsConst2> &rhs)
+	{return (lhs.base() < rhs.base());}
+
+	template<class T, bool IsConst1, bool IsConst2>
+	bool	operator<=(const iterator<T, IsConst1>	&lhs, const iterator<T, IsConst2> &rhs)
+	{return (lhs.base() <= rhs.base());}
+
+	template<class T, bool IsConst1, bool IsConst2>
+	bool	operator>(const iterator<T, IsConst1>	&lhs, const iterator<T, IsConst2> &rhs)
+	{return (lhs.base() > rhs.base());}
+
+	template<class T, bool IsConst1, bool IsConst2>
+	bool	operator>=(const iterator<T, IsConst1>	&lhs, const iterator<T, IsConst2> &rhs)
+	{return (lhs.base() >= rhs.base());}
+
 }
 #endif

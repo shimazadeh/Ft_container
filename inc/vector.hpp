@@ -32,7 +32,7 @@ namespace	ft
 			typedef	ft::iterator<T>									iterator;
 			typedef	ft::iterator<T, true>							const_iterator;
 			typedef	ft::reverse_iterator<iterator>					reverse_iterator;
-			typedef	ft::reverse_iterator<const_iterator, true>		const_reverse_iterator;
+			typedef	ft::reverse_iterator<const_iterator>			const_reverse_iterator;
 
 		//========================================Constructors==========================================================
 
@@ -53,7 +53,6 @@ namespace	ft
 			typename ft::enable_if<!ft::is_integral<InputIterator>::value>:: type* = 0):
 			arr(NULL), size_filled(0), _alloc(alloc)
 			{
-				// size_allocated = (last - first);//removed * 2
 				size_allocated = input_iter_diff(first, last);
 
 				if (size_allocated > 0)
@@ -113,7 +112,6 @@ namespace	ft
 			template<class InputIterator>
 			void assign (InputIterator first, InputIterator last, typename ft::enable_if<!ft::is_integral<InputIterator>::value>:: type* = 0)
 			{
-				// size_type	size = last - first;
 				size_type 	size = input_iter_diff(first, last);
 
 				if (size > size_allocated)
@@ -412,7 +410,6 @@ namespace	ft
 				}
 				return(count);
 			}
-
 
 	};//class end
 	//====================================================Non Member functions=====================================================

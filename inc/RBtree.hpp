@@ -77,7 +77,7 @@ namespace ft
 		{
 			if (node->isNil() || key == node->get_key())
 				return (node);
-			if (_cmp(node->get_key(), key))
+			if (Compare()(node->get_key(), key))
 				return (lower_bound(key, node->right));
 			node_type	*tmp = lower_bound(key, node->left);
 			if (tmp->isNil())
@@ -89,7 +89,7 @@ namespace ft
 		{
 			if (node->isNil())
 				return (node);
-			if (_cmp(node->get_key(), key) || key == node->get_key())
+			if (Compare()(node->get_key(), key) || key == node->get_key())
 				return (upper_bound(key, node->right));
 			node_type	*tmp = upper_bound(key, node->left);
 			if (tmp->isNil())
@@ -101,7 +101,7 @@ namespace ft
 		{
 			if (to_search->isNil() || to_search->get_maptype() == map)
 				return (to_search);
-			if(_cmp(map, to_search->get_maptype()))
+			if(Compare()(map, to_search->get_maptype()))
 				return (find_node_map(map, to_search->left));
 			return (find_node_map(map, to_search->right));
 		}
@@ -110,7 +110,7 @@ namespace ft
 		{
 			if (to_search->isNil() || to_search->get_key() == key)
 				return (to_search);
-			if(_cmp(key, to_search->get_key()))
+			if(Compare()(key, to_search->get_key()))
 				return (find_node_key(key, to_search->left));
 			return (find_node_key(key, to_search->right));
 		}
@@ -161,13 +161,13 @@ namespace ft
 				while(!tmp->isNil())//search to find the right position
 				{
 					tmp1 = tmp;
-					if (_cmp(tmp->value.first, new_node->value.first))
+					if (Compare()(tmp->value.first, new_node->value.first))
 						tmp = tmp->right;
 					else
 						tmp = tmp->left;
 				}
 				new_node->parent = tmp1;
-				if (_cmp(tmp1->value.first, new_node->value.first))
+				if (Compare()(tmp1->value.first, new_node->value.first))
 					tmp1->right = new_node;
 				else
 					tmp1->left = new_node;
@@ -521,17 +521,14 @@ namespace ft
 			node_type			*tmp_root = root;
 			node_type			*tmp_nil = nil;
 			size_type			tmp_size = _size;
-			key_compare			tmp_cmp = _cmp;
 
 			root = other.root;
 			nil = other.nil;
 			_size = other._size;
-			_cmp = other._cmp;
 
 			other.root = tmp_root;
 			other.nil = tmp_nil;
 			other._size = tmp_size;
-			other._cmp = tmp_cmp;
 		}
 		//=================================================== Debugging tools =================================================================================
 		void	print(node_type	*node)
@@ -626,7 +623,6 @@ namespace ft
 			node_type											*root;
 			node_type											*nil;
 			size_type											_size;
-			key_compare											_cmp;
 	};
 }
 

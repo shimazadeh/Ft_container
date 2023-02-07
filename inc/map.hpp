@@ -10,6 +10,7 @@
 #include "./equal.hpp"
 #include "./Is_Integral.hpp"
 #include "./pair.hpp"
+#include <limits>
 
 namespace ft
 {
@@ -169,7 +170,15 @@ namespace ft
 
 		size_type	size()const { return (_bstree.size());}
 
-		size_type	max_size()const{ return(_allocNode.max_size());}
+		size_type	max_size()const
+		{
+			// std::cout << "PTR max size   :" << __PTRDIFF_MAX__ << std::endl;
+			// std::cout << "numerical limit:" << std::numeric_limits<size_type>::max() << std::endl;
+			// return (std::allocator<value_type>().max_size());
+			return (size_t(-1) / (sizeof(node_type) + sizeof(value_type)));
+			// return (std::size_t(-1) / ( sizeof(value_type)));
+			// return(std::numeric_limits<size_type>::max() / sizeof(value_type));
+		}
 		//=========================================== Modifiers ===================================================
 		void clear()
 		{

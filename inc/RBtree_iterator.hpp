@@ -10,16 +10,16 @@ namespace	ft
 	class tree_iterator
 	{
 		public:
-			typedef	Key																						key_type;
-			typedef	T																						mapped_type;
-			typedef ft::pair<key_type, mapped_type>															value_type;
-			typedef std::less<Key>																			key_compare;
-			typedef std::allocator<value_type>																allocator_type;
-
-			typedef ft::tree_node<key_type, mapped_type, key_compare, allocator_type>						node_type;
-			typedef typename ft::select_const<IsConst, const value_type&, value_type&>::type				reference;
-			typedef typename ft::select_const<IsConst, const value_type*, value_type*>::type				pointer;
-			typedef std::random_access_iterator_tag															iterator_category;
+			typedef	Key																				key_type;
+			typedef	T																				mapped_type;
+			typedef ft::pair<key_type, mapped_type>													value_type;
+			typedef std::ptrdiff_t																	difference_type;
+			typedef std::less<Key>																	key_compare;
+			typedef std::allocator<value_type>														allocator_type;
+			typedef ft::tree_node<key_type, mapped_type, key_compare, allocator_type>				node_type;
+			typedef typename ft::select_const<IsConst, const value_type&, value_type&>::type		reference;
+			typedef typename ft::select_const<IsConst, const value_type*, value_type*>::type		pointer;
+			typedef std::random_access_iterator_tag													iterator_category;
 
 		private:
 			node_type	*node;
@@ -49,6 +49,7 @@ namespace	ft
 			return (*this);
 		}
 		node_type	*get_node()const { return (node);}
+		node_type	*base()const { return (node);}
 
 		//===============================================================================================================
 
@@ -56,13 +57,13 @@ namespace	ft
 		{
 			if (node == nullptr)
 				return (*this);
-			if (!node->right->isNil())
+			if (!node->isNil() && !node->right->isNil())
 			{
 				node = node->right;
 				while(node->left && !node->left->isNil())
 					node = node->left;
 			}
-			else
+			else if (!node->isNil())
 			{
 				node_type	*node_up = node->parent;
 				while(!node->parent->isNil() && node == node_up->right)
@@ -72,6 +73,8 @@ namespace	ft
 				}
 				node = node_up;
 			}
+			else
+				node = node->parent;
 			return (*this);
 		}
 
@@ -115,7 +118,30 @@ namespace	ft
 
 			return (tmp);
 		}
+		//=========================================Arithmetic Operators==================================================================================
 
+		friend tree_iterator	operator+(int n, const tree_iterator	&rhs)
+		{
+			return (tree_iterator(rhs._pointer + n));
+		}
+
+		friend tree_iterator	operator-(int n, const tree_iterator	&rhs)
+		{
+			return (tree_iterator(rhs._pointer - n));
+		}
+
+		friend difference_type	operator-(const tree_iterator &rhs, const tree_iterator	&lhs)
+		{
+			return (rhs.base() - lhs.base());
+		}
+
+		friend tree_iterator	operator+(difference_type n, const tree_iterator	&lhs)
+		{
+			return (tree_iterator(lhs.base() + n));
+		}
+
+
+		//============================================================================================================================================================//
 		bool operator==(const tree_iterator &rhs)
 		{
 			if (node->isNil() && rhs.node->isNil())
