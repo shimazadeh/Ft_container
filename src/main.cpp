@@ -1,35 +1,53 @@
-#include <iostream>
-#include "../inc/vector.hpp"
-#include "../inc/map.hpp"
-#include "../inc/stack.hpp"
+#include "../inc/ft_container.hpp"
 
-int map_test();
-int vector_test();
-int stack_test();
+struct timespec std_start;
+struct timespec ft_start;
 
-#include "../tester-3/srcs/map/common.hpp"
-#include <list>
+double   std_time_calculator(void)
+{
+    struct timespec end;
+    double time_taken;
 
-#define T1 char
-#define T2 foo<std::string>
+    clock_gettime(CLOCK_MONOTONIC, &end);
+    time_taken = (end.tv_sec - std_start.tv_sec) * 1e9;
+    time_taken = (time_taken + (end.tv_nsec - std_start.tv_nsec)) * 1e-9;
+    std::cout << "<<< " << std::fixed << time_taken << std::endl;
+    clock_gettime(CLOCK_MONOTONIC, &std_start);
+    return(time_taken);
+}
+
+double    ft_time_calculator(void)
+{
+    struct timespec end;
+    double time_taken;
+
+    clock_gettime(CLOCK_MONOTONIC, &end);
+    time_taken = (end.tv_sec - ft_start.tv_sec) * 1e9;
+    time_taken = (time_taken + (end.tv_nsec - ft_start.tv_nsec)) * 1e-9;
+    std::cout << "<<< " << std::fixed << time_taken << std::endl;
+    clock_gettime(CLOCK_MONOTONIC, &ft_start);
+    return(time_taken);
+}
+
+std::string    time_is_ok ( long double ft_t, long double std_t)
+{
+    if(ft_t < (std_t * 20))
+        return("ok");
+    else
+        return("ko");
+}
 
 int main()
 {
-	// vector_test();
-	// stack_test();
-	// map_test();
-	//debugging testers
-	TESTED_NAMESPACE::map<T1, T2> mp;
+    clock_t time_req;
 
-	mp['a'] = "an element";
-	mp['b'] = "another element";
-	mp['c'] = mp['b'];
-	mp['b'] = "old element";
+    time_req = clock();
+	vector_test();
+	stack_test();
+	map_test();
 
-	printSize(mp);
-
-	std::cout << "insert a new element via operator[]: " << mp['d'] << std::endl;
-
-	printSize(mp);
-return (0);
+    time_req = clock() - time_req;
+    std::cout << "total processing time: " << (float)time_req/CLOCKS_PER_SEC << std::endl;
+    return (0);
 }
+

@@ -1,7 +1,4 @@
-#include "../inc/vector.hpp"
-#include "../inc/stack.hpp"
-
-using namespace ft;
+#include "../inc/ft_container.hpp"
 
 template <typename T>
 void	print_vector(ft::vector<T>	_vector, std::string msg)
@@ -130,7 +127,7 @@ int vector_test()
 		}
 	}
 
-	std::cout << "=======================================TEST2: TESTING AT, OPERTOR[], FRONT AND BACK ================================================" << std::endl;
+	std::cout << "=======================================TEST2: TESTING AT, OPERATOR[], FRONT AND BACK ================================================" << std::endl;
 	{
 		ft::vector<int>	test1;
 
@@ -194,6 +191,7 @@ int vector_test()
 
 		print_vector(test1, "test1 after erase v:");
 	}
+
 	std::cout << "==================================TEST4: INSERT TEST =======================================" << std::endl;
 	{
 		vector<int> myvector (3,100);
@@ -216,7 +214,8 @@ int vector_test()
 
 		print_vector(myvector, "myvector: ");
 	}
-	std::cout << "===================================TEST5: reserve ========================================" << std::endl;
+
+	std::cout << "===================================TEST5: RESERVE ========================================" << std::endl;
 	{
 		vector<int>::size_type sz;
 
@@ -298,6 +297,8 @@ int vector_test()
 		vector<int>::const_iterator tmp = foo.begin(); //tmp iterates through foo
 		vector<int>::const_iterator tmp2 = bar.begin(); //tmp2 iterates through bar
 
+		(void)tmp;
+		(void)tmp2;
 		swap(bar, foo);
 	}
 
