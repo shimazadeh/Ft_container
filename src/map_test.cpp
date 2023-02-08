@@ -1,7 +1,5 @@
 #include "../inc/ft_container.hpp"
 
-// using namespace ft;
-
 template <typename Key, typename T>
 void	print_map(ft::map<Key, T>	_map, std::string msg)
 {
@@ -13,6 +11,7 @@ void	print_map(ft::map<Key, T>	_map, std::string msg)
 
 int map_test()
 {
+  std::cout << "=========================================================== MAP TEST =================================================================" << std::endl;
   std::cout << "===========================================================TEST0: BASIC CONSTRUCTOR, OPERATOR[], ITER, REV_ITER (WITH ++ & --)=================================================================" << std::endl;
   {
     map<char,int> foo;
@@ -79,7 +78,7 @@ int map_test()
       bar['b']= 1000;
       bar['c'] = 1;
 
-      if (foo == bar) std::cout << "                -foo and bar are equal\n";
+      if (foo==bar) std::cout << "                -foo and bar are equal\n";
       if (foo!=bar) std::cout << "                -foo and bar are not equal\n";
       if (foo< bar) std::cout << "                -foo is less than bar\n";
       if (foo> bar) std::cout << "                -foo is greater than bar\n";
@@ -100,7 +99,7 @@ int map_test()
       bar['b']= 1000;
       bar['c'] = 1;
 
-      if (foo == bar) std::cout << "                -foo and bar are equal\n";
+      if (foo==bar) std::cout << "                -foo and bar are equal\n";
       if (foo!=bar) std::cout << "                -foo and bar are not equal\n";
       if (foo< bar) std::cout << "                -foo is less than bar\n";
       if (foo> bar) std::cout << "                -foo is greater than bar\n";
@@ -121,7 +120,7 @@ int map_test()
       bar['b']= 1000;
       bar['c'] = 1;
 
-      if (foo == bar) std::cout << "                -foo and bar are equal\n";
+      if (foo==bar) std::cout << "                -foo and bar are equal\n";
       if (foo!=bar) std::cout << "                -foo and bar are not equal\n";
       if (foo< bar) std::cout << "                -foo is less than bar\n";
       if (foo> bar) std::cout << "                -foo is greater than bar\n";
@@ -143,14 +142,13 @@ int map_test()
       bar['b']= 1000;
       bar['c'] = 1;
 
-      if (foo == bar) std::cout << "                -foo and bar are equal\n";
+      if (foo==bar) std::cout << "                -foo and bar are equal\n";
       if (foo!=bar) std::cout << "                -foo and bar are not equal\n";
       if (foo< bar) std::cout << "                -foo is less than bar\n";
       if (foo> bar) std::cout << "                -foo is greater than bar\n";
       if (foo<=bar) std::cout << "                -foo is less than or equal to bar\n";
       if (foo>=bar) std::cout << "                -foo is greater than or equal to bar\n";
     }
-
   }
 
   std::cout << "===============================================================TEST2: INSERT, ERASE, FIND , LOWER BOUND, UPPER BOUND===========================================================================" << std::endl;
@@ -169,23 +167,23 @@ int map_test()
     test1['d'] = 4;
     test0.insert(test0.find('c'), *(test1.find('d')));//actual element
 
-    // test0.print_tree("before erase: test0");
-    // test1.print_tree("before erase: test1");
+    print_map(test0, "before erase: test0");
+    print_map(test1, "before erase: test1");
 
     std::cout << "count of a in test0" << test0.count('a') << std::endl;
     std::cout << "lower bound of a in test1" << test1.lower_bound('a')->first << std::endl;
     std::cout << "upper bound of c in test1" << test1.upper_bound('c')->first << std::endl;
 
     test2 = test0;
-    // test2.print_tree("before erase: test2");
+    print_map(test2, "before erase: test2");
 
     test1.erase('a');//deleting a leaf
     test0.erase('b');//deleting the root /a node with two child
     test2.erase('c');//deleting a middle member
 
-    // test0.print_tree("after erase of b: test0");
-    // test1.print_tree("after erase of a: test1");
-    // test2.print_tree("after erase of c: test2");
+    print_map(test0, "after erase of b: test0");
+    print_map(test1, "after erase of a: test1");
+    print_map(test2, "after erase of c: test2");
     return (0);
   }
   std::cout << "====================================================================TEST3: SWAP=========================================================================================" << std::endl;
@@ -198,27 +196,26 @@ int map_test()
     test1['1'] = 3;
 
     std::cout << "swaping empty to nonempty" << std::endl;
-    // test0.print_tree("before first swap: test0");
-    // test1.print_tree("before first swap: test1");
+    print_map(test0, "before first swap: test0");
+    print_map(test1, "before first swap: test1");
 
     test0.swap(test1);
 
-    // test0.print_tree("after first swap: test0");
-    // test1.print_tree("after first swap: test1");
+    print_map(test0, "after first swap: test0");
+    print_map(test1, "after first swap: test1");
 
     test1['4'] = 1;
     test1['5'] = 2;
     test1['6'] = 3;
 
     std::cout << "swaping nonempty to nonempty" << std::endl;
-    // test0.print_tree("before second swap: test0");
-    // test1.print_tree("before second swap: test1");
+    print_map(test0, "before second swap: test0");
+    print_map(test1, "before second swap: test1");
 
     test0.swap(test1);
 
-    // test0.print_tree("after second swap: test0");
-    // test1.print_tree("after second swap: test1");
-
+    print_map(test0, "after second swap: test0");
+    print_map(test1, "after second swap: test1");
   }
   std::cout << "===============================================================TEST4: SAME TYPE PAIR =====================================================================================" << std::endl;
   {
@@ -234,10 +231,11 @@ int map_test()
     test0['6'] = '3';
 
     ft::map<char, char>::iterator tmp = test1.begin()++;
+    print_map(test0, "before Insert: test0");
+
     test0.insert(test1.begin(), tmp++);
 
-    // test0.print_tree("test0");
-    // test1.print_tree("test1");
+    print_map(test0, "after Insert: test0");
   }
   return 0;
 }

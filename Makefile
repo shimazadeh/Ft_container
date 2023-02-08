@@ -10,42 +10,6 @@
 #                                                                              #
 # **************************************************************************** #
 
-# NAME = ft_container
-
-# SRCDIR = src/
-# INCDIR = inc/
-# OBJDIR = obj/
-
-# CC = c++
-
-# SRCS     := $(wildcard $(SRCDIR)*.cpp)
-# INCLUDES := $(wildcard $(INCDIR)*.hpp)
-# OBJS     := $(SOURCES:$(SRCDIR)%.cpp=$(OBJDIR)%.o)
-# rm        = rm -f
-
-# FLAGS = -Wall -Wextra -Werror -g3 -std=c++98
-
-# $(NAME): $(OBJS)
-# 	$(CC) $(OBJS) -o $@
-# # @$(CC) $(OBJS) $(INCLUDES) -o $@
-
-# $(OBJS): $(OBJDIR)%.o : $(SRCDIR)%.cpp $(INCLUDES)
-# 	$(CC) $(FLAGS) -c $< -o $@
-
-# all: $(NAME)
-
-# clean:
-# 	@$(rm) $(OBJS)
-# 	@$(rm) $(wildcard $(INCDIR)/*.gch)
-
-# fclean: clean
-# 	@$(rm) $(NAME)
-
-# re: fclean all
-
-# .PHONY: all clean fclean re
-
-
 TARGET   = ft_container
 
 CC       = c++
@@ -54,24 +18,23 @@ CFLAGS   = -Wall -Wextra -Werror -g3 -std=c++98
 
 LINKER   = c++
 
-LDFLAGS  =
-
-INCDIR = inc/
-
 SRCDIR   = src/
 
 OBJDIR   = obj/
 
-SOURCES  := $(wildcard $(SRCDIR)*.cpp)
+SOURCES  := src/main.cpp src/map_test.cpp src/stack_test.cpp src/vector_test.cpp
 
 OBJECTS  := $(SOURCES:$(SRCDIR)%.cpp=$(OBJDIR)%.o)
 
-INCLUDES := $(wildcard $(INCDIR)*.hpp)
+INCLUDES := inc/equal.hpp inc/ft_container.hpp inc/Is_Integral.hpp inc/pair.hpp inc/SelectConst.hpp\
+			inc/iterator_traits.hpp inc/iterator.hpp inc/reverse_iterator.hpp\
+			inc/RBtree.hpp inc/RBtree_node.hpp inc/RBtree_iterator.hpp inc/RBtree_ReverseIterator.hpp \
+			inc/stack.hpp inc/vector.hpp inc/map.hpp
 
 rm       = rm -f
 
 $(TARGET): $(OBJECTS)
-	$(LINKER) $(LDFLAGS) $(OBJECTS) -o $@
+	$(LINKER) $(OBJECTS) -o $@
 
 $(OBJECTS): $(OBJDIR)%.o : $(SRCDIR)%.cpp $(INCLUDES)
 	$(CC) $(CFLAGS) -c $< -o $@

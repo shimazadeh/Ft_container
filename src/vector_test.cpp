@@ -11,6 +11,8 @@ void	print_vector(ft::vector<T>	_vector, std::string msg)
 
 int vector_test()
 {
+	std::cout << "=============================================================== VECTOR TEST =======================================================================" << std::endl;
+
 	std::cout << "==================================TEST0: default constructor + insert + push_back + iterator + basic getters =======================================" << std::endl;
 	{
 		ft::vector<int>	test1;
@@ -18,7 +20,7 @@ int vector_test()
 
 		for (size_t i = 0; i < 10; i++)
 		{
-			test1.insert(test1.begin(), 3);//This is testing if it chooses the right constructor
+			test1.insert(test1.begin(), 3);
 			test1.push_back(i);
 		}
 
@@ -202,7 +204,6 @@ int vector_test()
 
 		myvector.insert (it,2,300);
 
-		// "it" no longer valid, get a new one:
 		it = myvector.begin();
 
 		vector<int> anothervector (2,400);
@@ -250,6 +251,7 @@ int vector_test()
 		catch(std::exception& e)
 		{ std::cout << e.what(); }
 	}
+	std::cout << "===================================TEST6: RESIZE ========================================" << std::endl;
 	{
 		// testing resize over and over
 		 vector<int> myvector;
@@ -266,6 +268,7 @@ int vector_test()
 		print_vector(myvector, "third resize");
 
 	}
+	std::cout << "===================================TEST7: ERASE EXTENSIVE ========================================" << std::endl;
 	{
 		vector<int> myvector;
 
@@ -283,6 +286,7 @@ int vector_test()
 			std::cout << ' ' << myvector[i];
 		std::cout << '\n';
 	}
+	std::cout << "===================================TEST8: CONST_ITERATOR ========================================" << std::endl;
 	{
 		vector<int> foo,bar;
 
@@ -293,7 +297,6 @@ int vector_test()
 		bar.push_back(22);
 		bar.push_back(33);
 
-
 		vector<int>::const_iterator tmp = foo.begin(); //tmp iterates through foo
 		vector<int>::const_iterator tmp2 = bar.begin(); //tmp2 iterates through bar
 
@@ -301,7 +304,6 @@ int vector_test()
 		(void)tmp2;
 		swap(bar, foo);
 	}
-
 	return (0);
 }
 

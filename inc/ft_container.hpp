@@ -2,7 +2,7 @@
 #define _FT_CONTAINER_HPP
 #include <iostream>
 
-#if 1 //create a
+#if 0
 	#include <map>
 	#include <stack>
 	#include <vector>
@@ -16,6 +16,7 @@
 int map_test();
 int vector_test();
 int stack_test();
+
 using namespace ft;
 
 #endif
