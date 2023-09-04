@@ -14,9 +14,8 @@ The containers in Ft_container adhere to the following requirements:
 ## How to use:
 The containers are templated, meaning you can use them with any type, just like you would any other STL containers. 
 Just include the .hpp corresponding to the container you want to use, and use it! The difference is the namespace
-where you would call std::vector<T>, you now call ft::vector<T>.
-<pre>
-<code>
+where you would call std::vector<T>, you now call ft::vector<T>. Example of use:
+<pre><code>
   #include "includes/vector.hpp"
   #include "includes/map.hpp"
   #include "includes/stack.hpp"
@@ -25,8 +24,7 @@ where you would call std::vector<T>, you now call ft::vector<T>.
   ft::vector<int> vector;
   ft::map<int, std::string> map;
   ft:stack<int> stack;
-</code>
-</pre>
+</code></pre>
 ## Sources:
 Here are some useful references for working with C++ containers:
   - [C++ Reference](https://cplusplus.com/reference/stl/)
