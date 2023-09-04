@@ -25,7 +25,6 @@ where you would call std::vector<T>, you now call ft::vector<T>.
   ft:stack<int> stack;
 </code>
 </pre>
-
 ## Sources:
   - [C++ Reference](https://cplusplus.com/reference/stl/)
   - [CPP Reference](https://en.cppreference.com/w/)
