@@ -14,16 +14,15 @@ The containers are templated, meaning you can use them with any type, just like 
 Just include the .hpp corresponding to the container you want to use, and use it! The difference is the namespace
 where you would call std::vector<T>, you now call ft::vector<T>.
 <pre>
-<code>```python
-  # include "includes/vector.hpp"
-  # include "includes/map.hpp"
-  # include "includes/stack.hpp"
+<code>
+  #include "includes/vector.hpp"
+  #include "includes/map.hpp"
+  #include "includes/stack.hpp"
   
   // Containers are in the 'ft' namespace
   ft::vector<int> vector;
   ft::map<int, std::string> map;
   ft:stack<int> stack;
-```
 </code>
 </pre>
 
